@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMA - Asistencia a Tutorías</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .header-bar {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-bar h1 {
+      color: #1e3c72;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-bar p {
+      color: #666;
+      font-size: 13px;
+      margin: 5px 0 0 0;
+    }
+
+    .container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 30px 25px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      color: #1e3c72;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #1e3c72;
+    }
+
+    .alert-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .alert-box strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #856404;
+    }
+
+    .confirmation-box {
+      background: #e8f4fd;
+      border: 2px solid #1e3c72;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .confirmation-box h3 {
+      color: #1e3c72;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .confirmation-item {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px solid #d0e7f7;
+    }
+
+    .confirmation-item:last-child {
+      border-bottom: none;
+    }
+
+    .confirmation-label {
+      font-weight: 600;
+      color: #555;
+      min-width: 140px;
+      font-size: 14px;
+    }
+
+    .confirmation-value {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #1e3c72;
+      box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .rating {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .rating input[type="radio"] {
+      display: none;
+    }
+
+    .rating label {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #999;
+      background: white;
+    }
+
+    .rating input[type="radio"]:checked + label {
+      background: #1e3c72;
+      color: white;
+      border-color: #1e3c72;
+    }
+
+    .rating label:hover {
+      border-color: #1e3c72;
+      transform: scale(1.05);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #1e3c72;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: #2a5298;
+      box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1e3c72;
+      border: 2px solid #1e3c72;
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .mensaje {
+      padding: 14px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .mensaje.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .mensaje.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #1e3c72;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .admin-link {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .admin-link a {
+      color: #1e3c72;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .admin-link a:hover {
+      text-decoration: underline;
+    }
+
+    .user-greeting {
+      background: #e8f4fd;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border-left: 4px solid #1e3c72;
+    }
+
+    .user-greeting p {
+      margin: 0;
+      color: #1e3c72;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #e0e0e0;
+      flex-wrap: wrap;
+    }
+
+    .admin-tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: #666;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .admin-tab.active {
+      color: #1e3c72;
+      border-bottom-color: #1e3c72;
+    }
+
+    .admin-tab:hover {
+      color: #1e3c72;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      font-size: 30px;
+      margin-bottom: 5px;
+    }
+
+    .stat-card p {
+      font-size: 12px;
+      opacity: 0.95;
+    }
+
+    .chart-container {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    .chart-title {
+      color: #1e3c72;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .list-item {
+      background: white;
+      padding: 12px 15px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e0e0e0;
+    }
+
+    .list-item strong {
+      color: #1e3c72;
+      font-size: 16px;
+    }
+
+    .otro-tema {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px 15px;
+      }
+
+      .header-bar h1 {
+        font-size: 18px;
+      }
+
+      .section-title {
+        font-size: 18px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .admin-tabs {
+        overflow-x: auto;
+      }
+
+      .confirmation-label {
+        min-width: 100px;
+        font-size: 13px;
+      }
+
+      .confirmation-value {
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .rating {
+        gap: 6px;
+      }
+
+      .rating label {
+        width: 45px;
+        height: 45px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-bar">
+    <h1>PROGRAMA DE MEJORAMIENTO ACADÉMICO (PMA)</h1>
+    <p>Universidad Antonio José Camacho - Sistema de Registro de Asistencia a Tutorías</p>
+  </div>
+
+  <div class="container">
+    <!-- PANTALLA DE INICIO -->
+    <div id="pantallaInicio">
+      <h2 class="section-title">Bienvenido</h2>
+      <p style="margin-bottom: 20px; line-height: 1.6; color: #555;">Seleccione una opción para continuar con el registro de su asistencia a tutorías del Programa de Mejoramiento Académico.</p>
+      <button class="btn" onclick="mostrarLogin()">Iniciar Sesión</button>
+      <button class="btn btn-secondary" onclick="mostrarRegistro()">Registrarse</button>
+      <div class="admin-link">
+        <a href="#" onclick="mostrarLoginAdmin(); return false;">Acceder como Administrador</a>
+      </div>
+    </div>
+
+    <!-- PANTALLA DE REGISTRO -->
+    <div id="pantallaRegistro" class="hidden">
+      <h2 class="section-title">Registro de Estudiante</h2>
+      
+      <div class="alert-box">
+        <strong>Importante:</strong>
+        Es fundamental que complete correctamente todos sus datos personales y académicos. Esta información será utilizada para verificar su asistencia a las tutorías y generar reportes oficiales. Asegúrese de que los datos coincidan exactamente con su registro institucional.
+      </div>
+
+      <div id="mensajeRegistro"></div>
+      <form id="formRegistro" onsubmit="registrarEstudiante(event)">
+        <div class="form-group">
+          <label>Documento de Identidad *</label>
+          <input type="number" id="regDocumento" required>
+        </div>
+        <div class="form-group">
+          <label>Primer Nombre *</label>
+          <input type="text" id="regPrimerNombre" required style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label>Segundo Nombre</label>
+          <input type="text" id="regSegundoNombre" style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label>Primer Apellido *</label>
+          <input type="text" id="regPrimerApellido" required style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label>Segundo Apellido *</label>
+          <input type="text" id="regSegundoApellido" required style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label>Facultad *</label>
+          <select id="regFacultad" required onchange="cargarProgramas()">
+            <option value="">Seleccione una facultad</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Programa Académico *</label>
+          <select id="regPrograma" required disabled>
+            <option value="">Primero seleccione una facultad</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Semestre *</label>
+          <input type="number" id="regSemestre" min="1" max="12" required>
+        </div>
+        <div class="form-group">
+          <label>Grupo *</label>
+          <input type="text" id="regGrupo" required style="text-transform: uppercase;">
+        </div>
+
+        <div id="confirmacionDatos" class="hidden">
+          <div class="confirmation-box">
+            <h3>Confirme sus datos antes de registrarse</h3>
+            <div id="datosConfirmacion"></div>
+          </div>
+          <div class="alert-box" style="margin-top: 15px;">
+            <strong>Revise cuidadosamente:</strong>
+            Si sus datos no están correctos, no podremos verificar su asistencia a las tutorías. Una vez registrado, contacte al administrador para cualquier corrección.
+          </div>
+        </div>
+
+        <button type="button" class="btn" onclick="mostrarConfirmacion()">Continuar</button>
+        <button type="submit" class="btn hidden" id="btnConfirmarRegistro">Confirmar y Registrarme</button>
+        <button type="button" class="btn btn-secondary" onclick="volverInicio()">Cancelar</button>
+      </form>
+    </div>
+
+    <!-- PANTALLA DE LOGIN -->
+    <div id="pantallaLogin" class="hidden">
+      <h2 class="section-title">Iniciar Sesión</h2>
+      <p style="margin-bottom: 20px; color: #555;">Ingrese su documento de identidad para acceder al formulario de registro de asistencia.</p>
+      <div id="mensajeLogin"></div>
+      <form id="formLogin" onsubmit="iniciarSesion(event)">
+        <div class="form-group">
+          <label>Documento de Identidad</label>
+          <input type="number" id="loginDocumento" required>
+        </div>
+        <button type="submit" class="btn">Continuar</button>
+        <button type="button" class="btn btn-secondary" onclick="volverInicio()">Volver</button>
+      </form>
+    </div>
+
+    <!-- FORMULARIO DE TUTORÍA -->
+    <div id="pantallaFormulario" class="hidden">
+      <h2 class="section-title">Registro de Asistencia</h2>
+      
+      <div class="user-greeting">
+        <p id="nombreUsuario"></p>
+      </div>
+
+      <div id="mensajeFormulario"></div>
+      <form id="formTutoria" onsubmit="guardarFormulario(event)">
+        <div class="form-group">
+          <label>Sede donde recibió la tutoría *</label>
+          <select id="sedeTutoria" required onchange="cargarInstructores()">
+            <option value="">Seleccione una sede</option>
+            <option value="Norte">Sede Norte</option>
+            <option value="Sur">Sede Sur</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>¿Quién impartió la tutoría? *</label>
+          <select id="tipoInstructor" required onchange="cargarInstructores()">
+            <option value="">Seleccione una opción</option>
+            <option value="Tutor">Tutor</option>
+            <option value="Profesor">Profesor</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="grupoInstructor">
+          <label id="labelInstructor">Instructor *</label>
+          <select id="instructor" required onchange="cargarMaterias()">
+            <option value="">Seleccione un instructor</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="grupoMateria">
+          <label>Asignatura *</label>
+          <select id="asignatura" required onchange="cargarTemas()">
+            <option value="">Seleccione una asignatura</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="grupoTema">
+          <label>Tema de la tutoría *</label>
+          <select id="tema" required onchange="toggleOtroTema()">
+            <option value="">Seleccione un tema</option>
+          </select>
+          <div id="otroTemaContainer" class="otro-tema hidden">
+            <input type="text" id="otroTema" placeholder="Especifique el tema">
+          </div>
+        </div>
+
+        <div class="form-group hidden" id="grupoCalificacion">
+          <label>Calificación de la tutoría *</label>
+          <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Evalúe la calidad de la tutoría recibida (1 = Muy deficiente, 5 = Excelente)</p>
+          <div class="rating">
+            <input type="radio" name="calificacion" id="cal1" value="1" required>
+            <label for="cal1">1</label>
+            <input type="radio" name="calificacion" id="cal2" value="2">
+            <label for="cal2">2</label>
+            <input type="radio" name="calificacion" id="cal3" value="3">
+            <label for="cal3">3</label>
+            <input type="radio" name="calificacion" id="cal4" value="4">
+            <label for="cal4">4</label>
+            <input type="radio" name="calificacion" id="cal5" value="5">
+            <label for="cal5">5</label>
+          </div>
+        </div>
+
+        <div class="form-group hidden" id="grupoSugerencias">
+          <label>Sugerencias o Comentarios</label>
+          <textarea id="sugerencias" placeholder="Escriba aquí sus sugerencias, comentarios o recomendaciones"></textarea>
+          <label style="margin-top: 10px; font-weight: normal; font-size: 13px;">
+            <input type="checkbox" id="ningunaSugerencia" onchange="toggleSugerencias()"> No tengo sugerencias
+          </label>
+        </div>
+
+        <button type="submit" class="btn hidden" id="btnEnviar">Enviar Formulario</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarSesion()">Cerrar Sesión</button>
+      </form>
+    </div>
+
+    <!-- PANEL DE ADMINISTRADOR - LOGIN -->
+    <div id="pantallaAdminLogin" class="hidden">
+      <h2 class="section-title">Acceso de Administrador</h2>
+      <div id="mensajeAdminLogin"></div>
+      <form id="formAdminLogin" onsubmit="loginAdmin(event)">
+        <div class="form-group">
+          <label>Documento de Administrador</label>
+          <input type="number" id="adminDocumento" required>
+        </div>
+        <button type="submit" class="btn">Ingresar</button>
+        <button type="button" class="btn btn-secondary" onclick="volverInicio()">Volver</button>
+      </form>
+    </div>
+
+    <!-- PANEL DE ADMINISTRADOR -->
+    <div id="pantallaAdmin" class="hidden">
+      <h2 class="section-title">Panel de Administración</h2>
+      <p id="nombreAdmin" style="color: #666; margin-bottom: 20px;"></p>
+      
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="cambiarTab(event, 'estadisticas')">Estadísticas</button>
+        <button class="admin-tab" onclick="cambiarTab(event, 'descargas')">Descargar Datos</button>
+      </div>
+
+      <div id="tabEstadisticas">
+        <div class="stats-grid" id="statsGrid"></div>
+        <div id="detallesStats"></div>
+      </div>
+
+      <div id="tabDescargas" class="hidden">
+        <div class="chart-container">
+          <h3 class="chart-title">Descargar Reportes</h3>
+          <p style="margin-bottom: 20px; color: #555; font-size: 14px;">Descargue los registros de asistencia en formato CSV para análisis en Excel.</p>
+          
+          <div class="form-group">
+            <label>Fecha Desde</label>
+            <input type="date" id="fechaDesde">
+          </div>
+          <div class="form-group">
+            <label>Fecha Hasta</label>
+            <input type="date" id="fechaHasta">
+          </div>
+          <button class="btn" onclick="descargarDatos()">Descargar por Rango de Fechas</button>
+          <button class="btn btn-secondary" onclick="descargarTodo()">Descargar Todos los Registros</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-secondary" style="margin-top: 25px;" onclick="cerrarSesionAdmin()">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <script>
+    // ===================================
+    // CONFIGURACIÓN DE SUPABASE
+    // ===================================
+    const SUPABASE_URL = 'https://vkfjttukyrtiumzfmyuk.supabase.co';  // Reemplazar con tu URL
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NTU0MjQsImV4cCI6MjA3ODAzMTQyNH0.eU8GeI8IVazXydMDwY98TUzT9xvjhcbXBu6cruCPiEk';     // Reemplazar con tu clave
+
+    // Variables globales
+    let datosEstudiante = null;
+    let instructorActual = null;
+    let facultadesData = {};
+
+    // ===================================
+    // FUNCIONES DE SUPABASE
+    // ===================================
+    async function supabaseQuery(table, options = {}) {
+      let url = `${SUPABASE_URL}/rest/v1/${table}`;
+      
+      if (options.select) url += `?select=${options.select}`;
+      if (options.eq) url += `${options.select ? '&' : '?'}${options.eq.field}=eq.${options.eq.value}`;
+      if (options.order) url += `${url.includes('?') ? '&' : '?'}order=${options.order}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return await response.json();
+    }
+
+    async function supabaseInsert(table, data) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      return await response.json();
+    }
+
+    // ===================================
+    // FUNCIONES DE NAVEGACIÓN
+    // ===================================
+    function mostrarPantalla(id) {
+      document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function mostrarLogin() {
+      mostrarPantalla('pantallaLogin');
+      document.getElementById('mensajeLogin').innerHTML = '';
+    }
+
+    function mostrarRegistro() {
+      mostrarPantalla('pantallaRegistro');
+      document.getElementById('mensajeRegistro').innerHTML = '';
+      document.getElementById('confirmacionDatos').classList.add('hidden');
+      document.getElementById('btnConfirmarRegistro').classList.add('hidden');
+      cargarFacultades();
+    }
+
+    function mostrarLoginAdmin() {
+      mostrarPantalla('pantallaAdminLogin');
+      document.getElementById('mensajeAdminLogin').innerHTML = '';
+    }
+
+    function volverInicio() {
+      mostrarPantalla('pantallaInicio');
+      limpiarFormularios();
+    }
+
+    function limpiarFormularios() {
+      document.getElementById('formRegistro').reset();
+      document.getElementById('formLogin').reset();
+      document.getElementById('formTutoria').reset();
+      document.getElementById('formAdminLogin').reset();
+    }
+
+    function mostrarMensaje(elementId, mensaje, tipo) {
+      const elemento = document.getElementById(elementId);
+      elemento.innerHTML = `<div class="mensaje ${tipo}">${mensaje}</div>`;
+      setTimeout(() => elemento.innerHTML = '', 5000);
+    }
+
+    function mostrarCargando(elementId) {
+      document.getElementById(elementId).innerHTML = '<div class="loader"></div>';
+    }
+
+    // ===================================
+    // CARGAR FACULTADES Y PROGRAMAS
+    // ===================================
+    async function cargarFacultades() {
+      try {
+        const data = await supabaseQuery('facultades_carreras');
+        facultadesData = {};
+        
+        data.forEach(item => {
+          if (!facultadesData[item.facultad]) {
+            facultadesData[item.facultad] = [];
+          }
+          facultadesData[item.facultad].push(item.programa);
+        });
+
+        const select = document.getElementById('regFacultad');
+        select.innerHTML = '<option value="">Seleccione una facultad</option>';
+        
+        Object.keys(facultadesData).forEach(facultad => {
+          const option = document.createElement('option');
+          option.value = facultad;
+          option.textContent = facultad;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error cargando facultades:', error);
+      }
+    }
+
+    function cargarProgramas() {
+      const facultad = document.getElementById('regFacultad').value;
+      const selectPrograma = document.getElementById('regPrograma');
+      
+      if (!facultad) {
+        selectPrograma.disabled = true;
+        selectPrograma.innerHTML = '<option value="">Primero seleccione una facultad</option>';
+        return;
+      }
+      
+      selectPrograma.disabled = false;
+      selectPrograma.innerHTML = '<option value="">Seleccione un programa</option>';
+      
+      const programas = facultadesData[facultad] || [];
+      programas.forEach(programa => {
+        const option = document.createElement('option');
+        option.value = programa;
+        option.textContent = programa;
+        selectPrograma.appendChild(option);
+      });
+    }
+
+    // ===================================
+    // CONFIRMACIÓN Y REGISTRO
+    // ===================================
+    function mostrarConfirmacion() {
+      const doc = document.getElementById('regDocumento').value;
+      const primerNombre = document.getElementById('regPrimerNombre').value.toUpperCase();
+      const segundoNombre = document.getElementById('regSegundoNombre').value.toUpperCase();
+      const primerApellido = document.getElementById('regPrimerApellido').value.toUpperCase();
+      const segundoApellido = document.getElementById('regSegundoApellido').value.toUpperCase();
+      const facultad = document.getElementById('regFacultad').value;
+      const programa = document.getElementById('regPrograma').value;
+      const semestre = document.getElementById('regSemestre').value;
+      const grupo = document.getElementById('regGrupo').value.toUpperCase();
+
+      if (!doc || !primerNombre || !primerApellido || !segundoApellido || !facultad || !programa || !semestre || !grupo) {
+        mostrarMensaje('mensajeRegistro', 'Por favor complete todos los campos obligatorios', 'error');
+        return;
+      }
+
+      const nombreCompleto = `${primerNombre} ${segundoNombre} ${primerApellido} ${segundoApellido}`.replace(/\s+/g, ' ');
+
+      const html = `
+        <div class="confirmation-item">
+          <div class="confirmation-label">Documento:</div>
+          <div class="confirmation-value">${doc}</div>
+        </div>
+        <div class="confirmation-item">
+          <div class="confirmation-label">Nombre Completo:</div>
+          <div class="confirmation-value">${nombreCompleto}</div>
+        </div>
+        <div class="confirmation-item">
+          <div class="confirmation-label">Facultad:</div>
+          <div class="confirmation-value">${facultad}</div>
+        </div>
+        <div class="confirmation-item">
+          <div class="confirmation-label">Programa:</div>
+          <div class="confirmation-value">${programa}</div>
+        </div>
+        <div class="confirmation-item">
+          <div class="confirmation-label">Semestre:</div>
+          <div class="confirmation-value">${semestre}</div>
+        </div>
+        <div class="confirmation-item">
+          <div class="confirmation-label">Grupo:</div>
+          <div class="confirmation-value">${grupo}</div>
+        </div>
+      `;
+
+      document.getElementById('datosConfirmacion').innerHTML = html;
+      document.getElementById('confirmacionDatos').classList.remove('hidden');
+      document.getElementById('btnConfirmarRegistro').classList.remove('hidden');
+      
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    async function registrarEstudiante(event) {
+      event.preventDefault();
+      mostrarCargando('mensajeRegistro');
+
+      const datos = {
+        documento: document.getElementById('regDocumento').value,
+        primer_nombre: document.getElementById('regPrimerNombre').value.toUpperCase(),
+        segundo_nombre: document.getElementById('regSegundoNombre').value.toUpperCase() || null,
+        primer_apellido: document.getElementById('regPrimerApellido').value.toUpperCase(),
+        segundo_apellido: document.getElementById('regSegundoApellido').value.toUpperCase(),
+        facultad: document.getElementById('regFacultad').value,
+        programa: document.getElementById('regPrograma').value,
+        semestre: parseInt(document.getElementById('regSemestre').value),
+        grupo: document.getElementById('regGrupo').value.toUpperCase()
+      };
+
+      try {
+        // Verificar si ya existe
+        const existing = await supabaseQuery('estudiantes', {
+          eq: { field: 'documento', value: datos.documento }
+        });
+
+        if (existing.length > 0) {
+          mostrarMensaje('mensajeRegistro', 'Este documento ya está registrado', 'error');
+          return;
+        }
+
+        // Insertar nuevo estudiante
+        await supabaseInsert('estudiantes', datos);
+        mostrarMensaje('mensajeRegistro', 'Registro exitoso. Ahora puede iniciar sesión.', 'success');
+        setTimeout(() => mostrarLogin(), 2500);
+      } catch (error) {
+        mostrarMensaje('mensajeRegistro', 'Error en el registro: ' + error.message, 'error');
+      }
+    }
+
+    // ===================================
+    // LOGIN
+    // ===================================
+    function censurarNombre(nombreCompleto) {
+      const partes = nombreCompleto.split(' ');
+      return partes.map(parte => {
+        if (parte.length <= 2) return parte;
+        return parte.substring(0, 2) + '*'.repeat(parte.length - 2);
+      }).join(' ');
+    }
+
+    async function iniciarSesion(event) {
+      event.preventDefault();
+      mostrarCargando('mensajeLogin');
+
+      const documento = document.getElementById('loginDocumento').value;
+
+      try {
+        const data = await supabaseQuery('estudiantes', {
+          eq: { field: 'documento', value: documento }
+        });
+
+        if (data.length === 0) {
+          mostrarMensaje('mensajeLogin', 'Documento no encontrado. Por favor regístrese primero.', 'error');
+          return;
+        }
+
+        const estudiante = data[0];
+        const nombres = `${estudiante.primer_nombre} ${estudiante.segundo_nombre || ''}`.trim();
+        const apellidos = `${estudiante.primer_apellido} ${estudiante.segundo_apellido}`.trim();
+        const nombreCompleto = `${nombres} ${apellidos}`;
+
+        datosEstudiante = {
+          documento: estudiante.documento,
+          nombres: nombres,
+          apellidos: apellidos,
+          nombreCensurado: censurarNombre(nombreCompleto),
+          facultad: estudiante.facultad,
+          programa: estudiante.programa,
+          semestre: estudiante.semestre,
+          grupo: estudiante.grupo,
+          sede: estudiante.sede || ''
+        };
+
+        mostrarPantalla('pantallaFormulario');
+        document.getElementById('nombreUsuario').textContent = 'Bienvenido(a): ' + datosEstudiante.nombreCensurado;
+        document.getElementById('mensajeFormulario').innerHTML = '';
+      } catch (error) {
+        mostrarMensaje('mensajeLogin', 'Error de conexión: ' + error.message, 'error');
+      }
+    }
+
+    // ===================================
+    // CARGAR INSTRUCTORES
+    // ===================================
+    async function cargarInstructores() {
+      const sede = document.getElementById('sedeTutoria').value;
+      const tipo = document.getElementById('tipoInstructor').value;
+
+      if (!sede || !tipo) return;
+
+      const selectInstructor = document.getElementById('instructor');
+      selectInstructor.innerHTML = '<option value="">Cargando...</option>';
+      
+      document.getElementById('grupoInstructor').classList.remove('hidden');
+      document.getElementById('labelInstructor').textContent = tipo + ' *';
+
+      try {
+        const tabla = tipo === 'Tutor' ? 'tutores' : 'profesores';
+        const data = await supabaseQuery(tabla, {
+          eq: { field: 'sede', value: sede }
+        });
+
+        selectInstructor.innerHTML = `<option value="">Seleccione un ${tipo.toLowerCase()}</option>`;
+        data.forEach(inst => {
+          const option = document.createElement('option');
+          option.value = inst.nombre;
+          option.setAttribute('data-area', inst.area);
+          option.textContent = inst.nombre;
+          selectInstructor.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error cargando instructores:', error);
+      }
+    }
+
+    // ===================================
+    // CARGAR MATERIAS
+    // ===================================
+    async function cargarMaterias() {
+      const selectInstructor = document.getElementById('instructor');
+      const selectedOption = selectInstructor.options[selectInstructor.selectedIndex];
+      
+      if (!selectedOption || !selectedOption.value) return;
+
+      const area = selectedOption.getAttribute('data-area');
+      instructorActual = { nombre: selectedOption.value, area: area };
+
+      document.getElementById('grupoMateria').classList.remove('hidden');
+
+      try {
+        const data = await supabaseQuery('materias', {
+          eq: { field: 'area', value: area }
+        });
+
+        const selectMateria = document.getElementById('asignatura');
+        selectMateria.innerHTML = '<option value="">Seleccione una asignatura</option>';
+        data.forEach(mat => {
+          const option = document.createElement('option');
+          option.value = mat.materia;
+          option.textContent = mat.materia;
+          selectMateria.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error cargando materias:', error);
+      }
+    }
+
+    // ===================================
+    // CARGAR TEMAS
+    // ===================================
+    async function cargarTemas() {
+      const materia = document.getElementById('asignatura').value;
+      if (!materia) return;
+
+      document.getElementById('grupoTema').classList.remove('hidden');
+
+      try {
+        const data = await supabaseQuery('temas', {
+          eq: { field: 'materia', value: materia }
+        });
+
+        const selectTema = document.getElementById('tema');
+        selectTema.innerHTML = '<option value="">Seleccione un tema</option>';
+        data.forEach(tem => {
+          const option = document.createElement('option');
+          option.value = tem.tema;
+          option.textContent = tem.tema;
+          selectTema.appendChild(option);
+        });
+
+        const optionOtro = document.createElement('option');
+        optionOtro.value = 'Otro';
+        optionOtro.textContent = 'Otro: ¿Cuál?';
+        selectTema.appendChild(optionOtro);
+
+        document.getElementById('grupoCalificacion').classList.remove('hidden');
+        document.getElementById('grupoSugerencias').classList.remove('hidden');
+        document.getElementById('btnEnviar').classList.remove('hidden');
+      } catch (error) {
+        console.error('Error cargando temas:', error);
+      }
+    }
+
+    function toggleOtroTema() {
+      const tema = document.getElementById('tema').value;
+      const container = document.getElementById('otroTemaContainer');
+      const input = document.getElementById('otroTema');
+      
+      if (tema === 'Otro') {
+        container.classList.remove('hidden');
+        input.required = true;
+      } else {
+        container.classList.add('hidden');
+        input.required = false;
+        input.value = '';
+      }
+    }
+
+    function toggleSugerencias() {
+      const checkbox = document.getElementById('ningunaSugerencia');
+      const textarea = document.getElementById('sugerencias');
+      
+      if (checkbox.checked) {
+        textarea.value = 'Ninguna';
+        textarea.disabled = true;
+      } else {
+        textarea.value = '';
+        textarea.disabled = false;
+      }
+    }
+
+    // ===================================
+    // GUARDAR FORMULARIO
+    // ===================================
+    async function guardarFormulario(event) {
+      event.preventDefault();
+      mostrarCargando('mensajeFormulario');
+
+      let tema = document.getElementById('tema').value;
+      if (tema === 'Otro') {
+        tema = document.getElementById('otroTema').value;
+      }
+
+      const calificacionRadio = document.querySelector('input[name="calificacion"]:checked');
+      
+      const datos = {
+        documento: datosEstudiante.documento,
+        nombres: datosEstudiante.nombres,
+        apellidos: datosEstudiante.apellidos,
+        facultad: datosEstudiante.facultad,
+        programa: datosEstudiante.programa,
+        semestre: datosEstudiante.semestre,
+        grupo: datosEstudiante.grupo,
+        sede_estudiante: datosEstudiante.sede,
+        sede_tutoria: document.getElementById('sedeTutoria').value,
+        tipo_instructor: document.getElementById('tipoInstructor').value,
+        instructor: document.getElementById('instructor').value,
+        asignatura: document.getElementById('asignatura').value,
+        tema: tema,
+        calificacion: parseInt(calificacionRadio ? calificacionRadio.value : '0'),
+        sugerencias: document.getElementById('sugerencias').value || 'Ninguna'
+      };
+
+      try {
+        await supabaseInsert('formularios', datos);
+        mostrarMensaje('mensajeFormulario', 'Formulario guardado exitosamente. Gracias por su participación en el PMA.', 'success');
+        
+        document.getElementById('formTutoria').reset();
+        document.getElementById('grupoInstructor').classList.add('hidden');
+        document.getElementById('grupoMateria').classList.add('hidden');
+        document.getElementById('grupoTema').classList.add('hidden');
+        document.getElementById('grupoCalificacion').classList.add('hidden');
+        document.getElementById('grupoSugerencias').classList.add('hidden');
+        document.getElementById('btnEnviar').classList.add('hidden');
+      } catch (error) {
+        mostrarMensaje('mensajeFormulario', 'Error al guardar: ' + error.message, 'error');
+      }
+    }
+
+    function cerrarSesion() {
+      datosEstudiante = null;
+      instructorActual = null;
+      volverInicio();
+    }
+
+    // ===================================
+    // ADMINISTRADOR - LOGIN
+    // ===================================
+    async function loginAdmin(event) {
+      event.preventDefault();
+      mostrarCargando('mensajeAdminLogin');
+
+      const documento = document.getElementById('adminDocumento').value;
+
+      try {
+        const data = await supabaseQuery('administradores', {
+          eq: { field: 'documento', value: documento }
+        });
+
+        if (data.length === 0) {
+          mostrarMensaje('mensajeAdminLogin', 'Acceso denegado. Documento no autorizado.', 'error');
+          return;
+        }
+
+        document.getElementById('nombreAdmin').textContent = 'Administrador: ' + data[0].nombre;
+        mostrarPantalla('pantallaAdmin');
+        await cargarEstadisticas();
+      } catch (error) {
+        mostrarMensaje('mensajeAdminLogin', 'Error de conexión: ' + error.message, 'error');
+      }
+    }
+
+    // ===================================
+    // ADMINISTRADOR - TABS
+    // ===================================
+    function cambiarTab(event, tab) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      document.getElementById('tabEstadisticas').classList.add('hidden');
+      document.getElementById('tabDescargas').classList.add('hidden');
+      
+      if (tab === 'estadisticas') {
+        document.getElementById('tabEstadisticas').classList.remove('hidden');
+      } else if (tab === 'descargas') {
+        document.getElementById('tabDescargas').classList.remove('hidden');
+      }
+    }
+
+    // ===================================
+    // ESTADÍSTICAS
+    // ===================================
+    async function cargarEstadisticas() {
+      try {
+        const data = await supabaseQuery('formularios');
+
+        if (data.length === 0) {
+          document.getElementById('statsGrid').innerHTML = '<p style="text-align: center; color: #666;">No hay datos disponibles aún.</p>';
+          return;
+        }
+
+        // Calcular estadísticas
+        const stats = {
+          total: data.length,
+          materias: {},
+          instructores: {},
+          sedes: {},
+          facultades: {},
+          programas: {},
+          tiposInstructor: {},
+          calificaciones: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
+          tendenciaMensual: {},
+          sumaCalificaciones: 0
+        };
+
+        data.forEach(item => {
+          stats.materias[item.asignatura] = (stats.materias[item.asignatura] || 0) + 1;
+          stats.instructores[item.instructor] = (stats.instructores[item.instructor] || 0) + 1;
+          stats.sedes[item.sede_tutoria] = (stats.sedes[item.sede_tutoria] || 0) + 1;
+          stats.facultades[item.facultad] = (stats.facultades[item.facultad] || 0) + 1;
+          stats.programas[item.programa] = (stats.programas[item.programa] || 0) + 1;
+          stats.tiposInstructor[item.tipo_instructor] = (stats.tiposInstructor[item.tipo_instructor] || 0) + 1;
+          stats.calificaciones[item.calificacion] = (stats.calificaciones[item.calificacion] || 0) + 1;
+          stats.sumaCalificaciones += item.calificacion;
+
+          const fecha = new Date(item.fecha);
+          const mesAnio = `${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+          stats.tendenciaMensual[mesAnio] = (stats.tendenciaMensual[mesAnio] || 0) + 1;
+        });
+
+        const promedioCalificacion = (stats.sumaCalificaciones / stats.total).toFixed(2);
+
+        // Renderizar tarjetas principales
+        const grid = document.getElementById('statsGrid');
+        grid.innerHTML = `
+          <div class="stat-card">
+            <h3>${stats.total}</h3>
+            <p>Total Registros</p>
+          </div>
+          <div class="stat-card">
+            <h3>${promedioCalificacion}</h3>
+            <p>Calificación Promedio</p>
+          </div>
+          <div class="stat-card">
+            <h3>${stats.tiposInstructor['Tutor'] || 0}</h3>
+            <p>Tutorías</p>
+          </div>
+          <div class="stat-card">
+            <h3>${stats.tiposInstructor['Profesor'] || 0}</h3>
+            <p>Con Profesores</p>
+          </div>
+        `;
+
+        // Renderizar detalles
+        let detalles = '';
+
+        // Distribución de calificaciones
+        detalles += '<div class="chart-container"><h3 class="chart-title">Distribución de Calificaciones</h3>';
+        Object.entries(stats.calificaciones).forEach(([cal, cant]) => {
+          const porcentaje = ((cant / stats.total) * 100).toFixed(1);
+          detalles += `<div class="list-item"><span>Calificación ${cal}</span><strong>${cant} (${porcentaje}%)</strong></div>`;
+        });
+        detalles += '</div>';
+
+        // Materias más solicitadas
+        detalles += '<div class="chart-container"><h3 class="chart-title">Materias Más Solicitadas</h3>';
+        const materiasOrdenadas = Object.entries(stats.materias).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        materiasOrdenadas.forEach(([materia, cantidad]) => {
+          detalles += `<div class="list-item"><span>${materia}</span><strong>${cantidad}</strong></div>`;
+        });
+        detalles += '</div>';
+
+        // Instructores más activos
+        detalles += '<div class="chart-container"><h3 class="chart-title">Instructores Más Activos</h3>';
+        const instructoresOrdenados = Object.entries(stats.instructores).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        instructoresOrdenados.forEach(([instructor, cantidad]) => {
+          detalles += `<div class="list-item"><span>${instructor}</span><strong>${cantidad} tutorías</strong></div>`;
+        });
+        detalles += '</div>';
+
+        // Distribución por sedes
+        detalles += '<div class="chart-container"><h3 class="chart-title">Distribución por Sedes</h3>';
+        Object.entries(stats.sedes).forEach(([sede, cantidad]) => {
+          const porcentaje = ((cantidad / stats.total) * 100).toFixed(1);
+          detalles += `<div class="list-item"><span>Sede ${sede}</span><strong>${cantidad} (${porcentaje}%)</strong></div>`;
+        });
+        detalles += '</div>';
+
+        // Participación por facultades
+        detalles += '<div class="chart-container"><h3 class="chart-title">Participación por Facultades</h3>';
+        const facultadesOrdenadas = Object.entries(stats.facultades).sort((a, b) => b[1] - a[1]);
+        facultadesOrdenadas.forEach(([facultad, cantidad]) => {
+          detalles += `<div class="list-item"><span>${facultad}</span><strong>${cantidad}</strong></div>`;
+        });
+        detalles += '</div>';
+
+        // Top 10 programas
+        detalles += '<div class="chart-container"><h3 class="chart-title">Top 10 Programas Académicos</h3>';
+        const programasOrdenados = Object.entries(stats.programas).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        programasOrdenados.forEach(([programa, cantidad]) => {
+          detalles += `<div class="list-item"><span>${programa}</span><strong>${cantidad}</strong></div>`;
+        });
+        detalles += '</div>';
+
+        // Tendencia mensual
+        if (Object.keys(stats.tendenciaMensual).length > 0) {
+          detalles += '<div class="chart-container"><h3 class="chart-title">Tendencia Mensual</h3>';
+          const mesesOrdenados = Object.entries(stats.tendenciaMensual).sort();
+          mesesOrdenados.forEach(([mes, cantidad]) => {
+            detalles += `<div class="list-item"><span>${mes}</span><strong>${cantidad} registros</strong></div>`;
+          });
+          detalles += '</div>';
+        }
+
+        document.getElementById('detallesStats').innerHTML = detalles;
+      } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+      }
+    }
+
+    // ===================================
+    // DESCARGAR DATOS
+    // ===================================
+    async function descargarDatos() {
+      const desde = document.getElementById('fechaDesde').value;
+      const hasta = document.getElementById('fechaHasta').value;
+
+      if (!desde || !hasta) {
+        alert('Por favor seleccione ambas fechas');
+        return;
+      }
+
+      if (new Date(desde) > new Date(hasta)) {
+        alert('La fecha inicial no puede ser mayor que la fecha final');
+        return;
+      }
+
+      try {
+        let url = `${SUPABASE_URL}/rest/v1/formularios?fecha=gte.${desde}T00:00:00&fecha=lte.${hasta}T23:59:59&order=fecha.asc`;
+        
+        const response = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.length === 0) {
+          alert('No hay registros en el rango de fechas seleccionado');
+          return;
+        }
+
+        generarExcel(data, `PMA_${desde}_a_${hasta}`);
+        alert(`${data.length} registros descargados exitosamente`);
+      } catch (error) {
+        alert('Error al descargar datos: ' + error.message);
+      }
+    }
+
+    async function descargarTodo() {
+      if (!confirm('¿Está seguro de descargar todos los registros históricos?')) {
+        return;
+      }
+
+      try {
+        const data = await supabaseQuery('formularios', { order: 'fecha.asc' });
+        
+        if (data.length === 0) {
+          alert('No hay registros para descargar');
+          return;
+        }
+
+        generarExcel(data, 'PMA_Completo');
+        alert(`${data.length} registros descargados exitosamente`);
+      } catch (error) {
+        alert('Error al descargar datos: ' + error.message);
+      }
+    }
+
+    function generarExcel(datos, nombreArchivo) {
+      // Headers
+      const headers = ['Fecha', 'Documento', 'Nombres', 'Apellidos', 'Facultad', 'Programa', 'Semestre', 'Grupo', 
+                      'Sede Estudiante', 'Sede Tutoría', 'Tipo Instructor', 'Instructor', 'Asignatura', 'Tema', 
+                      'Calificación', 'Sugerencias'];
+      
+      let csv = headers.join(',') + '\n';
+      
+      datos.forEach(fila => {
+        const fecha = new Date(fila.fecha).toLocaleString('es-CO');
+        const row = [
+          fecha,
+          fila.documento,
+          fila.nombres,
+          fila.apellidos,
+          fila.facultad,
+          fila.programa,
+          fila.semestre,
+          fila.grupo,
+          fila.sede_estudiante || '',
+          fila.sede_tutoria,
+          fila.tipo_instructor,
+          fila.instructor,
+          fila.asignatura,
+          fila.tema,
+          fila.calificacion,
+          fila.sugerencias || ''
+        ];
+        
+        const rowFormateada = row.map(celda => {
+          const celdaStr = String(celda);
+          if (celdaStr.includes(',') || celdaStr.includes('"') || celdaStr.includes('\n')) {
+            return '"' + celdaStr.replace(/"/g, '""') + '"';
+          }
+          return celdaStr;
+        });
+        
+        csv += rowFormateada.join(',') + '\n';
+      });
+
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      const fechaHoy = new Date().toISOString().split('T')[0];
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${nombreArchivo}_${fechaHoy}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function cerrarSesionAdmin() {
+      volverInicio();
+    }
+
+    // ===================================
+    // INICIALIZACIÓN
+    // ===================================
+    window.onload = function() {
+      console.log('Sistema PMA con Supabase iniciado');
+    };
+  </script>
+</body>
+</html>
