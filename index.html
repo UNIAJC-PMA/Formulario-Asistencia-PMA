@@ -439,8 +439,11 @@
 </head>
 <body>
   <div class="header-bar">
-    <h1>PROGRAMA DE MEJORAMIENTO ACADÉMICO (PMA)</h1>
-    <p>Universidad Antonio José Camacho - Sistema de Registro de Asistencia a Tutorías</p>
+    <h1 style="text-align: center;">PROGRAMA DE MEJORAMIENTO ACADÉMICO (PMA)</h1>
+    <p style="text-align: left; margin-top: 10px; line-height: 1.8;">
+      <strong>Formulario de Asistencia a Tutorías</strong><br>
+      Institución Universitaria Antonio José Camacho
+    </p>
   </div>
 
   <div class="container">
@@ -448,8 +451,57 @@
     <div id="pantallaInicio">
       <h2 class="section-title">Bienvenido</h2>
       <p style="margin-bottom: 20px; line-height: 1.6; color: #555;">Seleccione una opción para continuar con el registro de su asistencia a tutorías del Programa de Mejoramiento Académico.</p>
-      <button class="btn" onclick="mostrarLogin()">Iniciar Sesión</button>
+      <button class="btn" onclick="mostrarLogin()">Llenar Formulario</button>
       <button class="btn btn-secondary" onclick="mostrarRegistro()">Registrarse</button>
+      
+      <div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1e3c72;">
+        <button class="btn btn-secondary" onclick="mostrarHorarios()" style="width: 100%; margin: 0;">
+          📅 Horarios y Lugar de Atención
+        </button>
+      </div>
+
+      <div id="horariosInfo" class="hidden" style="margin-top: 20px; padding: 20px; background: #e8f4fd; border-radius: 8px; border: 2px solid #1e3c72;">
+        <h3 style="color: #1e3c72; margin-bottom: 15px; text-align: center;">Horarios de Atención PMA</h3>
+        
+        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 12px;">
+          <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">De Lunes a Viernes</strong>
+          <p style="margin: 0; color: #555; line-height: 1.8;">
+            ⏰ 10:00 AM - 12:00 PM<br>
+            ⏰ 2:00 PM - 6:30 PM<br>
+            📍 Salones del Bloque D
+          </p>
+        </div>
+
+        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 12px;">
+          <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Sábados</strong>
+          <p style="margin: 0; color: #555; line-height: 1.8;">
+            ⏰ 1:00 PM - 4:00 PM<br>
+            📍 Salones del Bloque D
+          </p>
+        </div>
+
+        <div style="background: white; padding: 15px; border-radius: 6px;">
+          <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Domingos (Virtual)</strong>
+          <p style="margin: 0; color: #555; line-height: 1.8;">
+            ⏰ Horarios de la mañana<br>
+            📧 Separar con anticipación al correo:<br>
+            <a href="mailto:pma@admon.uniajc.edu.co" style="color: #1e3c72; font-weight: 600;">pma@admon.uniajc.edu.co</a><br>
+            💻 Modalidad Virtual
+          </p>
+        </div>
+
+        <button class="btn btn-secondary" onclick="ocultarHorarios()" style="margin-top: 15px;">
+          Cerrar
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <img id="logoUniversidad" src="" alt="Logo UNIAJC" style="max-width: 150px; height: auto; display: none;">
+        <p style="font-size: 12px; color: #999; margin-top: 10px;">
+          Institución Universitaria Antonio José Camacho
+        </p>
+      </div>
+
       <div class="admin-link">
         <a href="#" onclick="mostrarLoginAdmin(); return false;">Acceder como Administrador</a>
       </div>
@@ -500,11 +552,32 @@
         </div>
         <div class="form-group">
           <label>Semestre *</label>
-          <input type="number" id="regSemestre" min="1" max="12" required>
+          <select id="regSemestre" required>
+            <option value="">Seleccione el semestre</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Grupo *</label>
           <input type="text" id="regGrupo" required style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label>Sede donde estudia *</label>
+          <select id="regSede" required>
+            <option value="">Seleccione una sede</option>
+            <option value="Norte">Sede Norte</option>
+            <option value="Sur">Sede Sur</option>
+          </select>
         </div>
 
         <div id="confirmacionDatos" class="hidden">
@@ -593,7 +666,11 @@
 
         <div class="form-group hidden" id="grupoCalificacion">
           <label>Calificación de la tutoría *</label>
-          <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Evalúe la calidad de la tutoría recibida (1 = Muy deficiente, 5 = Excelente)</p>
+          <p style="font-size: 13px; color: #666; margin-bottom: 5px; line-height: 1.6;">
+            Evalúe la calidad de la tutoría recibida<br>
+            1 = Deficiente<br>
+            5 = Excelente
+          </p>
           <div class="rating">
             <input type="radio" name="calificacion" id="cal1" value="1" required>
             <label for="cal1">1</label>
@@ -676,8 +753,8 @@
     // ===================================
     // CONFIGURACIÓN DE SUPABASE
     // ===================================
-    const SUPABASE_URL = 'https://vkfjttukyrtiumzfmyuk.supabase.co';  // Reemplazar con tu URL
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NTU0MjQsImV4cCI6MjA3ODAzMTQyNH0.eU8GeI8IVazXydMDwY98TUzT9xvjhcbXBu6cruCPiEk';     // Reemplazar con tu clave
+    const SUPABASE_URL = 'https://vkfjttukyrtiumzfmyuk.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NTU0MjQsImV4cCI6MjA3ODAzMTQyNH0.eU8GeI8IVazXydMDwY98TUzT9xvjhcbXBu6cruCPiEk';
 
     // Variables globales
     let datosEstudiante = null;
@@ -744,6 +821,14 @@
     function mostrarLoginAdmin() {
       mostrarPantalla('pantallaAdminLogin');
       document.getElementById('mensajeAdminLogin').innerHTML = '';
+    }
+
+    function mostrarHorarios() {
+      document.getElementById('horariosInfo').classList.remove('hidden');
+    }
+
+    function ocultarHorarios() {
+      document.getElementById('horariosInfo').classList.add('hidden');
     }
 
     function volverInicio() {
@@ -832,8 +917,9 @@
       const programa = document.getElementById('regPrograma').value;
       const semestre = document.getElementById('regSemestre').value;
       const grupo = document.getElementById('regGrupo').value.toUpperCase();
+      const sede = document.getElementById('regSede').value;
 
-      if (!doc || !primerNombre || !primerApellido || !segundoApellido || !facultad || !programa || !semestre || !grupo) {
+      if (!doc || !primerNombre || !primerApellido || !segundoApellido || !facultad || !programa || !semestre || !grupo || !sede) {
         mostrarMensaje('mensajeRegistro', 'Por favor complete todos los campos obligatorios', 'error');
         return;
       }
@@ -865,6 +951,10 @@
           <div class="confirmation-label">Grupo:</div>
           <div class="confirmation-value">${grupo}</div>
         </div>
+        <div class="confirmation-item">
+          <div class="confirmation-label">Sede:</div>
+          <div class="confirmation-value">${sede}</div>
+        </div>
       `;
 
       document.getElementById('datosConfirmacion').innerHTML = html;
@@ -887,7 +977,8 @@
         facultad: document.getElementById('regFacultad').value,
         programa: document.getElementById('regPrograma').value,
         semestre: parseInt(document.getElementById('regSemestre').value),
-        grupo: document.getElementById('regGrupo').value.toUpperCase()
+        grupo: document.getElementById('regGrupo').value.toUpperCase(),
+        sede: document.getElementById('regSede').value
       };
 
       try {
@@ -903,8 +994,14 @@
 
         // Insertar nuevo estudiante
         await supabaseInsert('estudiantes', datos);
-        mostrarMensaje('mensajeRegistro', 'Registro exitoso. Ahora puede iniciar sesión.', 'success');
-        setTimeout(() => mostrarLogin(), 2500);
+        
+        // Mostrar mensaje de éxito y esperar antes de redirigir
+        mostrarMensaje('mensajeRegistro', '¡Registro exitoso! Bienvenido al PMA. Redirigiendo a la página principal...', 'success');
+        
+        // Esperar 3 segundos y volver a inicio
+        setTimeout(() => {
+          volverInicio();
+        }, 3000);
       } catch (error) {
         mostrarMensaje('mensajeRegistro', 'Error en el registro: ' + error.message, 'error');
       }
@@ -1445,6 +1542,11 @@
     // ===================================
     window.onload = function() {
       console.log('Sistema PMA con Supabase iniciado');
+      
+      // Configurar logo de la universidad (opcional)
+      // Descomenta y agrega la URL de tu logo aquí:
+      // document.getElementById('logoUniversidad').src = 'URL_DE_TU_LOGO_AQUI';
+      // document.getElementById('logoUniversidad').style.display = 'block';
     };
   </script>
 </body>
