@@ -121,7 +121,6 @@
         <div class="form-group">
           <label>Documento de Identidad *</label>
           <input type="number" id="regDocumento" required min="1000000" max="999999999999">
-          <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">Debe tener entre 7 y 12 dígitos</small>
         </div>
         <div class="form-group">
           <label>Primer Nombre *</label>
@@ -186,7 +185,6 @@
         <div class="form-group">
           <label>Documento de Identidad</label>
           <input type="number" id="loginDocumento" required min="1000000" max="999999999999">
-          <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">Debe tener entre 7 y 12 dígitos</small>
         </div>
         <button type="submit" class="btn">Continuar</button>
         <button type="button" class="btn btn-secondary" onclick="volverInicio()">Volver</button>
@@ -378,6 +376,18 @@
       <h2>¡Formulario Enviado!</h2>
       <p>Gracias por su participación en el PMA</p>
       <p class="small-text">Redirigiendo a la página principal...</p>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de cancelación -->
+  <div id="modalConfirmacion" class="modal-overlay hidden" style="display: none;">
+    <div class="modal-confirmacion">
+      <h2 id="tituloConfirmacion">¿Estás seguro?</h2>
+      <p id="mensajeConfirmacion">Esta acción no se puede deshacer.</p>
+      <div class="modal-buttons">
+        <button class="btn" id="btnConfirmarModal">Sí, estoy seguro</button>
+        <button class="btn btn-secondary" id="btnCancelarModal">No, volver</button>
+      </div>
     </div>
   </div>
 

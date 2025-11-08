@@ -257,6 +257,7 @@ textarea {
   margin-bottom: 20px;
   text-align: center;
   font-size: 14px;
+  animation: slideDown 0.3s ease;
 }
 
 .mensaje.success {
@@ -500,6 +501,42 @@ textarea {
   margin-top: 20px;
 }
 
+/* Modal de confirmación */
+.modal-confirmacion {
+  background: white;
+  padding: 40px 35px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+}
+
+.modal-confirmacion h2 {
+  color: #1e3c72;
+  font-size: 24px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.modal-confirmacion p {
+  color: #555;
+  font-size: 15px;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.modal-buttons .btn {
+  margin-top: 0;
+}
+
 @media (max-width: 768px) {
   body {
     padding: 10px;
@@ -563,5 +600,13 @@ textarea {
   
   .modal-success h2 {
     font-size: 22px;
+  }
+  
+  .modal-confirmacion {
+    padding: 35px 25px;
+  }
+  
+  .modal-confirmacion h2 {
+    font-size: 20px;
   }
 }

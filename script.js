@@ -8,6 +8,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let datosEstudiante = null;
 let instructorActual = null;
 let facultadesData = {};
+let formularioEnviandose = false;
 
 // ===================================
 // FUNCIONES DE SUPABASE
@@ -51,6 +52,8 @@ async function supabaseInsert(table, data) {
 function mostrarPantalla(id) {
   document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
+  // Scroll suave al inicio del contenedor
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function mostrarLogin() {
@@ -90,6 +93,7 @@ function toggleHorario(sede) {
 function volverInicio() {
   mostrarPantalla('pantallaInicio');
   limpiarFormularios();
+  formularioEnviandose = false;
   // Restaurar el botón continuar y ocultar confirmación
   document.getElementById('btnContinuar').classList.remove('hidden');
   document.getElementById('btnConfirmarRegistro').classList.add('hidden');
@@ -106,11 +110,23 @@ function limpiarFormularios() {
 function mostrarMensaje(elementId, mensaje, tipo) {
   const elemento = document.getElementById(elementId);
   elemento.innerHTML = `<div class="mensaje ${tipo}">${mensaje}</div>`;
+  
+  // Scroll suave hacia el mensaje
+  setTimeout(() => {
+    elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+  
   setTimeout(() => elemento.innerHTML = '', 5000);
 }
 
 function mostrarCargando(elementId) {
-  document.getElementById(elementId).innerHTML = '<div class="loader"></div>';
+  const elemento = document.getElementById(elementId);
+  elemento.innerHTML = '<div class="loader"></div>';
+  
+  // Scroll suave hacia el loader
+  setTimeout(() => {
+    elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 }
 
 // ===================================
@@ -243,7 +259,9 @@ function mostrarConfirmacion() {
   document.getElementById('btnConfirmarRegistro').classList.remove('hidden');
   document.getElementById('btnContinuar').classList.add('hidden');
   
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  setTimeout(() => {
+    document.getElementById('confirmacionDatos').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 }
 
 async function registrarEstudiante(event) {
@@ -357,9 +375,11 @@ async function iniciarSesion(event) {
       sede: estudiante.sede || ''
     };
 
+    formularioEnviandose = false;
     mostrarPantalla('pantallaFormulario');
     document.getElementById('nombreUsuario').textContent = 'Bienvenido(a): ' + datosEstudiante.nombreCensurado;
     document.getElementById('mensajeFormulario').innerHTML = '';
+    actualizarBotonCerrarSesion();
   } catch (error) {
     mostrarMensaje('mensajeLogin', 'Error de conexión: ' + error.message, 'error');
   }
@@ -482,6 +502,10 @@ async function cargarTemas() {
     document.getElementById('grupoCalificacion').classList.remove('hidden');
     document.getElementById('grupoSugerencias').classList.remove('hidden');
     document.getElementById('btnEnviar').classList.remove('hidden');
+    
+    // Marcar que el usuario está llenando el formulario
+    formularioEnviandose = true;
+    actualizarBotonCerrarSesion();
   } catch (error) {
     console.error('Error cargando temas:', error);
   }
@@ -513,6 +537,59 @@ function toggleSugerencias() {
     textarea.value = '';
     textarea.disabled = false;
   }
+}
+
+// ===================================
+// ACTUALIZAR BOTÓN CERRAR SESIÓN
+// ===================================
+function actualizarBotonCerrarSesion() {
+  const btnCerrar = document.querySelector('#pantallaFormulario .btn-secondary');
+  if (formularioEnviandose) {
+    btnCerrar.textContent = 'Cancelar';
+    btnCerrar.onclick = confirmarCancelacion;
+  } else {
+    btnCerrar.textContent = 'Cerrar Sesión';
+    btnCerrar.onclick = cerrarSesion;
+  }
+}
+
+function confirmarCancelacion() {
+  mostrarModalConfirmacion(
+    '¿Estás seguro que deseas cancelar?',
+    'Se perderán todos los datos del formulario que has ingresado.',
+    function() {
+      // Si confirma
+      cerrarSesion();
+    },
+    function() {
+      // Si cancela, no hacer nada
+    }
+  );
+}
+
+// ===================================
+// MODAL DE CONFIRMACIÓN
+// ===================================
+function mostrarModalConfirmacion(titulo, mensaje, callbackConfirmar, callbackCancelar) {
+  const modal = document.getElementById('modalConfirmacion');
+  document.getElementById('tituloConfirmacion').textContent = titulo;
+  document.getElementById('mensajeConfirmacion').textContent = mensaje;
+  
+  modal.style.display = 'flex';
+  modal.classList.remove('hidden');
+  
+  // Configurar botones
+  document.getElementById('btnConfirmarModal').onclick = function() {
+    modal.style.display = 'none';
+    modal.classList.add('hidden');
+    if (callbackConfirmar) callbackConfirmar();
+  };
+  
+  document.getElementById('btnCancelarModal').onclick = function() {
+    modal.style.display = 'none';
+    modal.classList.add('hidden');
+    if (callbackCancelar) callbackCancelar();
+  };
 }
 
 // ===================================
@@ -566,6 +643,7 @@ async function guardarFormulario(event) {
     document.getElementById('grupoCalificacion').classList.add('hidden');
     document.getElementById('grupoSugerencias').classList.add('hidden');
     document.getElementById('btnEnviar').classList.add('hidden');
+    formularioEnviandose = false;
     
     // Redirigir después de 3 segundos
     setTimeout(() => {
@@ -581,6 +659,7 @@ async function guardarFormulario(event) {
 function cerrarSesion() {
   datosEstudiante = null;
   instructorActual = null;
+  formularioEnviandose = false;
   volverInicio();
 }
 
@@ -817,7 +896,7 @@ async function descargarDatos() {
 }
 
 async function descargarTodo() {
-  if (!confirm('¿Está seguro de descargar todos los registros históricos?')) {
+  if (!confirm('¿Está seguro de descargar todos los registros?')) {
     return;
   }
 
