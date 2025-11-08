@@ -151,18 +151,18 @@ function mostrarCargando(elementId) {
 // VALIDACIÓN DE DOCUMENTO
 // ===================================
 function validarDocumento(documento) {
-  const docStr = documento.toString();
-  const longitud = docStr.length;
+  const longitud = documento.length;
   
   if (longitud < 7 || longitud > 12) {
     return {
       valido: false,
-      mensaje: 'El documento debe tener entre 7 y 12 dígitos'
+      mensaje: 'Documento no válido'
     };
   }
   
   return { valido: true };
 }
+
 
 // ===================================
 // CARGAR FACULTADES Y PROGRAMAS
@@ -233,7 +233,7 @@ function mostrarConfirmacion() {
     mostrarMensaje('mensajeRegistro', validacion.mensaje, 'error');
     return;
   }
-  
+    
   const primerNombre = document.getElementById('regPrimerNombre').value.toUpperCase();
   const segundoNombre = document.getElementById('regSegundoNombre').value.toUpperCase();
   const primerApellido = document.getElementById('regPrimerApellido').value.toUpperCase();
@@ -295,6 +295,7 @@ async function registrarEstudiante(event) {
   }
   
   mostrarCargando('mensajeRegistro');
+
 
   const datos = {
     documento: doc,
