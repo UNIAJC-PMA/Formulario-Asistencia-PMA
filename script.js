@@ -626,6 +626,14 @@ async function guardarFormulario(event) {
     ? document.getElementById('tituloCurso').value.toUpperCase() 
     : null;
   
+  // OBTENER FECHA Y HORA EN FORMATO COLOMBIA (UTC-5)
+  const ahora = new Date();
+  const offsetColombia = -5 * 60; // Colombia es UTC-5
+  const offsetLocal = ahora.getTimezoneOffset();
+  const diferencia = offsetColombia - offsetLocal;
+  const fechaColombia = new Date(ahora.getTime() + diferencia * 60000);
+  const fechaISO = fechaColombia.toISOString();
+  
   const datos = {
     documento: datosEstudiante.documento,
     nombres: datosEstudiante.nombres,
@@ -643,7 +651,8 @@ async function guardarFormulario(event) {
     asignatura: document.getElementById('asignatura').value,
     tema: tema,
     calificacion: parseInt(calificacionRadio ? calificacionRadio.value : '0'),
-    sugerencias: document.getElementById('sugerencias').value || 'Ninguna'
+    sugerencias: document.getElementById('sugerencias').value || 'Ninguna',
+    fecha: fechaISO
   };
 
   try {
