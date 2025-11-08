@@ -800,3 +800,35 @@ textarea {
     font-size: 20px;
   }
 }
+
+
+.footer {
+  background-color: #FFD400; /* Amarillo brillante */
+  color: #004C8C; /* Azul oscuro */
+  text-align: center;
+  padding: 25px 10px;
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+.footer-content h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.footer-content p {
+  margin: 8px 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.footer-content a {
+  color: #004C8C;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.footer-content a:hover {
+  color: #002E5D; /* Azul más oscuro al pasar el cursor */
+}
