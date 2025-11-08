@@ -71,9 +71,20 @@ function mostrarLoginAdmin() {
   document.getElementById('mensajeAdminLogin').innerHTML = '';
 }
 
-function toggleHorarios() {
-  const horarios = document.getElementById('horariosInfo');
-  horarios.classList.toggle('hidden');
+function toggleHorario(sede) {
+  // Ocultar todos los horarios
+  document.getElementById('horarioNorte').classList.add('hidden');
+  document.getElementById('horarioSur').classList.add('hidden');
+  document.getElementById('horarioVirtual').classList.add('hidden');
+  
+  // Mostrar el seleccionado
+  if (sede === 'norte') {
+    document.getElementById('horarioNorte').classList.toggle('hidden');
+  } else if (sede === 'sur') {
+    document.getElementById('horarioSur').classList.toggle('hidden');
+  } else if (sede === 'virtual') {
+    document.getElementById('horarioVirtual').classList.toggle('hidden');
+  }
 }
 
 function volverInicio() {
@@ -160,11 +171,9 @@ function mostrarConfirmacion() {
   const segundoApellido = document.getElementById('regSegundoApellido').value.toUpperCase();
   const facultad = document.getElementById('regFacultad').value;
   const programa = document.getElementById('regPrograma').value;
-  const semestre = document.getElementById('regSemestre').value;
-  const grupo = document.getElementById('regGrupo').value.toUpperCase();
   const sede = document.getElementById('regSede').value;
 
-  if (!doc || !primerNombre || !primerApellido || !segundoApellido || !facultad || !programa || !semestre || !grupo || !sede) {
+  if (!doc || !primerNombre || !primerApellido || !segundoApellido || !facultad || !programa || !sede) {
     mostrarMensaje('mensajeRegistro', 'Por favor complete todos los campos obligatorios', 'error');
     return;
   }
@@ -187,14 +196,6 @@ function mostrarConfirmacion() {
     <div class="confirmation-item">
       <div class="confirmation-label">Programa:</div>
       <div class="confirmation-value">${programa}</div>
-    </div>
-    <div class="confirmation-item">
-      <div class="confirmation-label">Semestre:</div>
-      <div class="confirmation-value">${semestre}</div>
-    </div>
-    <div class="confirmation-item">
-      <div class="confirmation-label">Grupo:</div>
-      <div class="confirmation-value">${grupo}</div>
     </div>
     <div class="confirmation-item">
       <div class="confirmation-label">Sede:</div>
@@ -221,8 +222,6 @@ async function registrarEstudiante(event) {
     segundo_apellido: document.getElementById('regSegundoApellido').value.toUpperCase(),
     facultad: document.getElementById('regFacultad').value,
     programa: document.getElementById('regPrograma').value,
-    semestre: parseInt(document.getElementById('regSemestre').value),
-    grupo: document.getElementById('regGrupo').value.toUpperCase(),
     sede: document.getElementById('regSede').value
   };
 
@@ -286,8 +285,6 @@ async function iniciarSesion(event) {
       nombreCensurado: censurarNombre(nombreCompleto),
       facultad: estudiante.facultad,
       programa: estudiante.programa,
-      semestre: estudiante.semestre,
-      grupo: estudiante.grupo,
       sede: estudiante.sede || ''
     };
 
@@ -315,10 +312,19 @@ async function cargarInstructores() {
   document.getElementById('labelInstructor').textContent = tipo + ' *';
 
   try {
-    const tabla = tipo === 'Tutor' ? 'tutores' : 'profesores';
-    const data = await supabaseQuery(tabla, {
-      eq: { field: 'sede', value: sede }
-    });
+    // Determinar la tabla según tipo y sede
+    let tabla = '';
+    if (tipo === 'Tutor' && sede === 'Norte') {
+      tabla = 'tutores_norte';
+    } else if (tipo === 'Tutor' && sede === 'Sur') {
+      tabla = 'tutores_sur';
+    } else if (tipo === 'Profesor' && sede === 'Norte') {
+      tabla = 'profesores_norte';
+    } else if (tipo === 'Profesor' && sede === 'Sur') {
+      tabla = 'profesores_sur';
+    }
+
+    const data = await supabaseQuery(tabla);
 
     selectInstructor.innerHTML = `<option value="">Seleccione un ${tipo.toLowerCase()}</option>`;
     data.forEach(inst => {
@@ -449,8 +455,8 @@ async function guardarFormulario(event) {
     apellidos: datosEstudiante.apellidos,
     facultad: datosEstudiante.facultad,
     programa: datosEstudiante.programa,
-    semestre: datosEstudiante.semestre,
-    grupo: datosEstudiante.grupo,
+    semestre: parseInt(document.getElementById('semestre').value),
+    grupo: document.getElementById('grupo').value.toUpperCase(),
     sede_estudiante: datosEstudiante.sede,
     sede_tutoria: document.getElementById('sedeTutoria').value,
     tipo_instructor: document.getElementById('tipoInstructor').value,

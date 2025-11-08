@@ -27,39 +27,78 @@
       <p class="registro-unico">El registro se realiza una única vez</p>
 
       <div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1e3c72;">
-        <button class="btn btn-secondary" onclick="toggleHorarios()" style="width: 100%; margin: 0;">
-          📅 Horarios y Lugar de Atención
-        </button>
-      </div>
-
-      <div id="horariosInfo" class="hidden" style="margin-top: 20px; padding: 20px; background: #e8f4fd; border-radius: 8px; border: 2px solid #1e3c72;">
-        <h3 style="color: #1e3c72; margin-bottom: 15px; text-align: center;">Horarios de Atención PMA</h3>
+        <h3 style="color: #1e3c72; margin-bottom: 15px; text-align: center;">📅 Horarios y Lugar de Atención</h3>
         
-        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 12px;">
-          <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">De Lunes a Viernes</strong>
-          <p style="margin: 0; color: #555; line-height: 1.8;">
-            ⏰ 10:15 AM - 12:00 PM<br>
-            ⏰ 2:15 PM - 6:30 PM<br>
-            📍 Salones del Bloque D
-          </p>
+        <!-- Botones de sedes -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px;">
+          <button class="btn btn-secondary" onclick="toggleHorario('norte')" style="flex: 1; min-width: 150px; margin: 0;">
+            Sede Norte
+          </button>
+          <button class="btn btn-secondary" onclick="toggleHorario('sur')" style="flex: 1; min-width: 150px; margin: 0;">
+            Sede Sur
+          </button>
+          <button class="btn btn-secondary" onclick="toggleHorario('virtual')" style="flex: 1; min-width: 150px; margin: 0;">
+            Virtual
+          </button>
         </div>
 
-        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 12px;">
-          <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Sábados</strong>
-          <p style="margin: 0; color: #555; line-height: 1.8;">
-            ⏰ 1:00 PM - 4:00 PM<br>
-            📍 Salones del Bloque D
-          </p>
+        <!-- Horario Sede Norte -->
+        <div id="horarioNorte" class="horario-info hidden">
+          <h4 style="color: #1e3c72; margin-bottom: 12px; text-align: center;">Sede Norte</h4>
+          
+          <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 12px;">
+            <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">De Lunes a Viernes</strong>
+            <p style="margin: 0; color: #555; line-height: 1.8;">
+              ⏰ 10:15 AM - 12:00 PM<br>
+              ⏰ 2:15 PM - 6:30 PM<br>
+              📍 Salones del Bloque D
+            </p>
+          </div>
+
+          <div style="background: white; padding: 15px; border-radius: 6px;">
+            <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Sábados</strong>
+            <p style="margin: 0; color: #555; line-height: 1.8;">
+              ⏰ 1:00 PM - 4:00 PM<br>
+              📍 Salones del Bloque D
+            </p>
+          </div>
         </div>
 
-        <div style="background: white; padding: 15px; border-radius: 6px;">
-          <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Domingos (Virtual)</strong>
-          <p style="margin: 0; color: #555; line-height: 1.8;">
-            ⏰ Horarios de la mañana<br>
-            📧 Separar con anticipación al correo:<br>
-            <a href="mailto:pma@admon.uniajc.edu.co" style="color: #1e3c72; font-weight: 600;">pma@admon.uniajc.edu.co</a><br>
-            💻 Modalidad Virtual
-          </p>
+        <!-- Horario Sede Sur -->
+        <div id="horarioSur" class="horario-info hidden">
+          <h4 style="color: #1e3c72; margin-bottom: 12px; text-align: center;">Sede Sur</h4>
+          
+          <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 12px;">
+            <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">De Lunes a Viernes</strong>
+            <p style="margin: 0; color: #555; line-height: 1.8;">
+              ⏰ 9:00 AM - 12:00 PM<br>
+              ⏰ 2:00 PM - 6:00 PM<br>
+              📍 Centro de Recursos para el Aprendizaje (CRA)
+            </p>
+          </div>
+
+          <div style="background: white; padding: 15px; border-radius: 6px;">
+            <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Sábados</strong>
+            <p style="margin: 0; color: #555; line-height: 1.8;">
+              ⏰ 10:00 AM - 1:00 PM<br>
+              📍 Centro de Recursos para el Aprendizaje (CRA)
+            </p>
+          </div>
+        </div>
+
+        <!-- Horario Virtual -->
+        <div id="horarioVirtual" class="horario-info hidden">
+          <h4 style="color: #1e3c72; margin-bottom: 12px; text-align: center;">Modalidad Virtual</h4>
+          
+          <div style="background: white; padding: 15px; border-radius: 6px;">
+            <strong style="color: #1e3c72; display: block; margin-bottom: 8px;">Domingos</strong>
+            <p style="margin: 0; color: #555; line-height: 1.8;">
+              ⏰ Horarios de la mañana<br>
+              📧 Separar con anticipación al correo:<br>
+              <a href="mailto:pma@admon.uniajc.edu.co" style="color: #1e3c72; font-weight: 600;">pma@admon.uniajc.edu.co</a><br>
+              💻 Modalidad Virtual
+            </p>
+          </div>
         </div>
       </div>
 
@@ -112,27 +151,6 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Semestre *</label>
-          <select id="regSemestre" required>
-            <option value="">Seleccione el semestre</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Grupo *</label>
-          <input type="text" id="regGrupo" required style="text-transform: uppercase;">
-        </div>
-        <div class="form-group">
           <label>Sede donde estudia *</label>
           <select id="regSede" required>
             <option value="">Seleccione una sede</option>
@@ -183,6 +201,29 @@
 
       <div id="mensajeFormulario"></div>
       <form id="formTutoria" onsubmit="guardarFormulario(event)">
+        <div class="form-group">
+          <label>Semestre *</label>
+          <select id="semestre" required>
+            <option value="">Seleccione el semestre</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Grupo *</label>
+          <input type="text" id="grupo" required style="text-transform: uppercase;">
+        </div>
+
         <div class="form-group">
           <label>Sede donde recibió la tutoría *</label>
           <select id="sedeTutoria" required onchange="cargarInstructores()">
