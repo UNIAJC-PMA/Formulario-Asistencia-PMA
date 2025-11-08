@@ -114,6 +114,23 @@ function mostrarCargando(elementId) {
 }
 
 // ===================================
+// VALIDACIÓN DE DOCUMENTO
+// ===================================
+function validarDocumento(documento) {
+  const docStr = documento.toString();
+  const longitud = docStr.length;
+  
+  if (longitud < 7 || longitud > 12) {
+    return {
+      valido: false,
+      mensaje: 'El documento debe tener entre 7 y 12 dígitos'
+    };
+  }
+  
+  return { valido: true };
+}
+
+// ===================================
 // CARGAR FACULTADES Y PROGRAMAS
 // ===================================
 async function cargarFacultades() {
@@ -175,6 +192,14 @@ function cargarProgramas() {
 // ===================================
 function mostrarConfirmacion() {
   const doc = document.getElementById('regDocumento').value;
+  
+  // Validar documento
+  const validacion = validarDocumento(doc);
+  if (!validacion.valido) {
+    mostrarMensaje('mensajeRegistro', validacion.mensaje, 'error');
+    return;
+  }
+  
   const primerNombre = document.getElementById('regPrimerNombre').value.toUpperCase();
   const segundoNombre = document.getElementById('regSegundoNombre').value.toUpperCase();
   const primerApellido = document.getElementById('regPrimerApellido').value.toUpperCase();
@@ -223,10 +248,20 @@ function mostrarConfirmacion() {
 
 async function registrarEstudiante(event) {
   event.preventDefault();
+  
+  const doc = document.getElementById('regDocumento').value;
+  
+  // Validar documento antes de enviar
+  const validacion = validarDocumento(doc);
+  if (!validacion.valido) {
+    mostrarMensaje('mensajeRegistro', validacion.mensaje, 'error');
+    return;
+  }
+  
   mostrarCargando('mensajeRegistro');
 
   const datos = {
-    documento: document.getElementById('regDocumento').value,
+    documento: doc,
     primer_nombre: document.getElementById('regPrimerNombre').value.toUpperCase(),
     segundo_nombre: document.getElementById('regSegundoNombre').value.toUpperCase() || null,
     primer_apellido: document.getElementById('regPrimerApellido').value.toUpperCase(),
@@ -285,9 +320,17 @@ function censurarNombre(nombreCompleto) {
 
 async function iniciarSesion(event) {
   event.preventDefault();
-  mostrarCargando('mensajeLogin');
-
+  
   const documento = document.getElementById('loginDocumento').value;
+  
+  // Validar documento
+  const validacion = validarDocumento(documento);
+  if (!validacion.valido) {
+    mostrarMensaje('mensajeLogin', validacion.mensaje, 'error');
+    return;
+  }
+  
+  mostrarCargando('mensajeLogin');
 
   try {
     const data = await supabaseQuery('estudiantes', {
@@ -506,8 +549,16 @@ async function guardarFormulario(event) {
 
   try {
     await supabaseInsert('formularios', datos);
-    mostrarMensaje('mensajeFormulario', 'Formulario guardado exitosamente. Gracias por su participación en el PMA.', 'success');
     
+    // Limpiar mensaje de carga
+    document.getElementById('mensajeFormulario').innerHTML = '';
+    
+    // Mostrar modal de éxito
+    const modal = document.getElementById('modalExitoFormulario');
+    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+    
+    // Limpiar formulario
     document.getElementById('formTutoria').reset();
     document.getElementById('grupoInstructor').classList.add('hidden');
     document.getElementById('grupoMateria').classList.add('hidden');
@@ -515,6 +566,13 @@ async function guardarFormulario(event) {
     document.getElementById('grupoCalificacion').classList.add('hidden');
     document.getElementById('grupoSugerencias').classList.add('hidden');
     document.getElementById('btnEnviar').classList.add('hidden');
+    
+    // Redirigir después de 3 segundos
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.add('hidden');
+      cerrarSesion();
+    }, 3000);
   } catch (error) {
     mostrarMensaje('mensajeFormulario', 'Error al guardar: ' + error.message, 'error');
   }
@@ -697,7 +755,7 @@ async function cargarEstadisticas() {
 
     detalles += '<div class="chart-container"><h3 class="chart-title">Cantidad de Tutorías por Instructor - Sede Sur</h3>';
     const instructoresSur = Object.entries(stats.instructoresPorSede.Sur || {})
-      .sort((a, b) => b[1] - a[1]);
+    .sort((a, b) => b[1] - a[1]);
     if (instructoresSur.length > 0) {
       instructoresSur.forEach(([instructor, cantidad]) => {
         const promedio = promediosPorInstructor[instructor] || 'N/A';
