@@ -654,40 +654,28 @@ async function guardarFormulario(event) {
   const calificacionRadio = document.querySelector('input[name="calificacion"]:checked');
   
   if (!calificacionRadio) {
-    // Mostrar mensaje de error que NO desaparezca automáticamente
-    const elemento = document.getElementById('mensajeFormulario');
-    elemento.innerHTML = '<div class="mensaje error">⚠️ Por favor seleccione una calificación para la tutoría (del 1 al 5)</div>';
+    const grupoCalificacion = document.getElementById('grupoCalificacion');
     
-    // Scroll al mensaje
+    // Hacer scroll
+    grupoCalificacion.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'center' 
+    });
+    
+    // Resaltar
+    grupoCalificacion.style.background = '#fff3cd';
+    grupoCalificacion.style.padding = '20px';
+    grupoCalificacion.style.borderRadius = '8px';
+    grupoCalificacion.style.border = '3px solid #ffc107';
+    
+    // Quitar resaltado después de 3 segundos
     setTimeout(() => {
-      elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
+      grupoCalificacion.style.background = '';
+      grupoCalificacion.style.padding = '';
+      grupoCalificacion.style.border = '';
+    }, 3000);
     
-    // Luego scroll y resaltar la sección de calificación
-    setTimeout(() => {
-      const grupoCalificacion = document.getElementById('grupoCalificacion');
-      if (grupoCalificacion) {
-        grupoCalificacion.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
-        });
-        
-        grupoCalificacion.style.background = '#fff3cd';
-        grupoCalificacion.style.padding = '20px';
-        grupoCalificacion.style.borderRadius = '8px';
-        grupoCalificacion.style.border = '3px solid #ffc107';
-        grupoCalificacion.style.transition = 'all 0.3s ease';
-        
-        // Quitar el resaltado después de 5 segundos
-        setTimeout(() => {
-          grupoCalificacion.style.background = '';
-          grupoCalificacion.style.padding = '';
-          grupoCalificacion.style.border = '';
-        }, 5000);
-      }
-    }, 800);
-    
-    return; // DETENER aquí si no hay calificación
+    return;
   }
   
   mostrarCargando('mensajeFormulario');
