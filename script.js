@@ -810,20 +810,44 @@ function cerrarSesion() {
   instructorActual = null;
   formularioEnviandose = false;
   
-  // ====== REINICIAR BARRA DE PROGRESO ======
+  // Reiniciar barra de progreso
   document.querySelectorAll('.progress-step').forEach(step => {
     step.classList.remove('active', 'completed');
   });
   
-  // Opcional: poner el primer paso como activo nuevamente
   const primerPaso = document.getElementById('step1');
   if (primerPaso) {
     primerPaso.classList.add('active');
   }
-  // ====== FIN REINICIO PROGRESO ======
   
   volverInicio();
 }
+
+// ====== AGREGAR ESTAS DOS FUNCIONES AQUÍ ======
+function actualizarBotonCerrarSesion() {
+  const btnCerrar = document.querySelector('#pantallaFormulario .btn-secondary');
+  if (formularioEnviandose) {
+    btnCerrar.textContent = 'Cancelar';
+    btnCerrar.onclick = confirmarCancelacion;
+  } else {
+    btnCerrar.textContent = 'Cerrar Sesión';
+    btnCerrar.onclick = cerrarSesion;
+  }
+}
+
+function confirmarCancelacion() {
+  mostrarModalConfirmacion(
+    '¿Estás seguro que deseas cancelar?',
+    'Se perderán todos los datos del formulario que has ingresado.',
+    function() {
+      cerrarSesion();
+    },
+    function() {
+      // Si cancela, no hacer nada
+    }
+  );
+}
+// ====== FIN ======
 
 // ===================================
 // ADMINISTRADOR - LOGIN
