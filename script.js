@@ -968,7 +968,7 @@ async function descargarTodo() {
 }
 
 function generarExcelSimplificado(datos, nombreArchivo) {
-  const headers = ['Fecha', 'Hora', 'Documento', 'Nombres', 'Apellidos', 'Programa', 'Tipo Acompañamiento', 'Título Curso', 'Instructor', 'Asignatura', 'Tema', 'Motivo Consulta'];
+  const headers = ['Fecha', 'Hora', 'Documento', 'Nombres', 'Apellidos', 'Programa', 'Instructor', 'Asignatura', 'Tema'];
   
   let csv = headers.join(',') + '\n';
   
@@ -995,12 +995,9 @@ function generarExcelSimplificado(datos, nombreArchivo) {
       fila.nombres,
       fila.apellidos,
       fila.programa,
-      fila.tipo_acompanamiento || 'Tutoría',
-      fila.titulo_curso || '',
       fila.instructor,
       fila.asignatura,
-      fila.tema,
-      fila.motivo_consulta || ''
+      fila.tema
     ];
     
     const rowFormateada = row.map(celda => {
