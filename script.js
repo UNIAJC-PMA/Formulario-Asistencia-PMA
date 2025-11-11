@@ -1041,66 +1041,10 @@ async function cargarEstadisticas() {
   }
 }
 
+
 // ===================================
-// DESCARGAR DATOS
+// DESCARGAR DATOS - FUNCIONES CORREGIDAS
 // ===================================
-async function descargarDatos() {
-  const desde = document.getElementById('fechaDesde').value;
-  const hasta = document.getElementById('fechaHasta').value;
-
-  if (!desde || !hasta) {
-    alert('Por favor seleccione ambas fechas');
-    return;
-  }
-
-  if (new Date(desde) > new Date(hasta)) {
-    alert('La fecha inicial no puede ser mayor que la fecha final');
-    return;
-  }
-
-  try {
-    let url = `${SUPABASE_URL}/rest/v1/formularios?fecha=gte.${desde}T00:00:00&fecha=lte.${hasta}T23:59:59&order=fecha.asc`;
-    
-    const response = await fetch(url, {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      }
-    });
-    
-    const data = await response.json();
-    
-    if (data.length === 0) {
-      alert('No hay registros en el rango de fechas seleccionado');
-      return;
-    }
-
-    generarExcelSimplificado(data, `PMA_${desde}_a_${hasta}`);
-    alert(`${data.length} registros descargados exitosamente`);
-  } catch (error) {
-    alert('Error al descargar datos: ' + error.message);
-  }
-}
-
-async function descargarTodo() {
-  if (!confirm('¿Está seguro de descargar todos los registros?')) {
-    return;
-  }
-
-  try {
-    const data = await supabaseQuery('formularios', { order: 'fecha.asc' });
-    
-    if (data.length === 0) {
-      alert('No hay registros para descargar');
-      return;
-    }
-
-    generarExcelCompleto(data, 'PMA_Completo');
-    alert(`${data.length} registros descargados exitosamente`);
-  } catch (error) {
-    alert('Error al descargar datos: ' + error.message);
-  }
-}
 
 function generarExcelSimplificado(datos, nombreArchivo) {
   const headers = ['Fecha', 'Hora', 'Documento', 'Nombres', 'Apellidos', 'Programa', 'Instructor', 'Asignatura', 'Tema'];
@@ -1173,9 +1117,10 @@ function generarExcelSimplificado(datos, nombreArchivo) {
 }
 
 function generarExcelCompleto(datos, nombreArchivo) {
+  // CAMBIADO: Actualizado header de 'Facultad Profesor' a 'Facultad/Departamento'
   const headers = ['Fecha', 'Hora', 'Documento', 'Nombres', 'Apellidos', 'Facultad', 'Programa', 'Semestre', 'Grupo', 
-                  'Tipo Acompañamiento', 'Título Curso', 'Sede Estudiante', 'Sede Tutoría', 'Tipo Instructor', 'Instructor', 
-                  'Asignatura', 'Tema', 'Motivo Consulta', 'Calificación', 'Sugerencias'];
+                  'Tipo Acompañamiento', 'Título Curso', 'Sede Estudiante', 'Sede Tutoría', 'Tipo Instructor', 
+                  'Facultad/Departamento', 'Instructor', 'Asignatura', 'Tema', 'Motivo Consulta', 'Calificación', 'Sugerencias'];
   
   // Preparar los datos
   const datosExcel = datos.map(fila => {
@@ -1206,6 +1151,7 @@ function generarExcelCompleto(datos, nombreArchivo) {
       'Sede Estudiante': fila.sede_estudiante || '',
       'Sede Tutoría': fila.sede_tutoria,
       'Tipo Instructor': fila.tipo_instructor,
+      'Facultad/Departamento': fila.facultad_departamento || '', // CAMBIADO: de facultad_profesor a facultad_departamento
       'Instructor': fila.instructor,
       'Asignatura': fila.asignatura,
       'Tema': fila.tema,
@@ -1237,10 +1183,27 @@ function generarExcelCompleto(datos, nombreArchivo) {
 
   // Ajustar ancho de columnas
   ws['!cols'] = [
-    { wch: 12 }, { wch: 8 }, { wch: 12 }, { wch: 20 }, { wch: 20 },
-    { wch: 35 }, { wch: 35 }, { wch: 10 }, { wch: 10 }, { wch: 20 },
-    { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 },
-    { wch: 30 }, { wch: 30 }, { wch: 25 }, { wch: 12 }, { wch: 40 }
+    { wch: 12 }, // Fecha
+    { wch: 8 },  // Hora
+    { wch: 12 }, // Documento
+    { wch: 20 }, // Nombres
+    { wch: 20 }, // Apellidos
+    { wch: 35 }, // Facultad
+    { wch: 35 }, // Programa
+    { wch: 10 }, // Semestre
+    { wch: 10 }, // Grupo
+    { wch: 20 }, // Tipo Acompañamiento
+    { wch: 25 }, // Título Curso
+    { wch: 15 }, // Sede Estudiante
+    { wch: 15 }, // Sede Tutoría
+    { wch: 15 }, // Tipo Instructor
+    { wch: 40 }, // Facultad/Departamento (CAMBIADO: ancho aumentado)
+    { wch: 25 }, // Instructor
+    { wch: 30 }, // Asignatura
+    { wch: 30 }, // Tema
+    { wch: 25 }, // Motivo Consulta
+    { wch: 12 }, // Calificación
+    { wch: 40 }  // Sugerencias
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, "Registros Completos");
