@@ -479,7 +479,7 @@ async function iniciarSesion(event) {
 }
 
 // ===================================
-// CARGAR INSTRUCTORES
+// CARGAR INSTRUCTORES - MODIFICADO
 // ===================================
 function cargarInstructores() {
   const sede = document.getElementById('sedeTutoria').value;
@@ -487,34 +487,74 @@ function cargarInstructores() {
 
   if (!sede || !tipo) return;
 
-  const selectInstructor = document.getElementById('instructor');
-  
-  document.getElementById('grupoInstructor').classList.remove('hidden');
-  document.getElementById('labelInstructor').textContent = tipo + ' *';
+  // Ocultar facultad del profesor y el instructor al cambiar sede o tipo
+  document.getElementById('grupoFacultadProfesor').classList.add('hidden');
+  document.getElementById('grupoInstructor').classList.add('hidden');
+  document.getElementById('facultadProfesor').value = '';
+  document.getElementById('instructor').value = '';
 
-  let instructores = [];
-  if (tipo === 'Tutor' && sede === 'Norte') {
-    instructores = datosCache.tutoresNorte;
-  } else if (tipo === 'Tutor' && sede === 'Sur') {
-    instructores = datosCache.tutoresSur;
-  } else if (tipo === 'Profesor' && sede === 'Norte') {
-    instructores = datosCache.profesoresNorte;
-  } else if (tipo === 'Profesor' && sede === 'Sur') {
-    instructores = datosCache.profesoresSur;
+  if (tipo === 'Tutor') {
+    // Si es tutor, mostrar directamente los tutores
+    const selectInstructor = document.getElementById('instructor');
+    document.getElementById('grupoInstructor').classList.remove('hidden');
+    document.getElementById('labelInstructor').textContent = 'Tutor *';
+
+    let instructores = [];
+    if (sede === 'Norte') {
+      instructores = datosCache.tutoresNorte;
+    } else if (sede === 'Sur') {
+      instructores = datosCache.tutoresSur;
+    }
+
+    const instructoresOrdenados = [...instructores].sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    selectInstructor.innerHTML = '<option value="">Seleccione un tutor</option>';
+    instructoresOrdenados.forEach(inst => {
+      const option = document.createElement('option');
+      option.value = inst.nombre;
+      option.setAttribute('data-area', inst.area);
+      option.textContent = inst.nombre;
+      selectInstructor.appendChild(option);
+    });
+    
+    actualizarProgreso(2);
+  } else if (tipo === 'Profesor') {
+    // Si es profesor, mostrar el selector de facultad
+    document.getElementById('grupoFacultadProfesor').classList.remove('hidden');
+    actualizarProgreso(2);
+  }
+}
+
+// ===================================
+// CARGAR PROFESORES POR FACULTAD - NUEVA FUNCIÓN
+// ===================================
+function cargarProfesoresPorFacultad() {
+  const sede = document.getElementById('sedeTutoria').value;
+  const facultadProfesor = document.getElementById('facultadProfesor').value;
+
+  if (!sede || !facultadProfesor) return;
+
+  const selectInstructor = document.getElementById('instructor');
+  document.getElementById('grupoInstructor').classList.remove('hidden');
+  document.getElementById('labelInstructor').textContent = 'Profesor *';
+
+  let profesores = [];
+  if (sede === 'Norte') {
+    profesores = datosCache.profesoresNorte.filter(prof => prof.facultad === facultadProfesor);
+  } else if (sede === 'Sur') {
+    profesores = datosCache.profesoresSur.filter(prof => prof.facultad === facultadProfesor);
   }
 
-  const instructoresOrdenados = [...instructores].sort((a, b) => a.nombre.localeCompare(b.nombre));
+  const profesoresOrdenados = [...profesores].sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-  selectInstructor.innerHTML = `<option value="">Seleccione un ${tipo.toLowerCase()}</option>`;
-  instructoresOrdenados.forEach(inst => {
+  selectInstructor.innerHTML = '<option value="">Seleccione un profesor</option>';
+  profesoresOrdenados.forEach(prof => {
     const option = document.createElement('option');
-    option.value = inst.nombre;
-    option.setAttribute('data-area', inst.area);
-    option.textContent = inst.nombre;
+    option.value = prof.nombre;
+    option.setAttribute('data-area', prof.area);
+    option.textContent = prof.nombre;
     selectInstructor.appendChild(option);
   });
-  
-  actualizarProgreso(2);
 }
 
 // ===================================
@@ -771,6 +811,7 @@ async function guardarFormulario(event) {
     
     document.getElementById('formTutoria').reset();
     document.getElementById('grupoTituloCurso').classList.add('hidden');
+    document.getElementById('grupoFacultadProfesor').classList.add('hidden');
     document.getElementById('grupoInstructor').classList.add('hidden');
     document.getElementById('grupoMateria').classList.add('hidden');
     document.getElementById('grupoTema').classList.add('hidden');
