@@ -791,6 +791,7 @@ async function guardarFormulario(event) {
     sede_estudiante: datosEstudiante.sede,
     sede_tutoria: document.getElementById('sedeTutoria').value,
     tipo_instructor: document.getElementById('tipoInstructor').value,
+    facultad_profesor: document.getElementById('facultadProfesor').value,
     instructor: document.getElementById('instructor').value,
     asignatura: document.getElementById('asignatura').value,
     tema: tema,
