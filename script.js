@@ -1151,8 +1151,11 @@ function generarExcelSimplificado(datos, nombreArchivo) {
     const minutos = String(fechaColombia.getMinutes()).padStart(2, '0');
     const horaFormateada = `${horas}:${minutos}`;
     
+    // Convertir Date a número de serie de Excel
+    const serialDate = (fechaColombia - new Date(1899, 11, 30)) / (24 * 60 * 60 * 1000);
+    
     return {
-      'Fecha': fechaColombia, // Fecha como objeto Date para que Excel la reconozca
+      'Fecha': serialDate,
       'Hora': horaFormateada,
       'Documento': parseInt(fila.documento),
       'Nombres': fila.nombres,
@@ -1173,8 +1176,8 @@ function generarExcelSimplificado(datos, nombreArchivo) {
   // Aplicar formato de fecha DD/MM/YYYY a la columna Fecha
   for (let row = 1; row <= range.e.r; row++) {
     const fechaCell = XLSX.utils.encode_cell({ r: row, c: 0 }); // Columna Fecha
-    if (ws[fechaCell]) {
-      ws[fechaCell].t = 'd'; // Tipo fecha
+    if (ws[fechaCell] && row > 0) {
+      ws[fechaCell].t = 'n'; // Tipo numérico (Excel maneja fechas como números)
       ws[fechaCell].z = 'dd/mm/yyyy'; // Formato día/mes/año
     }
   }
@@ -1182,22 +1185,10 @@ function generarExcelSimplificado(datos, nombreArchivo) {
   // Aplicar formato a documento como número
   for (let row = 1; row <= range.e.r; row++) {
     const docCell = XLSX.utils.encode_cell({ r: row, c: 2 }); // Columna Documento
-    if (ws[docCell]) {
+    if (ws[docCell] && row > 0) {
       ws[docCell].t = 'n'; // Tipo numérico
       ws[docCell].z = '0'; // Formato sin decimales
     }
-  }
-  
-  // Estilo de encabezados
-  for (let col = range.s.c; col <= range.e.c; col++) {
-    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-    if (!ws[cellAddress]) continue;
-    
-    ws[cellAddress].s = {
-      fill: { fgColor: { rgb: "1E3C72" } },
-      font: { color: { rgb: "FFFFFF" }, bold: true },
-      alignment: { horizontal: "center", vertical: "center" }
-    };
   }
 
   ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
@@ -1223,8 +1214,11 @@ function generarExcelCompleto(datos, nombreArchivo) {
     const minutos = String(fechaColombia.getMinutes()).padStart(2, '0');
     const horaFormateada = `${horas}:${minutos}`;
     
+    // Convertir Date a número de serie de Excel
+    const serialDate = (fechaColombia - new Date(1899, 11, 30)) / (24 * 60 * 60 * 1000);
+    
     return {
-      'Fecha': fechaColombia, // Fecha como objeto Date para que Excel la reconozca
+      'Fecha': serialDate,
       'Hora': horaFormateada,
       'Documento': parseInt(fila.documento),
       'Nombres': fila.nombres,
@@ -1256,8 +1250,8 @@ function generarExcelCompleto(datos, nombreArchivo) {
   // Aplicar formato de fecha DD/MM/YYYY a la columna Fecha
   for (let row = 1; row <= range.e.r; row++) {
     const fechaCell = XLSX.utils.encode_cell({ r: row, c: 0 }); // Columna Fecha
-    if (ws[fechaCell]) {
-      ws[fechaCell].t = 'd'; // Tipo fecha
+    if (ws[fechaCell] && row > 0) {
+      ws[fechaCell].t = 'n'; // Tipo numérico (Excel maneja fechas como números)
       ws[fechaCell].z = 'dd/mm/yyyy'; // Formato día/mes/año
     }
   }
@@ -1265,22 +1259,10 @@ function generarExcelCompleto(datos, nombreArchivo) {
   // Aplicar formato a documento como número
   for (let row = 1; row <= range.e.r; row++) {
     const docCell = XLSX.utils.encode_cell({ r: row, c: 2 }); // Columna Documento
-    if (ws[docCell]) {
+    if (ws[docCell] && row > 0) {
       ws[docCell].t = 'n'; // Tipo numérico
       ws[docCell].z = '0'; // Formato sin decimales
     }
-  }
-  
-  // Estilo de encabezados
-  for (let col = range.s.c; col <= range.e.c; col++) {
-    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-    if (!ws[cellAddress]) continue;
-    
-    ws[cellAddress].s = {
-      fill: { fgColor: { rgb: "1E3C72" } },
-      font: { color: { rgb: "FFFFFF" }, bold: true },
-      alignment: { horizontal: "center", vertical: "center" }
-    };
   }
 
   ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
