@@ -367,11 +367,14 @@
         </div>
 
         <div class="form-group hidden" id="grupoMateria">
-          <label>Asignatura *</label>
-          <select id="asignatura" required onchange="cargarTemas()">
-            <option value="">Seleccione una asignatura</option>
-          </select>
-        </div>
+  <label>Asignatura *</label>
+  <select id="asignatura" required onchange="cargarTemas()">
+    <option value="">Seleccione una asignatura</option>
+  </select>
+  <div id="otraAsignaturaContainer" class="otro-tema hidden">
+    <input type="text" id="otraAsignatura" placeholder="Especifique la asignatura" class="uppercase-input">
+  </div>
+</div>
 
         <div class="form-group hidden" id="grupoTema">
           <label>Tema de la tutoría *</label>

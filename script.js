@@ -681,6 +681,13 @@ function cargarMaterias() {
     selectMateria.appendChild(option);
   });
   
+  // Agregar opción "Otra"
+  const optionOtra = document.createElement('option');
+  optionOtra.value = 'Otra';
+  optionOtra.textContent = 'Otra: ¿Cuál?';
+  optionOtra.style.fontWeight = 'bold';
+  selectMateria.appendChild(optionOtra);
+  
   actualizarProgreso(3);
 }
 
@@ -690,6 +697,31 @@ function cargarMaterias() {
 function cargarTemas() {
   const materia = document.getElementById('asignatura').value;
   if (!materia) return;
+
+  // Verificar si seleccionó "Otra"
+  const container = document.getElementById('otraAsignaturaContainer');
+  const input = document.getElementById('otraAsignatura');
+  
+  if (materia === 'Otra') {
+    container.classList.remove('hidden');
+    input.required = true;
+    
+    // No mostrar temas, solo continuar con el formulario
+    document.getElementById('grupoTema').classList.add('hidden');
+    document.getElementById('grupoMotivo').classList.remove('hidden');
+    document.getElementById('grupoCalificacion').classList.remove('hidden');
+    document.getElementById('grupoSugerencias').classList.remove('hidden');
+    document.getElementById('btnEnviar').classList.remove('hidden');
+    
+    formularioEnviandose = true;
+    actualizarBotonCerrarSesion();
+    actualizarProgreso(4);
+    return;
+  } else {
+    container.classList.add('hidden');
+    input.required = false;
+    input.value = '';
+  }
 
   document.getElementById('grupoTema').classList.remove('hidden');
 
@@ -709,6 +741,7 @@ function cargarTemas() {
   const optionOtro = document.createElement('option');
   optionOtro.value = 'Otro';
   optionOtro.textContent = 'Otro: ¿Cuál?';
+  optionOtro.style.fontWeight = 'bold';
   selectTema.appendChild(optionOtro);
 
   document.getElementById('grupoMotivo').classList.remove('hidden');
@@ -887,10 +920,17 @@ async function guardarFormulario(event) {
     return;
   }
 
-  let tema = document.getElementById('tema').value;
-  if (tema === 'Otro') {
-    tema = document.getElementById('otroTema').value;
-  }
+// Obtener asignatura (puede ser personalizada)
+let asignatura = document.getElementById('asignatura').value;
+if (asignatura === 'Otra') {
+  asignatura = document.getElementById('otraAsignatura').value;
+}
+
+// Obtener tema (puede ser personalizado)
+let tema = document.getElementById('tema').value;
+if (tema === 'Otro') {
+  tema = document.getElementById('otroTema').value;
+}
 
   const tipoAcompanamiento = document.getElementById('tipoAcompanamiento').value;
   const tituloCurso = tipoAcompanamiento === 'Curso y/o capacitación' 
@@ -920,7 +960,7 @@ async function guardarFormulario(event) {
     tipo_instructor: document.getElementById('tipoInstructor').value,
     facultad_departamento: facultadDepartamentoValue,
     instructor: instructorSeleccionado,
-    asignatura: document.getElementById('asignatura').value,
+    asignatura: asignatura,
     tema: tema,
     motivo_consulta: document.getElementById('motivoConsulta').value,
     calificacion: parseInt(calificacionRadio.value),
