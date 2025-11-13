@@ -1139,7 +1139,8 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     detalles += '</div></div>';
   }
 
-  // PROFESORES: Solo mostrar por facultad/departamento (SIN sección de sede)
+  
+  // PROFESORES: Mostrar por facultad/departamento con profesores agrupados
   if (tipo === 'profesores') {
     detalles += '<div class="chart-container"><h3 class="chart-title">Cantidad de Asesorías por Facultad/Departamento</h3>';
     
@@ -1153,6 +1154,72 @@ function mostrarEstadisticas(tipo, botonClickeado) {
       });
     } else {
       detalles += '<p style="text-align: center; color: #666;">No hay datos por facultad</p>';
+    }
+    
+    detalles += '</div>';
+
+    // Nueva sección: Cantidad de Asesorías por Profesor agrupados por Facultad/Departamento
+    detalles += `<div class="chart-container">
+      <h3 class="chart-title">Cantidad de Asesorías por Profesor</h3>`;
+
+    // Agrupar profesores por facultad/departamento
+    const profesoresPorFacultad = {};
+    
+    datosFiltrados.forEach(item => {
+      const facultad = item.facultad_departamento || 'Sin Facultad';
+      const profesor = item.instructor;
+      
+      if (!profesoresPorFacultad[facultad]) {
+        profesoresPorFacultad[facultad] = {};
+      }
+      
+      profesoresPorFacultad[facultad][profesor] = (profesoresPorFacultad[facultad][profesor] || 0) + 1;
+    });
+
+    // Crear ID único para cada facultad (sin espacios ni caracteres especiales)
+    const facultadesConProfesores = Object.keys(profesoresPorFacultad).sort();
+    
+    // Crear botones para cada facultad/departamento
+    if (facultadesConProfesores.length > 0) {
+      detalles += '<div class="botones-sedes">';
+      
+      facultadesConProfesores.forEach(facultad => {
+        const facultadId = facultad.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        const facultadCorta = facultad.replace('Facultad de ', '').replace('Departamento de ', '');
+        detalles += `
+          <button class="btn btn-secondary btn-sede" onclick="toggleProfesoresFacultad('${facultadId}')">
+            ${facultadCorta}
+          </button>`;
+      });
+      
+      detalles += '</div>';
+
+      // Crear secciones ocultas para cada facultad con sus profesores
+      facultadesConProfesores.forEach(facultad => {
+        const facultadId = facultad.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        const profesores = profesoresPorFacultad[facultad];
+        const profesoresOrdenados = Object.entries(profesores).sort((a, b) => b[1] - a[1]);
+        
+        detalles += `
+          <div id="profesores${facultadId}" class="horario-info hidden">
+            <h4 class="horario-titulo">${facultad}</h4>`;
+        
+        if (profesoresOrdenados.length > 0) {
+          profesoresOrdenados.forEach(([profesor, cantidad]) => {
+            const promedio = promediosPorInstructor[profesor] || 'N/A';
+            detalles += `<div class="list-item">
+              <span>${profesor}</span>
+              <strong>${cantidad} asesorías<br><span style="font-size: 12px; font-weight: normal;">Calificación: ${promedio}</span></strong>
+            </div>`;
+          });
+        } else {
+          detalles += '<p style="text-align: center; color: #666;">No hay profesores en esta facultad</p>';
+        }
+        
+        detalles += '</div>';
+      });
+    } else {
+      detalles += '<p style="text-align: center; color: #666;">No hay datos de profesores disponibles</p>';
     }
     
     detalles += '</div>';
@@ -1393,6 +1460,26 @@ function toggleInstructoresSede(sede) {
     document.getElementById('instructoresSurAdmin').classList.toggle('hidden');
   }
 }
+
+// ===================================
+// TOGGLE PROFESORES POR FACULTAD EN ADMIN
+// ===================================
+function toggleProfesoresFacultad(facultadId) {
+  // Ocultar todas las secciones de profesores
+  const todasLasSecciones = document.querySelectorAll('[id^="profesores"]');
+  todasLasSecciones.forEach(seccion => {
+    if (seccion.id.startsWith('profesores')) {
+      seccion.classList.add('hidden');
+    }
+  });
+  
+  // Mostrar/ocultar la sección clickeada
+  const seccionActual = document.getElementById('profesores' + facultadId);
+  if (seccionActual) {
+    seccionActual.classList.toggle('hidden');
+  }
+}
+
 
 // ===================================
 // INICIALIZACIÓN
