@@ -1148,22 +1148,64 @@ textarea {
 @media (max-width: 768px) {
   .estadisticas-menu-wrapper {
     gap: 8px;
+    flex-wrap: nowrap;
   }
   
   .estadisticas-menu-wrapper .btn-sede {
-    padding: 12px 15px;
-    font-size: 14px;
+    padding: 12px 10px;
+    font-size: 13px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Forzar que las tarjetas de estadísticas estén una debajo de otra */
+  #contenidoEstadisticas .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 20px 15px;
+  }
+
+  .stat-card h3 {
+    font-size: 26px;
+  }
+
+  .stat-card p {
+    font-size: 12px;
   }
 }
 
 @media (max-width: 480px) {
   .estadisticas-menu-wrapper {
-    gap: 6px;
+    gap: 5px;
+    flex-wrap: nowrap;
   }
   
   .estadisticas-menu-wrapper .btn-sede {
-    padding: 10px 8px;
-    font-size: 12px;
+    padding: 10px 5px;
+    font-size: 11px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Forzar que las tarjetas de estadísticas estén una debajo de otra */
+  #contenidoEstadisticas .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 18px 12px;
+  }
+
+  .stat-card h3 {
+    font-size: 24px;
+  }
+
+  .stat-card p {
+    font-size: 11px;
   }
 
 
