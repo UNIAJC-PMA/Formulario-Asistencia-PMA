@@ -1087,70 +1087,79 @@ textarea {
 
 
 /* ===================================
-   BOTONES DE ESTADÍSTICAS - FORZAR HORIZONTAL
+   CONTENEDOR DE ESTADÍSTICAS COMPLETO
    =================================== */
-.botones-sedes.estadisticas-menu {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 10px;
-  justify-content: stretch;
-  margin-bottom: 25px;
-  flex-wrap: nowrap;
+#statsGrid {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
 
-.botones-sedes.estadisticas-menu .btn-sede {
+/* Botones de filtro de estadísticas */
+.estadisticas-menu-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.estadisticas-menu-wrapper .btn-sede {
   flex: 1;
-  min-width: 0;
-  max-width: none;
   padding: 15px 20px;
   font-size: 15px;
   font-weight: 600;
   margin: 0;
   transition: all 0.3s;
-  white-space: nowrap;
+  background: white;
+  color: #1e3c72;
+  border: 2px solid #1e3c72;
 }
 
-/* Botón activo en azul */
-.botones-sedes.estadisticas-menu .btn-sede.activo {
+.estadisticas-menu-wrapper .btn-sede.activo {
   background: #1e3c72;
   color: white;
   border-color: #1e3c72;
 }
 
-.botones-sedes.estadisticas-menu .btn-sede.activo:hover {
+.estadisticas-menu-wrapper .btn-sede:hover {
+  background: #f5f5f5;
+}
+
+.estadisticas-menu-wrapper .btn-sede.activo:hover {
   background: #2a5298;
   border-color: #2a5298;
 }
 
-/* Contenedor de estadísticas */
+/* Contenedor de cards y detalles */
 #contenidoEstadisticas {
   width: 100%;
-  margin-top: 0;
 }
 
 #contenidoEstadisticas .stats-grid {
-  margin-top: 0;
-  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  margin: 0 0 20px 0;
 }
 
 @media (max-width: 768px) {
-  .botones-sedes.estadisticas-menu {
+  .estadisticas-menu-wrapper {
     gap: 8px;
   }
   
-  .botones-sedes.estadisticas-menu .btn-sede {
+  .estadisticas-menu-wrapper .btn-sede {
     padding: 12px 15px;
     font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
-  .botones-sedes.estadisticas-menu {
+  .estadisticas-menu-wrapper {
     gap: 6px;
   }
   
-  .botones-sedes.estadisticas-menu .btn-sede {
+  .estadisticas-menu-wrapper .btn-sede {
     padding: 10px 8px;
     font-size: 12px;
   }

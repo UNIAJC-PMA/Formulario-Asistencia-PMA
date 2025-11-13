@@ -910,23 +910,23 @@ async function cargarEstadisticas() {
       return;
     }
 
-    // Crear HTML con botones de filtro - CORREGIDO
-    const botonesHTML = `
-      <div class="botones-sedes estadisticas-menu">
-        <button class="btn btn-secondary btn-sede activo" onclick="mostrarEstadisticas('general', this)">
+    // Crear HTML con estructura correcta
+    const contenidoHTML = `
+      <div class="estadisticas-menu-wrapper">
+        <button class="btn btn-sede activo" onclick="mostrarEstadisticas('general', this)">
           General
         </button>
-        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('tutores', this)">
+        <button class="btn btn-sede" onclick="mostrarEstadisticas('tutores', this)">
           Tutores
         </button>
-        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('profesores', this)">
+        <button class="btn btn-sede" onclick="mostrarEstadisticas('profesores', this)">
           Profesores
         </button>
       </div>
       <div id="contenidoEstadisticas"></div>
     `;
 
-    document.getElementById('statsGrid').innerHTML = botonesHTML;
+    document.getElementById('statsGrid').innerHTML = contenidoHTML;
     document.getElementById('detallesStats').innerHTML = '';
 
     // Guardar datos globalmente para uso posterior
@@ -942,7 +942,7 @@ async function cargarEstadisticas() {
 
 function mostrarEstadisticas(tipo, botonClickeado) {
   // Remover clase activo de todos los botones
-  document.querySelectorAll('.botones-sedes.estadisticas-menu .btn-sede').forEach(btn => {
+  document.querySelectorAll('.estadisticas-menu-wrapper .btn-sede').forEach(btn => {
     btn.classList.remove('activo');
   });
   
@@ -951,7 +951,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     botonClickeado.classList.add('activo');
   } else {
     // Si se llama sin botón (carga inicial), activar el botón de General
-    const btnGeneral = document.querySelector('.botones-sedes.estadisticas-menu .btn-sede');
+    const btnGeneral = document.querySelector('.estadisticas-menu-wrapper .btn-sede');
     if (btnGeneral) btnGeneral.classList.add('activo');
   }
   
