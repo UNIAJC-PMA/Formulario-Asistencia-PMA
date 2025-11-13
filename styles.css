@@ -1092,19 +1092,33 @@ textarea {
 .botones-sedes.estadisticas-menu {
   display: flex !important;
   flex-direction: row !important;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   margin-bottom: 25px;
   flex-wrap: nowrap;
+  width: 100%;
 }
 
 .botones-sedes.estadisticas-menu .btn-sede {
   flex: 1;
-  min-width: 90px;
-  max-width: 120px;
-  padding: 10px 15px;
-  font-size: 13px;
+  min-width: 100px;
+  max-width: 200px;
+  padding: 12px 20px;
+  font-size: 14px;
   margin: 0;
+  transition: all 0.3s;
+}
+
+/* Botón activo en azul */
+.botones-sedes.estadisticas-menu .btn-sede.activo {
+  background: #1e3c72;
+  color: white;
+  border-color: #1e3c72;
+}
+
+.botones-sedes.estadisticas-menu .btn-sede.activo:hover {
+  background: #2a5298;
+  border-color: #2a5298;
 }
 
 @media (max-width: 480px) {
@@ -1114,8 +1128,8 @@ textarea {
   }
   
   .botones-sedes.estadisticas-menu .btn-sede {
-    min-width: 70px;
-    padding: 8px 10px;
+    min-width: 80px;
+    padding: 10px 12px;
     font-size: 12px;
   }
 }

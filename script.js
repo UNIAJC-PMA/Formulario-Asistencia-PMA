@@ -910,16 +910,16 @@ async function cargarEstadisticas() {
       return;
     }
 
-    // Crear HTML con botones de filtro
+    // Crear HTML con botones de filtro - CORREGIDO
     const botonesHTML = `
       <div class="botones-sedes estadisticas-menu">
-        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('general')">
+        <button class="btn btn-secondary btn-sede activo" onclick="mostrarEstadisticas('general', this)">
           General
         </button>
-        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('tutores')">
+        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('tutores', this)">
           Tutores
         </button>
-        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('profesores')">
+        <button class="btn btn-secondary btn-sede" onclick="mostrarEstadisticas('profesores', this)">
           Profesores
         </button>
       </div>
@@ -940,7 +940,21 @@ async function cargarEstadisticas() {
   }
 }
 
-function mostrarEstadisticas(tipo) {
+function mostrarEstadisticas(tipo, botonClickeado) {
+  // Remover clase activo de todos los botones
+  document.querySelectorAll('.botones-sedes.estadisticas-menu .btn-sede').forEach(btn => {
+    btn.classList.remove('activo');
+  });
+  
+  // Agregar clase activo al botón clickeado (si existe)
+  if (botonClickeado) {
+    botonClickeado.classList.add('activo');
+  } else {
+    // Si se llama sin botón (carga inicial), activar el botón de General
+    const btnGeneral = document.querySelector('.botones-sedes.estadisticas-menu .btn-sede');
+    if (btnGeneral) btnGeneral.classList.add('activo');
+  }
+  
   const data = window.datosFormulariosGlobal;
   
   let datosFiltrados;
