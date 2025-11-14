@@ -609,11 +609,22 @@ function cargarInstructores() {
 
     const instructoresOrdenados = [...instructores].sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-    selectInstructor.innerHTML = '<option value="">Seleccione un tutor</option>';
+selectInstructor.innerHTML = '<option value="">Seleccione un tutor</option>';
+    
+    // Eliminar duplicados (mismo nombre, diferentes áreas)
+    const instructoresUnicos = [];
+    const nombresVistos = new Set();
+    
     instructoresOrdenados.forEach(inst => {
+      if (!nombresVistos.has(inst.nombre)) {
+        nombresVistos.add(inst.nombre);
+        instructoresUnicos.push(inst);
+      }
+    });
+    
+    instructoresUnicos.forEach(inst => {
       const option = document.createElement('option');
       option.value = inst.nombre;
-      option.setAttribute('data-area', inst.area);
       option.textContent = inst.nombre;
       selectInstructor.appendChild(option);
     });
@@ -667,12 +678,47 @@ function cargarMaterias() {
   
   if (!selectedOption || !selectedOption.value) return;
 
-  const area = selectedOption.getAttribute('data-area');
-  instructorActual = { nombre: selectedOption.value, area: area };
+  const instructorNombre = selectedOption.value;
+  
+  // Obtener TODAS las áreas del instructor (puede tener múltiples)
+  let areasInstructor = [];
+  
+  if (document.getElementById('tipoInstructor').value === 'Tutor') {
+    const sede = document.getElementById('sedeTutoria').value;
+    let tutores = [];
+    
+    if (sede === 'Virtual') {
+      tutores = [...datosCache.tutoresNorte, ...datosCache.tutoresSur];
+    } else if (sede === 'Norte') {
+      tutores = datosCache.tutoresNorte;
+    } else if (sede === 'Sur') {
+      tutores = datosCache.tutoresSur;
+    }
+    
+    // Buscar todas las áreas de este tutor
+    tutores.forEach(tutor => {
+      if (tutor.nombre === instructorNombre && !areasInstructor.includes(tutor.area)) {
+        areasInstructor.push(tutor.area);
+      }
+    });
+  } else {
+    // Para profesores
+    datosCache.profesores.forEach(prof => {
+      if (prof.nombre === instructorNombre && !areasInstructor.includes(prof.area)) {
+        areasInstructor.push(prof.area);
+      }
+    });
+  }
+
+  instructorActual = { nombre: instructorNombre, areas: areasInstructor };
 
   document.getElementById('grupoMateria').classList.remove('hidden');
 
-  const materiasFiltradas = datosCache.materias.filter(mat => mat.area === area);
+  // Filtrar materias de TODAS las áreas del instructor
+  const materiasFiltradas = datosCache.materias.filter(mat => 
+    areasInstructor.includes(mat.area)
+  );
+  
   const materiasOrdenadas = materiasFiltradas.sort((a, b) => a.materia.localeCompare(b.materia));
 
   const selectMateria = document.getElementById('asignatura');
