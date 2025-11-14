@@ -312,7 +312,7 @@
           <input type="text" id="grupo" required class="uppercase-input" placeholder="Ej: B1303A, 2303A" oninput="this.value = this.value.replace(/[^A-Za-z0-9-]/g, '')">
         </div>
 
-        <div class="form-group">
+        <<div class="form-group">
           <label>Tipo de acompañamiento académico *</label>
           <select id="tipoAcompanamiento" required onchange="toggleTituloCurso()">
             <option value="">Seleccione una opción</option>
@@ -321,14 +321,13 @@
           </select>
         </div>
 
-        <div id="otraAsignaturaContainer" class="otro-tema hidden">
-          <input type="text" id="otraAsignatura" placeholder="Especifique la asignatura" class="uppercase-input" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ,\-]/g, '')">
+        <div class="form-group hidden" id="grupoTituloCurso">
+          <label>Título del curso/capacitación *</label>
+          <input type="text" id="tituloCurso" class="uppercase-input" placeholder="Ingrese el título del curso" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,\-]/g, '')">
         </div>
 
-        <!-- REEMPLAZA toda esta sección en tu HTML del formulario -->
-
- <div class="form-group">
-  <label>Sede *</label>
+        <div class="form-group">
+          <label>Sede *</label>
   <select id="sedeTutoria" required onchange="cargarInstructores()">
     <option value="">Seleccione una sede</option>
     <option value="Norte">Sede Norte</option>
@@ -367,14 +366,14 @@
         </div>
 
         <div class="form-group hidden" id="grupoMateria">
-  <label>Asignatura *</label>
-  <select id="asignatura" required onchange="cargarTemas()">
-    <option value="">Seleccione una asignatura</option>
-  </select>
-    <div id="otraAsignaturaContainer" class="otro-tema hidden">
-     <input type="text" id="otraAsignatura" placeholder="Especifique la asignatura" class="uppercase-input" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ,\-]/g, '')">
-    </div>
-</div>
+          <label>Asignatura *</label>
+          <select id="asignatura" required onchange="cargarTemas()">
+            <option value="">Seleccione una asignatura</option>
+          </select>
+          <div id="otraAsignaturaContainer" class="otro-tema hidden">
+            <input type="text" id="otraAsignatura" placeholder="Especifique la asignatura" class="uppercase-input" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,\-]/g, '')">
+          </div>
+        </div>
 
         <div class="form-group hidden" id="grupoTema">
           <label>Tema de la tutoría *</label>
@@ -382,7 +381,7 @@
             <option value="">Seleccione un tema</option>
           </select>
           <div id="otroTemaContainer" class="otro-tema hidden">
-            <input type="text" id="otroTema" placeholder="Especifique el tema" class="uppercase-input" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ,\-]/g, '')">
+            <input type="text" id="otroTema" placeholder="Especifique el tema" class="uppercase-input" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,\-]/g, '')">
           </div>
         </div>
 
