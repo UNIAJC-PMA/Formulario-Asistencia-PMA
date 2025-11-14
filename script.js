@@ -597,7 +597,11 @@ function cargarInstructores() {
     document.getElementById('labelInstructor').textContent = 'Tutor *';
 
     let instructores = [];
-    if (sede === 'Norte') {
+    
+    // Si es Virtual, mostrar TODOS los tutores (Norte + Sur)
+    if (sede === 'Virtual') {
+      instructores = [...datosCache.tutoresNorte, ...datosCache.tutoresSur];
+    } else if (sede === 'Norte') {
       instructores = datosCache.tutoresNorte;
     } else if (sede === 'Sur') {
       instructores = datosCache.tutoresSur;
@@ -699,15 +703,23 @@ function cargarTemas() {
   if (!materia) return;
 
   // Verificar si seleccionó "Otra"
-  const container = document.getElementById('otraAsignaturaContainer');
-  const input = document.getElementById('otraAsignatura');
+  const containerAsignatura = document.getElementById('otraAsignaturaContainer');
+  const inputAsignatura = document.getElementById('otraAsignatura');
   
   if (materia === 'Otra') {
-    container.classList.remove('hidden');
-    input.required = true;
+    containerAsignatura.classList.remove('hidden');
+    inputAsignatura.required = true;
     
-    // No mostrar temas, solo continuar con el formulario
-    document.getElementById('grupoTema').classList.add('hidden');
+    // Mostrar campo de tema personalizado directamente
+    document.getElementById('grupoTema').classList.remove('hidden');
+    const selectTema = document.getElementById('tema');
+    selectTema.innerHTML = '<option value="Otro">Otro: ¿Cuál?</option>';
+    selectTema.value = 'Otro';
+    
+    // Mostrar campo de texto para tema personalizado
+    document.getElementById('otroTemaContainer').classList.remove('hidden');
+    document.getElementById('otroTema').required = true;
+    
     document.getElementById('grupoMotivo').classList.remove('hidden');
     document.getElementById('grupoCalificacion').classList.remove('hidden');
     document.getElementById('grupoSugerencias').classList.remove('hidden');
@@ -718,9 +730,9 @@ function cargarTemas() {
     actualizarProgreso(4);
     return;
   } else {
-    container.classList.add('hidden');
-    input.required = false;
-    input.value = '';
+    containerAsignatura.classList.add('hidden');
+    inputAsignatura.required = false;
+    inputAsignatura.value = '';
   }
 
   document.getElementById('grupoTema').classList.remove('hidden');

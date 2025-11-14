@@ -1225,3 +1225,26 @@ input[type="text"]::placeholder {
   font-style: italic;
 }
 }
+
+/* ===================================
+   OPCIONES EN NEGRILLA PARA SELECT
+   =================================== */
+select option {
+  font-weight: normal;
+}
+
+/* Forzar negrilla en todas las plataformas */
+select option[value="Otra"],
+select option[value="Otro"] {
+  font-weight: 700 !important;
+  font-style: normal !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Alternativa adicional para móviles iOS */
+@supports (-webkit-touch-callout: none) {
+  select option[value="Otra"],
+  select option[value="Otro"] {
+    font-weight: bold !important;
+  }
+}
