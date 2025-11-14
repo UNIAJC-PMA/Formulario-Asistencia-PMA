@@ -698,6 +698,9 @@ function cargarMaterias() {
 // ===================================
 // CARGAR TEMAS
 // ===================================
+// ===================================
+// CARGAR TEMAS
+// ===================================
 function cargarTemas() {
   const materia = document.getElementById('asignatura').value;
   if (!materia) return;
@@ -707,14 +710,17 @@ function cargarTemas() {
   const inputAsignatura = document.getElementById('otraAsignatura');
   
   if (materia === 'Otra') {
+    // Mostrar campo para especificar la asignatura
     containerAsignatura.classList.remove('hidden');
     inputAsignatura.required = true;
     
-    // Mostrar grupo de tema con campo de texto personalizado
+    // Mostrar grupo de tema
     document.getElementById('grupoTema').classList.remove('hidden');
+    
+    // Ocultar el select de tema y mostrar el input de texto
     const selectTema = document.getElementById('tema');
-    selectTema.innerHTML = '';
-    selectTema.style.display = 'none'; // Ocultar el select
+    selectTema.style.display = 'none';
+    selectTema.required = false;
     
     // Mostrar campo de texto para tema personalizado
     const containerTema = document.getElementById('otroTemaContainer');
@@ -724,7 +730,7 @@ function cargarTemas() {
     
     // Cambiar el label de tema
     const labelTema = document.querySelector('#grupoTema label');
-    labelTema.textContent = 'Tema: Especifique el tema *';
+    labelTema.textContent = 'Tema *';
     
     document.getElementById('grupoMotivo').classList.remove('hidden');
     document.getElementById('grupoCalificacion').classList.remove('hidden');
@@ -736,6 +742,7 @@ function cargarTemas() {
     actualizarProgreso(4);
     return;
   } else {
+    // Si NO es "Otra", ocultar el campo de asignatura personalizada
     containerAsignatura.classList.add('hidden');
     inputAsignatura.required = false;
     inputAsignatura.value = '';
@@ -743,6 +750,14 @@ function cargarTemas() {
     // Restaurar el select de tema
     const selectTema = document.getElementById('tema');
     selectTema.style.display = '';
+    selectTema.required = true;
+    
+    // Ocultar el campo de tema personalizado
+    const containerTema = document.getElementById('otroTemaContainer');
+    const inputTema = document.getElementById('otroTema');
+    containerTema.classList.add('hidden');
+    inputTema.required = false;
+    inputTema.value = '';
     
     // Restaurar el label original
     const labelTema = document.querySelector('#grupoTema label');
