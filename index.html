@@ -434,7 +434,6 @@
     </div>
 
     <!-- PANEL DE ADMINISTRADOR - LOGIN -->
-    <!-- PANEL DE ADMINISTRADOR - LOGIN -->
 <div id="pantallaAdminLogin" class="hidden">
   <h2 class="section-title">Acceso de Administrador</h2>
   <div id="mensajeAdminLogin"></div>
@@ -444,8 +443,13 @@
       <input type="number" id="adminDocumento" required>
     </div>
     <div class="form-group">
-      <label>🔒Contraseña</label>
-      <input type="password" id="adminContrasena" required>
+      <label>🔒 Contraseña</label>
+      <div style="position: relative;">
+        <input type="password" id="adminContrasena" required style="padding-right: 45px;">
+        <button type="button" onclick="togglePassword()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 20px; padding: 5px 10px; color: #666;">
+          👁️
+        </button>
+      </div>
     </div>
     <button type="submit" class="btn">Ingresar</button>
     <button type="button" class="btn btn-secondary" onclick="volverInicio()">Volver</button>

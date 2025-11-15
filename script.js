@@ -1893,3 +1893,19 @@ window.onload = async function() {
     console.error('Error en precarga inicial:', error);
   });
 };
+
+// ===================================
+// MOSTRAR/OCULTAR CONTRASEÑA
+// ===================================
+function togglePassword() {
+  const input = document.getElementById('adminContrasena');
+  const button = input.nextElementSibling;
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    button.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    button.textContent = '👁️';
+  }
+}
