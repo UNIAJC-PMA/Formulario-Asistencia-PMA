@@ -1163,6 +1163,39 @@ function cambiarTab(event, tab) {
   }
 }
 
+
+// ===================================
+// ACTUALIZAR ESTADÍSTICAS
+// ===================================
+async function actualizarEstadisticas() {
+  const btnActualizar = document.querySelector('.btn-actualizar');
+  
+  // Agregar animación de carga
+  btnActualizar.classList.add('actualizando');
+  btnActualizar.disabled = true;
+  
+  try {
+    await cargarEstadisticas();
+    
+    // Mostrar feedback visual
+    btnActualizar.textContent = '✓';
+    setTimeout(() => {
+      btnActualizar.textContent = '🔄';
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Error actualizando estadísticas:', error);
+    btnActualizar.textContent = '✗';
+    setTimeout(() => {
+      btnActualizar.textContent = '🔄';
+    }, 1000);
+  } finally {
+    btnActualizar.classList.remove('actualizando');
+    btnActualizar.disabled = false;
+  }
+}
+
+
 async function cargarEstadisticas() {
   try {
     const data = await supabaseQuery('formularios');

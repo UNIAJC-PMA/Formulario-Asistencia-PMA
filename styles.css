@@ -467,9 +467,60 @@ textarea {
 /* ===================================
    PANEL DE ADMINISTRADOR
    =================================== */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.admin-header .section-title {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.btn-actualizar {
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  flex-shrink: 0;
+}
+
+.btn-actualizar:hover {
+  background: #218838;
+  transform: rotate(180deg);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
+}
+
+.btn-actualizar:active {
+  transform: rotate(180deg) scale(0.95);
+}
+
+.btn-actualizar.actualizando {
+  animation: rotar 1s linear infinite;
+  background: #ffc107;
+}
+
+@keyframes rotar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .nombre-admin {
   color: #666;
   margin-bottom: 20px;
+  margin-top: 15px;
 }
 
 .admin-tabs {
@@ -928,6 +979,20 @@ textarea {
   .btn-sede {
     min-width: 100%;
   }
+
+  .admin-header {
+    gap: 10px;
+  }
+
+  .admin-header .section-title {
+    font-size: 16px;
+  }
+
+  .btn-actualizar {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1055,6 +1120,20 @@ textarea {
   .logo-footer p {
     font-size: 11px;
   }
+
+  .admin-header {
+    gap: 8px;
+  }
+
+  .admin-header .section-title {
+    font-size: 14px;
+  }
+
+  .btn-actualizar {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
 }
 
 .footer {
@@ -1177,6 +1256,7 @@ textarea {
   .stat-card p {
     font-size: 12px;
   }
+  
 }
 
 @media (max-width: 480px) {
