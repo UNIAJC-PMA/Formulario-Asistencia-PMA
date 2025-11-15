@@ -1,6 +1,3 @@
-// ===================================
-// CONFIGURACIÓN DE SUPABASE (OFUSCADA)
-// ===================================
 
 // URL dividida en partes
 const p1 = 'https://';
@@ -30,6 +27,38 @@ let datosEstudiante = null;
 let instructorActual = null;
 let formularioEnviandose = false;
 
+
+// ===================================
+// FUNCIÓN DE REINTENTOS AUTOMÁTICOS
+// ===================================
+async function fetchConReintentos(url, options, intentos = 3) {
+  for (let i = 0; i < intentos; i++) {
+    try {
+      const response = await fetch(url, options);
+      
+      // Si la respuesta no es exitosa, lanzar error
+      if (!response.ok) {
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.log(`Intento ${i + 1} de ${intentos} falló:`, error.message);
+      
+      // Si es el último intento, lanzar el error
+      if (i === intentos - 1) {
+        throw new Error('No pudimos conectar con el servidor después de varios intentos. Por favor verifica tu conexión a internet e intenta de nuevo.');
+      }
+      
+      // Esperar antes de reintentar (1 segundo, luego 2 segundos, luego 3 segundos)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      console.log(`Reintentando...`);
+    }
+  }
+}
+
+
 // ===================================
 // CACHE DE DATOS PRECARGADOS
 // ===================================
@@ -55,19 +84,19 @@ async function supabaseQuery(table, options = {}) {
   if (options.eq) url += `${options.select ? '&' : '?'}${options.eq.field}=eq.${options.eq.value}`;
   if (options.order) url += `${url.includes('?') ? '&' : '?'}order=${options.order}`;
   
-  const response = await fetch(url, {
+  // AHORA USA fetchConReintentos en vez de fetch normal
+  return await fetchConReintentos(url, {
     headers: {
       'apikey': SUPABASE_KEY,
       'Authorization': `Bearer ${SUPABASE_KEY}`,
       'Content-Type': 'application/json'
     }
   });
-  
-  return await response.json();
 }
 
 async function supabaseInsert(table, data) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+  // AHORA USA fetchConReintentos en vez de fetch normal
+  return await fetchConReintentos(`${SUPABASE_URL}/rest/v1/${table}`, {
     method: 'POST',
     headers: {
       'apikey': SUPABASE_KEY,
@@ -77,8 +106,6 @@ async function supabaseInsert(table, data) {
     },
     body: JSON.stringify(data)
   });
-  
-  return await response.json();
 }
 
 // ===================================
@@ -436,7 +463,7 @@ async function registrarEstudiante(event) {
       mostrarMensaje('mensajeRegistro', 'Error: No se pudo completar el registro', 'error');
     }
   } catch (error) {
-    mostrarMensaje('mensajeRegistro', 'Error en el registro: ' + error.message, 'error');
+    mostrarMensaje('mensajeRegistro', error.message, 'error');
   }
 }
 
@@ -1099,7 +1126,7 @@ if (tema === 'Otro') {
       cerrarSesion();
     }, 3000);
   } catch (error) {
-    mostrarMensaje('mensajeFormulario', 'Error al guardar: ' + error.message, 'error');
+    mostrarMensaje('mensajeFormulario', error.message, 'error');
   }
 }
 
