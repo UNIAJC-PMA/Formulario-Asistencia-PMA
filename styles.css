@@ -1247,4 +1247,62 @@ select option[value="Otro"] {
   select option[value="Otro"] {
     font-weight: bold !important;
   }
+
+
+
+  /* ===================================
+   CAMPO DE CONTRASEÑA ADMINISTRADOR
+   =================================== */
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.3s;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.7);
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+input[type="password"]:focus {
+  outline: none;
+  border-color: #1e3c72;
+  box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+  background: white;
+}
+
+input[type="password"]::placeholder {
+  letter-spacing: normal;
+  color: #999;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: normal;
+}
+
+/* Estilo para el label de contraseña */
+#formAdminLogin label[for="adminContrasena"] {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Icono de candado antes del label (opcional) */
+#formAdminLogin label[for="adminContrasena"]::before {
+  content: "🔒";
+  font-size: 16px;
+}
+
+/* Responsive para contraseña */
+@media (max-width: 480px) {
+  input[type="password"] {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
 }
