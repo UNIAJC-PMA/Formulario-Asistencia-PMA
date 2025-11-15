@@ -1341,7 +1341,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
 
   let detalles = '';
 
-  
+
 // TUTORES: Mostrar por sede
   if (tipo === 'tutores') {
     detalles += '<div class="chart-container"><h3 class="chart-title">Cantidad de Tutorías por Sede</h3>';
@@ -1351,20 +1351,30 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     });
     detalles += '</div>';
 
-    // Agrupar tutores por su sede REAL (según tabla de origen)
-    const tutoresPorSedeReal = { Norte: {}, Sur: {} };
-    
+    // Contar tutorías totales por instructor
+    const tutoriasPorInstructor = {};
     datosFiltrados.forEach(item => {
       const instructor = item.instructor;
+      tutoriasPorInstructor[instructor] = (tutoriasPorInstructor[instructor] || 0) + 1;
+    });
+
+    // Agrupar tutores por sede según tabla de origen
+    // Si un tutor está en ambas tablas, aparece en ambas sedes con el mismo total
+    const tutoresPorSedeReal = { Norte: {}, Sur: {} };
+    
+    Object.keys(tutoriasPorInstructor).forEach(instructor => {
+      const cantidadTotal = tutoriasPorInstructor[instructor];
       
-      // Buscar en qué tabla está el tutor
+      // Verificar en qué tablas está el tutor
       const esTutorNorte = datosCache.tutoresNorte.some(t => t.nombre === instructor);
       const esTutorSur = datosCache.tutoresSur.some(t => t.nombre === instructor);
       
+      // Agregar a las sedes correspondientes con el TOTAL de tutorías
       if (esTutorNorte) {
-        tutoresPorSedeReal.Norte[instructor] = (tutoresPorSedeReal.Norte[instructor] || 0) + 1;
-      } else if (esTutorSur) {
-        tutoresPorSedeReal.Sur[instructor] = (tutoresPorSedeReal.Sur[instructor] || 0) + 1;
+        tutoresPorSedeReal.Norte[instructor] = cantidadTotal;
+      }
+      if (esTutorSur) {
+        tutoresPorSedeReal.Sur[instructor] = cantidadTotal;
       }
     });
 
