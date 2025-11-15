@@ -1170,28 +1170,33 @@ function cambiarTab(event, tab) {
 async function actualizarEstadisticas() {
   const btnActualizar = document.querySelector('.btn-actualizar');
   
-  // Agregar animación de carga
-  btnActualizar.classList.add('actualizando');
+  // Deshabilitar botón mientras carga
   btnActualizar.disabled = true;
+  btnActualizar.style.opacity = '0.6';
   
   try {
     await cargarEstadisticas();
     
-    // Mostrar feedback visual
+    // Cambiar a check
     btnActualizar.textContent = '✓';
+    
+    // Volver al icono original después de 1.5 segundos
     setTimeout(() => {
       btnActualizar.textContent = '🔄';
-    }, 1000);
+    }, 1500);
     
   } catch (error) {
     console.error('Error actualizando estadísticas:', error);
+    
+    // Mostrar X en caso de error
     btnActualizar.textContent = '✗';
+    
     setTimeout(() => {
       btnActualizar.textContent = '🔄';
-    }, 1000);
+    }, 1500);
   } finally {
-    btnActualizar.classList.remove('actualizando');
     btnActualizar.disabled = false;
+    btnActualizar.style.opacity = '1';
   }
 }
 

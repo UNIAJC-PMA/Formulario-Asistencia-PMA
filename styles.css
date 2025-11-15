@@ -499,57 +499,17 @@ textarea {
 
 .btn-actualizar:hover {
   background: #218838;
-  transform: rotate(180deg);
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
 }
 
 .btn-actualizar:active {
-  transform: rotate(180deg) scale(0.95);
-}
-
-.btn-actualizar.actualizando {
-  animation: rotar 1s linear infinite;
-  background: #ffc107;
-}
-
-@keyframes rotar {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  transform: scale(0.95);
 }
 
 .nombre-admin {
   color: #666;
   margin-bottom: 20px;
   margin-top: 15px;
-}
-
-.admin-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 25px;
-  border-bottom: 2px solid #e0e0e0;
-  flex-wrap: wrap;
-}
-
-.admin-tab {
-  padding: 12px 20px;
-  background: transparent;
-  border: none;
-  color: #666;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.3s;
-}
-
-.admin-tab.active {
-  color: #1e3c72;
-  border-bottom-color: #1e3c72;
-}
-
-.admin-tab:hover {
-  color: #1e3c72;
 }
 
 /* ===================================
