@@ -248,6 +248,7 @@ input[type="text"],
 input[type="number"],
 input[type="date"],
 input[type="password"],
+input[type="tel"],
 select,
 textarea {
   width: 100%;
@@ -887,10 +888,11 @@ textarea {
   input[type="text"],
   input[type="number"],
   input[type="date"],
+  input[type="tel"],
   select,
   textarea {
     padding: 10px;
-    font-size: 14px;
+    font-size: 16px !important; /* 16px evita zoom en iOS */
   }
 
   .btn {
@@ -1011,10 +1013,11 @@ textarea {
   input[type="text"],
   input[type="number"],
   input[type="date"],
+  input[type="tel"],
   select,
   textarea {
     padding: 8px;
-    font-size: 13px;
+    font-size: 16px !important; /* Mantener 16px para evitar zoom */
   }
 
   .btn {

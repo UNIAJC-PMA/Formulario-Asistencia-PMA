@@ -259,6 +259,24 @@ function volverInicio() {
   document.getElementById('horarioNorte').classList.add('hidden');
   document.getElementById('horarioSur').classList.add('hidden');
   document.getElementById('horarioVirtual').classList.add('hidden');
+
+  
+// REACTIVAR BOTONES
+  const btnEnviar = document.getElementById('btnEnviar');
+  if (btnEnviar) {
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar Formulario';
+    btnEnviar.style.opacity = '1';
+    btnEnviar.style.cursor = 'pointer';
+  }
+  
+  const btnRegistro = document.getElementById('btnConfirmarRegistro');
+  if (btnRegistro) {
+    btnRegistro.disabled = false;
+    btnRegistro.textContent = 'Confirmar y Registrarme';
+    btnRegistro.style.opacity = '1';
+    btnRegistro.style.cursor = 'pointer';
+  }
 }
 
 function limpiarFormularios() {
@@ -1190,6 +1208,15 @@ function cerrarSesion() {
   datosEstudiante = null;
   instructorActual = null;
   formularioEnviandose = false;
+  
+  // REACTIVAR BOTÓN DE ENVIAR
+  const btnEnviar = document.getElementById('btnEnviar');
+  if (btnEnviar) {
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar Formulario';
+    btnEnviar.style.opacity = '1';
+    btnEnviar.style.cursor = 'pointer';
+  }
   
   document.querySelectorAll('.progress-step').forEach(step => {
     step.classList.remove('active', 'completed');
