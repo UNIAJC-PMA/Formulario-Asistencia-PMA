@@ -69,8 +69,7 @@ let datosCache = {
   tutoresSur: [],
   profesores: [],
   materias: [],
-  temas: [],
-  cargado: false
+  temas: []
 };
 
 let facultadesData = {};
@@ -112,21 +111,16 @@ async function supabaseInsert(table, data) {
 // ===================================
 // PRECARGA DE DATOS
 // ===================================
-async function precargarDatosEstaticos() {
-  if (datosCache.cargado) return;
+// ===================================
+// PRECARGA OPTIMIZADA POR MÓDULO
+// ===================================
+async function precargarDatosFormulario() {
+  if (datosCache.tutoresNorte.length > 0) return; // Ya cargados
   
   try {
-    console.log('Precargando datos estáticos...');
+    console.log('Precargando datos del formulario...');
     
-    const [
-      facultadesCarreras,
-      tutoresNorte,
-      tutoresSur,
-      profesores,
-      materias,
-      temas
-    ] = await Promise.all([
-      supabaseQuery('facultades_carreras'),
+    const [tutoresNorte, tutoresSur, profesores, materias, temas] = await Promise.all([
       supabaseQuery('tutores_norte'),
       supabaseQuery('tutores_sur'),
       supabaseQuery('profesores'),
@@ -134,25 +128,62 @@ async function precargarDatosEstaticos() {
       supabaseQuery('temas')
     ]);
     
-    datosCache = {
-      facultadesCarreras,
-      tutoresNorte,
-      tutoresSur,
-      profesores,
-      materias,
-      temas,
-      cargado: true
-    };
+    datosCache.tutoresNorte = tutoresNorte;
+    datosCache.tutoresSur = tutoresSur;
+    datosCache.profesores = profesores;
+    datosCache.materias = materias;
+    datosCache.temas = temas;
     
-    procesarFacultadesData();
-    
-    console.log('Datos precargados exitosamente');
-    
+    console.log('Datos del formulario cargados');
   } catch (error) {
-    console.error('Error precargando datos:', error);
-    datosCache.cargado = false;
+    console.error('Error precargando datos del formulario:', error);
+    throw error;
   }
 }
+
+async function precargarDatosRegistro() {
+  if (datosCache.facultadesCarreras.length > 0) return; // Ya cargados
+  
+  try {
+    console.log('Precargando datos del registro...');
+    
+    const facultadesCarreras = await supabaseQuery('facultades_carreras');
+    
+    datosCache.facultadesCarreras = facultadesCarreras;
+    procesarFacultadesData();
+    
+    console.log('Datos del registro cargados');
+  } catch (error) {
+    console.error('Error precargando datos del registro:', error);
+    throw error;
+  }
+}
+
+async function precargarDatosEstadisticas() {
+  // Para estadísticas necesitamos tutores y profesores
+  if (datosCache.tutoresNorte.length > 0 && datosCache.profesores.length > 0) return; // Ya cargados
+  
+  try {
+    console.log('Precargando datos de estadísticas...');
+    
+    const [tutoresNorte, tutoresSur, profesores] = await Promise.all([
+      supabaseQuery('tutores_norte'),
+      supabaseQuery('tutores_sur'),
+      supabaseQuery('profesores')
+    ]);
+    
+    datosCache.tutoresNorte = tutoresNorte;
+    datosCache.tutoresSur = tutoresSur;
+    datosCache.profesores = profesores;
+    
+    console.log('Datos de estadísticas cargados');
+  } catch (error) {
+    console.error('Error precargando datos de estadísticas:', error);
+    throw error;
+  }
+}
+
+
 
 function procesarFacultadesData() {
   facultadesData = {};
@@ -198,19 +229,17 @@ async function mostrarLogin() {
   mostrarPantalla('pantallaLogin');
   document.getElementById('mensajeLogin').innerHTML = '';
   
-  // PRECARGAR DATOS AQUÍ cuando el usuario hace clic en "Formulario"
-  if (!datosCache.cargado) {
-    // Mostrar indicador de carga discreto
+  // PRECARGAR DATOS DEL FORMULARIO
+  if (datosCache.tutoresNorte.length === 0) {
     const mensajeLogin = document.getElementById('mensajeLogin');
     mensajeLogin.innerHTML = '<div class="loader"></div><p style="text-align: center; color: #666; font-size: 13px; margin-top: 10px;">Cargando datos del formulario...</p>';
     
     try {
-      await precargarDatosEstaticos();
+      await precargarDatosFormulario();
       mensajeLogin.innerHTML = '';
     } catch (error) {
       mensajeLogin.innerHTML = '';
       console.error('Error precargando datos:', error);
-      // No mostramos error al usuario, se volverá a intentar al hacer login
     }
   }
 }
@@ -227,11 +256,11 @@ async function mostrarRegistro() {
   document.getElementById('formRegistro').classList.add('hidden');
   document.getElementById('regDocumento').value = '';
   
-  // CARGAR DATOS SOLO AQUÍ cuando el usuario da clic en "Registrarse"
-  if (!datosCache.cargado) {
+  // CARGAR DATOS DEL REGISTRO
+  if (datosCache.facultadesCarreras.length === 0) {
     mostrarCargando('mensajeRegistro');
     try {
-      await precargarDatosEstaticos();
+      await precargarDatosRegistro();
       document.getElementById('mensajeRegistro').innerHTML = '';
       cargarFacultades();
     } catch (error) {
@@ -571,10 +600,10 @@ async function iniciarSesion(event) {
   
   mostrarCargando('mensajeLogin');
 
-  // CARGAR DATOS SOLO AQUÍ cuando el usuario da clic en "Formulario"
-  if (!datosCache.cargado) {
+  // Asegurar que datos del formulario estén cargados
+  if (datosCache.tutoresNorte.length === 0) {
     try {
-      await precargarDatosEstaticos();
+      await precargarDatosFormulario();
     } catch (error) {
       mostrarMensaje('mensajeLogin', 'Error al cargar los datos del formulario. Por favor intenta de nuevo.', 'error');
       return;
@@ -1300,16 +1329,28 @@ async function cambiarTab(event, tab) {
   
   if (tab === 'estadisticas') {
     document.getElementById('tabEstadisticas').classList.remove('hidden');
-    // CARGAR ESTADÍSTICAS SOLO AQUÍ cuando el admin hace clic en "Estadísticas"
+    
+    // CARGAR DATOS DE ESTADÍSTICAS
+    if (datosCache.tutoresNorte.length === 0) {
+      document.getElementById('statsGrid').innerHTML = '<div class="loader"></div><p style="text-align: center; color: #666; margin-top: 15px;">Cargando datos...</p>';
+      try {
+        await precargarDatosEstadisticas();
+      } catch (error) {
+        document.getElementById('statsGrid').innerHTML = '<p style="text-align: center; color: #dc3545;">Error al cargar datos. Por favor intenta de nuevo.</p>';
+        return;
+      }
+    }
+    
+    // Cargar estadísticas si no existen
     if (!window.datosFormulariosGlobal) {
       await cargarEstadisticas();
     }
+    
   } else if (tab === 'graficas') {
     document.getElementById('tabGraficas').classList.remove('hidden');
     
-    // CARGAR DATOS si no existen aún
+    // CARGAR DATOS PARA GRÁFICAS (solo necesita formularios)
     if (!window.datosFormulariosGlobal) {
-      // Mostrar loader mientras carga
       const container = document.querySelector('#tabGraficas .chart-container');
       const contenidoOriginal = container.innerHTML;
       container.innerHTML = '<div class="loader"></div><p style="text-align: center; color: #666; margin-top: 15px;">Cargando datos para gráficas...</p>';
@@ -1324,10 +1365,11 @@ async function cambiarTab(event, tab) {
       }
     }
     
-    // Ahora sí crear/actualizar la gráfica
+    // Crear/actualizar gráfica
     if (!graficoTutorias) {
       actualizarGrafica();
     }
+    
   } else if (tab === 'descargas') {
     document.getElementById('tabDescargas').classList.remove('hidden');
   }
@@ -1590,7 +1632,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     const tutoresPorSedeOrigen = { Norte: {}, Sur: {} };
     
     // Verificar si los datos están cargados
-    if (datosCache.cargado && datosCache.tutoresNorte && datosCache.tutoresSur) {
+    if (datosCache.tutoresNorte.length > 0 && datosCache.tutoresSur.length > 0) {
       Object.keys(tutoriasPorInstructor).forEach(instructor => {
         const cantidadTotal = tutoriasPorInstructor[instructor];
         
@@ -1770,13 +1812,13 @@ async function descargarDatos() {
     return;
   }
 
-  // Mostrar indicador de carga
   const btnDescarga = event.target;
   const textoOriginal = btnDescarga.textContent;
   btnDescarga.disabled = true;
   btnDescarga.textContent = '⏳ Preparando descarga...';
 
   try {
+    // CARGAR DATOS SOLO CUANDO SE VA A DESCARGAR
     let url = `${SUPABASE_URL}/rest/v1/formularios?fecha=gte.${desde}T00:00:00&fecha=lte.${hasta}T23:59:59&order=fecha.asc`;
     
     const response = await fetch(url, {
@@ -1787,8 +1829,6 @@ async function descargarDatos() {
     });
     
     const data = await response.json();
-    
-    // Filtrar solo tutores
     const datosTutores = data.filter(item => item.tipo_instructor === 'Tutor');
     
     if (datosTutores.length === 0) {
@@ -1801,24 +1841,23 @@ async function descargarDatos() {
   } catch (error) {
     alert('Error al descargar datos: ' + error.message);
   } finally {
-    // Restaurar botón
     btnDescarga.disabled = false;
     btnDescarga.textContent = textoOriginal;
   }
 }
 
 async function descargarTodo() {
-  if (!confirm('¿descargar todos los registros?')) {
+  if (!confirm('¿Descargar todos los registros?')) {
     return;
   }
 
-  // Mostrar indicador de carga
   const btnDescarga = event.target;
   const textoOriginal = btnDescarga.textContent;
   btnDescarga.disabled = true;
   btnDescarga.textContent = '⏳ Preparando descarga completa...';
 
   try {
+    // CARGAR TODOS LOS DATOS SOLO CUANDO SE VA A DESCARGAR
     const data = await supabaseQuery('formularios', { order: 'fecha.asc' });
     
     if (data.length === 0) {
@@ -1831,7 +1870,6 @@ async function descargarTodo() {
   } catch (error) {
     alert('Error al descargar datos: ' + error.message);
   } finally {
-    // Restaurar botón
     btnDescarga.disabled = false;
     btnDescarga.textContent = textoOriginal;
   }
@@ -1852,13 +1890,13 @@ async function descargarDocentes() {
     return;
   }
 
-  // Mostrar indicador de carga
   const btnDescarga = event.target;
   const textoOriginal = btnDescarga.textContent;
   btnDescarga.disabled = true;
   btnDescarga.textContent = '⏳ Preparando descarga...';
 
   try {
+    // CARGAR DATOS SOLO CUANDO SE VA A DESCARGAR
     let url = `${SUPABASE_URL}/rest/v1/formularios?fecha=gte.${desde}T00:00:00&fecha=lte.${hasta}T23:59:59&order=fecha.asc`;
     
     const response = await fetch(url, {
@@ -1869,8 +1907,6 @@ async function descargarDocentes() {
     });
     
     const data = await response.json();
-    
-    // Filtrar solo profesores
     const datosDocentes = data.filter(item => item.tipo_instructor === 'Profesor');
     
     if (datosDocentes.length === 0) {
@@ -1879,11 +1915,10 @@ async function descargarDocentes() {
     }
 
     generarExcelDocentes(datosDocentes, `PMA_Docentes_${desde}_a_${hasta}`);
-   alert(`${datosDocentes.length} registros de docentes descargados exitosamente`);
+    alert(`${datosDocentes.length} registros de docentes descargados exitosamente`);
   } catch (error) {
     alert('Error al descargar datos: ' + error.message);
   } finally {
-    // Restaurar botón
     btnDescarga.disabled = false;
     btnDescarga.textContent = textoOriginal;
   }
