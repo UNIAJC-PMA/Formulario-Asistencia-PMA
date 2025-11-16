@@ -1183,14 +1183,50 @@ async function guardarFormulario(event) {
   // Obtener asignatura (puede ser personalizada)
   let asignatura = document.getElementById('asignatura').value;
   if (asignatura === 'Otra') {
-    asignatura = document.getElementById('otraAsignatura').value;
+    asignatura = document.getElementById('otraAsignatura').value.trim().toUpperCase();
+    if (!asignatura) {
+      mostrarMensaje('mensajeFormulario', 'Por favor especifique la asignatura', 'error');
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = 'Enviar Formulario';
+      btnEnviar.style.opacity = '1';
+      btnEnviar.style.cursor = 'pointer';
+      return;
+    }
   }
 
   // Obtener tema (puede ser personalizado)
-  let tema = document.getElementById('tema').value;
-  if (tema === 'Otro') {
-    tema = document.getElementById('otroTema').value;
+const selectTema = document.getElementById('tema');
+const inputTema = document.getElementById('otroTema');
+let tema = '';
+
+// Caso 1: Select visible y con valor "Otro"
+if (selectTema.value === 'Otro') {
+  tema = inputTema.value.trim().toUpperCase();
+  if (!tema) {
+    mostrarMensaje('mensajeFormulario', 'Por favor especifique el tema', 'error');
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar Formulario';
+    btnEnviar.style.opacity = '1';
+    btnEnviar.style.cursor = 'pointer';
+    return;
   }
+}
+// Caso 2: Select oculto (no hay temas en BD o asignatura es "Otra")
+else if (selectTema.style.display === 'none') {
+  tema = inputTema.value.trim().toUpperCase();
+  if (!tema) {
+    mostrarMensaje('mensajeFormulario', 'Por favor ingrese el tema de la tutoría', 'error');
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar Formulario';
+    btnEnviar.style.opacity = '1';
+    btnEnviar.style.cursor = 'pointer';
+    return;
+  }
+}
+// Caso 3: Select visible con tema normal seleccionado
+else {
+  tema = selectTema.value;
+}
 
   const tipoAcompanamiento = document.getElementById('tipoAcompanamiento').value;
   const tituloCurso = tipoAcompanamiento === 'Curso y/o capacitación' 
