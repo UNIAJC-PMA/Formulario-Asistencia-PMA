@@ -2197,16 +2197,14 @@ function actualizarGrafica() {
       sabado.setDate(sabado.getDate() + 6);
       sabado.setHours(23, 59, 59, 999);
       
-      // Formatear las fechas para el label
+      // Formatear las fechas para el label (SIN AÑO)
       const diaD = String(domingoActual.getDate()).padStart(2, '0');
       const mesD = String(domingoActual.getMonth() + 1).padStart(2, '0');
-      const añoD = domingoActual.getFullYear();
       
       const diaS = String(sabado.getDate()).padStart(2, '0');
       const mesS = String(sabado.getMonth() + 1).padStart(2, '0');
-      const añoS = sabado.getFullYear();
       
-      const label = `${diaD}/${mesD}/${añoD} - ${diaS}/${mesS}/${añoS}`;
+      const label = `${diaD}/${mesD} - ${diaS}/${mesS}`;
       
       // Contar registros en esta semana
       const cantidad = datosFiltrados.filter(item => {
@@ -2228,9 +2226,9 @@ function actualizarGrafica() {
     // Agrupar por meses completos
     
     const meses = {};
-    const nombresMeses = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    const nombresMesesCortos = [
+      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
     ];
     
     datosFiltrados.forEach(item => {
@@ -2238,7 +2236,7 @@ function actualizarGrafica() {
       const mes = fecha.getMonth();
       const año = fecha.getFullYear();
       const claveMes = `${año}-${String(mes + 1).padStart(2, '0')}`; // Para ordenar
-      const labelMes = `${nombresMeses[mes]} ${año}`;
+      const labelMes = `${nombresMesesCortos[mes]} ${año}`;
       
       if (!meses[claveMes]) {
         meses[claveMes] = {
