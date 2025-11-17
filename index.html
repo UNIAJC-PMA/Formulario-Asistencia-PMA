@@ -422,12 +422,12 @@
         </div>
 
         <div class="form-group hidden" id="grupoSugerencias">
-          <label>Sugerencias o Comentarios</label>
-          <textarea id="sugerencias" placeholder="Escriba aquí sus sugerencias, comentarios o recomendaciones" onblur="limpiarEspacios(this)" autocomplete="off"></textarea>
-          <label class="checkbox-label">
-            <input type="checkbox" id="ningunaSugerencia" onchange="toggleSugerencias()"> No tengo sugerencias
-          </label>
-        </div>
+  <label>Sugerencias o Comentarios</label>
+  <textarea id="sugerencias" class="uppercase-input" placeholder="Escriba aquí sus sugerencias, comentarios o recomendaciones" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,.\-]/g, '')" onblur="limpiarEspacios(this)" autocomplete="off"></textarea>
+  <label class="checkbox-label">
+    <input type="checkbox" id="ningunaSugerencia" onchange="toggleSugerencias()"> No tengo sugerencias
+  </label>
+</div>
 
         <button type="submit" class="btn hidden" id="btnEnviar">Enviar Formulario</button>
         <button type="button" class="btn btn-secondary" id="btnCancelarFormulario">Cancelar</button>
