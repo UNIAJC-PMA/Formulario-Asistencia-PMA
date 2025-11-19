@@ -708,16 +708,6 @@ input[type="text"]::placeholder {
   display: flex;
 }
 
-.modal-success,
-.modal-confirmacion {
-  background: white;
-  border-radius: 12px;
-  text-align: center;
-  width: 90%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.4s ease;
-}
-
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -729,14 +719,16 @@ input[type="text"]::placeholder {
   }
 }
 
+/* Modal de éxito */
 .modal-success {
+  background: white;
   padding: 50px 40px;
+  border-radius: 12px;
+  text-align: center;
   max-width: 400px;
-}
-
-.modal-confirmacion {
-  padding: 40px 35px;
-  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
 }
 
 .success-icon {
@@ -763,43 +755,50 @@ input[type="text"]::placeholder {
   }
 }
 
-.modal-success h2,
-.modal-confirmacion h2 {
+.modal-success h2 {
   color: #1e3c72;
+  font-size: 26px;
+  margin-bottom: 15px;
   font-weight: 600;
 }
 
-.modal-success h2 {
-  font-size: 26px;
-  margin-bottom: 15px;
-}
-
-.modal-confirmacion h2 {
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-.modal-success p,
-.modal-confirmacion p {
-  color: #555;
-  line-height: 1.5;
-}
-
 .modal-success p {
+  color: #555;
   font-size: 16px;
   margin-bottom: 10px;
-}
-
-.modal-confirmacion p {
-  font-size: 15px;
-  margin-bottom: 25px;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .modal-success .small-text {
   font-size: 13px;
   color: #999;
   margin-top: 20px;
+}
+
+/* Modal de confirmación */
+.modal-confirmacion {
+  background: white;
+  padding: 40px 35px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+}
+
+.modal-confirmacion h2 {
+  color: #1e3c72;
+  font-size: 24px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.modal-confirmacion p {
+  color: #555;
+  font-size: 15px;
+  margin-bottom: 25px;
+  line-height: 1.6;
 }
 
 .modal-buttons {
