@@ -44,10 +44,14 @@ body {
   border-bottom: 3px solid #1e3c72;
 }
 
-.texto-bienvenida,
-.texto-login {
+.texto-bienvenida {
   margin-bottom: 20px;
   line-height: 1.6;
+  color: #555;
+}
+
+.texto-login {
+  margin-bottom: 20px;
   color: #555;
 }
 
@@ -73,7 +77,7 @@ body {
 }
 
 /* ===================================
-   CAJAS DE ALERTA Y CONFIRMACIÓN
+   CAJAS DE ALERTA
    =================================== */
 .alert-box {
   background: #fff3cd;
@@ -95,6 +99,9 @@ body {
   margin-top: 15px;
 }
 
+/* ===================================
+   CAJA DE CONFIRMACIÓN
+   =================================== */
 .confirmation-box {
   background: #e8f4fd;
   border: 2px solid #1e3c72;
@@ -266,11 +273,7 @@ textarea {
   text-transform: uppercase;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-input[type="password"]:focus,
-input[type="tel"]:focus,
+input:focus,
 select:focus,
 textarea:focus {
   outline: none;
@@ -286,19 +289,6 @@ textarea {
 
 .otro-tema {
   margin-top: 10px;
-}
-
-.documento-readonly {
-  background: #f5f5f5 !important;
-  color: #666;
-  cursor: not-allowed;
-  font-weight: 600;
-}
-
-input[type="text"]::placeholder {
-  color: #999;
-  font-size: 13px;
-  font-style: italic;
 }
 
 /* ===================================
@@ -365,10 +355,6 @@ input[type="text"]::placeholder {
   box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
 }
 
-.btn:active {
-  transform: translateY(1px);
-}
-
 #btnEnviar {
   background: #28a745;
 }
@@ -376,6 +362,10 @@ input[type="text"]::placeholder {
 #btnEnviar:hover {
   background: #218838;
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.btn:active {
+  transform: translateY(1px);
 }
 
 .btn-secondary {
@@ -652,19 +642,13 @@ input[type="text"]::placeholder {
 }
 
 .estadisticas-menu-wrapper .btn-sede.activo:hover {
+  background: #5ca3f5;
+  border-color: #5ca3f5;
+}
+
+.estadisticas-menu-wrapper .btn-sede:hover {
   background: #5886d6;
   border-color: #2a5298;
-}
-
-#contenidoEstadisticas {
-  width: 100%;
-}
-
-#contenidoEstadisticas .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-  margin: 0 0 20px 0;
 }
 
 /* ===================================
@@ -708,18 +692,6 @@ input[type="text"]::placeholder {
   display: flex;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Modal de éxito */
 .modal-success {
   background: white;
   padding: 50px 40px;
@@ -729,6 +701,17 @@ input[type="text"]::placeholder {
   width: 90%;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .success-icon {
@@ -775,7 +758,6 @@ input[type="text"]::placeholder {
   margin-top: 20px;
 }
 
-/* Modal de confirmación */
 .modal-confirmacion {
   background: white;
   padding: 40px 35px;
@@ -849,7 +831,6 @@ input[type="text"]::placeholder {
   border-radius: 50%;
   background: #e0e0e0;
   color: #999;
-  border: 3px solid #e0e0e0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -859,6 +840,7 @@ input[type="text"]::placeholder {
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
+  border: 3px solid #e0e0e0;
 }
 
 .progress-step.active .progress-circle {
@@ -918,7 +900,7 @@ input[type="text"]::placeholder {
 }
 
 .footer-content a {
-  color: white;
+  color: #004C8C;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
@@ -926,6 +908,22 @@ input[type="text"]::placeholder {
 
 .footer-content a:hover {
   color: #002E5D;
+}
+
+/* ===================================
+   CAMPO DE DOCUMENTO READONLY
+   =================================== */
+.documento-readonly {
+  background: #f5f5f5 !important;
+  color: #666;
+  cursor: not-allowed;
+  font-weight: 600;
+}
+
+input[type="text"]::placeholder {
+  color: #999;
+  font-size: 13px;
+  font-style: italic;
 }
 
 /* ===================================
@@ -950,7 +948,7 @@ select option[value="Otro"] {
 }
 
 /* ===================================
-   RESPONSIVE: TABLETS Y MÓVILES
+   RESPONSIVE DESIGN
    =================================== */
 @media (max-width: 768px) {
   body {
@@ -959,9 +957,10 @@ select option[value="Otro"] {
 
   .container {
     padding: 20px 12px;
+    margin: 0 auto;
     max-width: 95%;
   }
-  
+
   .section-title {
     font-size: 18px;
     margin-bottom: 15px;
@@ -1093,16 +1092,8 @@ select option[value="Otro"] {
     flex: 1 1 auto;
     min-width: 0;
   }
-
-  #contenidoEstadisticas .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
 }
 
-/* ===================================
-   RESPONSIVE: MÓVILES PEQUEÑOS
-   =================================== */
 @media (max-width: 480px) {
   body {
     padding: 5px;
@@ -1111,6 +1102,7 @@ select option[value="Otro"] {
   .container {
     padding: 15px 10px;
     max-width: 98%;
+    margin: 0 auto;
   }
 
   .section-title {
@@ -1253,23 +1245,6 @@ select option[value="Otro"] {
     font-size: 11px;
     flex: 1 1 auto;
     min-width: 0;
-  }
-
-  #contenidoEstadisticas .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .stat-card {
-    padding: 18px 12px;
-  }
-
-  .stat-card h3 {
-    font-size: 24px;
-  }
-
-  .stat-card p {
-    font-size: 11px;
   }
 
   .progress-indicator {
