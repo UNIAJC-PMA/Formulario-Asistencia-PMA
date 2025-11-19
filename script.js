@@ -28,45 +28,6 @@ let instructorActual = null;
 let formularioEnviandose = false;
 let graficoTutorias = null;
 
-// ===================================
-// MANEJO DEL BOTÓN DE RETROCESO
-// ===================================
-let pantallaActual = 'pantallaInicio';
-let historialNavegacion = ['pantallaInicio'];
-
-// Actualizar estado de navegación al cambiar de pantalla
-function actualizarHistorial(nuevaPantalla) {
-  pantallaActual = nuevaPantalla;
-  historialNavegacion.push(nuevaPantalla);
-  history.pushState({ pantalla: nuevaPantalla }, '', '');
-}
-
-window.addEventListener('popstate', function(event) {
-  // Inmediatamente volver a crear un estado para prevenir navegación real
-  history.pushState({ pantalla: pantallaActual }, '', '');
-  
-  // Determinar acción según pantalla actual
-  if (pantallaActual === 'pantallaLogin') {
-    // Desde "Llenar Formulario" → Volver a "Bienvenido"
-    volverInicio();
-  } 
-  else if (pantallaActual === 'pantallaFormulario') {
-    // Desde "Registro de Asistencia" → Mostrar modal de confirmación
-    confirmarCancelacion();
-  } 
-  else if (pantallaActual === 'pantallaRegistro') {
-    // Desde "Registro de Estudiante" → Mostrar modal de confirmación
-    confirmarCancelacion();
-  } 
-  else if (pantallaActual === 'pantallaAdminLogin') {
-    // Desde "Acceso de Administrador" → Volver a "Bienvenido"
-    volverInicio();
-  } 
-  else if (pantallaActual === 'pantallaAdmin') {
-    // Desde "Panel de Administración" → Volver a "Acceso de Administrador"
-    mostrarLoginAdmin();
-  }
-});
 
 // ===================================
 // FUNCIÓN DE REINTENTOS AUTOMÁTICOS
@@ -262,9 +223,6 @@ function mostrarPantalla(id) {
   document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  // Actualizar historial de navegación
-  actualizarHistorial(id);
 }
 
 async function mostrarLogin() {
@@ -317,7 +275,7 @@ async function mostrarRegistro() {
 function mostrarLoginAdmin() {
   mostrarPantalla('pantallaAdminLogin');
   document.getElementById('mensajeAdminLogin').innerHTML = '';
-  
+}
 
 function toggleHorarios() {
   const contenedor = document.getElementById('contenedorHorarios');
@@ -2290,10 +2248,6 @@ function obtenerNombreFacultad(codigo) {
 window.onload = function() {
   console.log('Sistema PMA con Supabase iniciado');
   console.log('Los datos se cargarán solo cuando sean necesarios.');
-  
-  // Inicializar el estado de navegación
-  history.replaceState({ pantalla: 'pantallaInicio' }, '', '');
-  pantallaActual = 'pantallaInicio';
 };
 
 // ===================================
