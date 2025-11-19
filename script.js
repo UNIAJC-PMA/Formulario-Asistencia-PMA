@@ -227,6 +227,7 @@ function mostrarPantalla(id) {
 
 async function mostrarLogin() {
   mostrarPantalla('pantallaLogin');
+  agregarHistorial('login');
   document.getElementById('mensajeLogin').innerHTML = '';
   
   // PRECARGAR DATOS DEL FORMULARIO
@@ -247,6 +248,7 @@ async function mostrarLogin() {
 
 async function mostrarRegistro() {
   mostrarPantalla('pantallaRegistro');
+  agregarHistorial('registro');
   document.getElementById('mensajeRegistro').innerHTML = '';
   document.getElementById('confirmacionDatos').classList.add('hidden');
   document.getElementById('btnConfirmarRegistro').classList.add('hidden');
@@ -274,6 +276,7 @@ async function mostrarRegistro() {
 
 function mostrarLoginAdmin() {
   mostrarPantalla('pantallaAdminLogin');
+  agregarHistorial('adminLogin');
   document.getElementById('mensajeAdminLogin').innerHTML = '';
 }
 
@@ -637,6 +640,7 @@ async function iniciarSesion(event) {
 
     formularioEnviandose = false;
     mostrarPantalla('pantallaFormulario');
+    agregarHistorial('formulario');
     document.getElementById('nombreUsuario').textContent = 'Bienvenido(a): ' + datosEstudiante.nombreCensurado;
     document.getElementById('mensajeFormulario').innerHTML = '';
     actualizarBotonCerrarSesion();
@@ -1349,6 +1353,7 @@ async function loginAdmin(event) {
 
     document.getElementById('nombreAdmin').textContent = 'Administrador: ' + data[0].nombre;
     mostrarPantalla('pantallaAdmin');
+    agregarHistorial('admin');
     // Ya NO cargamos estadísticas aquí, se cargan cuando el admin hace clic
   } catch (error) {
     mostrarMensaje('mensajeAdminLogin', 'Error de conexión: ' + error.message, 'error');
@@ -2242,12 +2247,56 @@ function obtenerNombreFacultad(codigo) {
   return nombres[codigo] || codigo;
 }
 
+
+
+// ===================================
+// MANEJO DEL BOTÓN ATRÁS DEL NAVEGADOR
+// ===================================
+window.addEventListener('popstate', function(event) {
+  // Verificar si hay un estado guardado
+  if (event.state && event.state.pantalla) {
+    // Restaurar la pantalla correspondiente
+    const pantalla = event.state.pantalla;
+    
+    // Manejar cada pantalla específicamente
+    if (pantalla === 'inicio') {
+      volverInicio();
+    } else if (pantalla === 'login') {
+      mostrarLogin();
+    } else if (pantalla === 'registro') {
+      mostrarRegistro();
+    } else if (pantalla === 'formulario') {
+      // Si está en el formulario, preguntar si quiere salir
+      if (formularioEnviandose) {
+        confirmarCancelacion();
+      } else {
+        cerrarSesion();
+      }
+    } else if (pantalla === 'adminLogin') {
+      mostrarLoginAdmin();
+    } else if (pantalla === 'admin') {
+      // Ya está en admin, no hacer nada
+    }
+  } else {
+    // Si no hay estado, ir al inicio
+    volverInicio();
+  }
+});
+
+// Función para agregar entrada al historial
+function agregarHistorial(pantalla) {
+  history.pushState({ pantalla: pantalla }, '', '');
+}
+
 // ===================================
 // INICIALIZACIÓN
 // ===================================
 window.onload = function() {
   console.log('Sistema PMA con Supabase iniciado');
   console.log('Los datos se cargarán solo cuando sean necesarios.');
+  
+  // Establecer estado inicial
+  history.replaceState({ pantalla: 'inicio' }, '', '');
 };
 
 // ===================================
