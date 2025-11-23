@@ -1240,9 +1240,7 @@ else {
     formularioEnviandose = false;
     
     setTimeout(() => {
-      modal.style.display = 'none';
-      modal.classList.add('hidden');
-      cerrarSesion();
+      location.reload(); // Recargar página para limpiar todo
     }, 3000);
   } catch (error) {
     mostrarMensaje('mensajeFormulario', error.message, 'error');
@@ -1255,13 +1253,6 @@ else {
 }
 
 function cerrarSesion() {
-
-// Resetear paginación
-  paginaFormularioActual = 1;
-  document.getElementById('paginaFormulario1').classList.remove('hidden');
-  document.getElementById('paginaFormulario2').classList.add('hidden');
-  document.getElementById('btnEnviar').classList.add('hidden');
-  
   datosEstudiante = null;
   instructorActual = null;
   formularioEnviandose = false;
@@ -1275,6 +1266,12 @@ function cerrarSesion() {
     btnEnviar.style.cursor = 'pointer';
   }
   
+  // Resetear paginación
+  paginaFormularioActual = 1;
+  document.getElementById('paginaFormulario1').classList.remove('hidden');
+  document.getElementById('paginaFormulario2').classList.add('hidden');
+  document.getElementById('btnEnviar').classList.add('hidden');
+  
   document.querySelectorAll('.progress-step').forEach(step => {
     step.classList.remove('active', 'completed');
   });
@@ -1284,7 +1281,10 @@ function cerrarSesion() {
     primerPaso.classList.add('active');
   }
   
-  volverInicio();
+  // Recargar la página para limpiar todo
+  setTimeout(() => {
+    location.reload();
+  }, 300);
 }
 
 // ===================================
