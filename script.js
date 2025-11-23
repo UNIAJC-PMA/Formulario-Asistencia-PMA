@@ -8,7 +8,8 @@ let datosEstudiante = null;
 let instructorActual = null;
 let formularioEnviandose = false;
 let graficoTutorias = null;
-let seccionFormularioActual = 1; // 1 = primera sección, 2 = segunda sección
+// Variable para controlar la página actual del formulario
+let paginaFormularioActual = 1;
 
 // Cache de datos precargados
 const datosCache = {
@@ -883,10 +884,8 @@ function cargarTemas() {
     const labelTema = document.querySelector('#grupoTema label');
     labelTema.textContent = 'Tema *';
     
-    document.getElementById('grupoMotivo').classList.remove('hidden');
-    document.getElementById('grupoCalificacion').classList.remove('hidden');
-    document.getElementById('grupoSugerencias').classList.remove('hidden');
-    document.getElementById('btnEnviar').classList.remove('hidden');
+document.getElementById('grupoMotivo').classList.remove('hidden');
+// NO mostrar calificación y sugerencias aquí, están en página 2
     
     formularioEnviandose = true;
     actualizarBotonCerrarSesion();
@@ -947,171 +946,11 @@ function cargarTemas() {
   }
 
 document.getElementById('grupoMotivo').classList.remove('hidden');
-  document.getElementById('grupoCalificacion').classList.remove('hidden');
-  document.getElementById('grupoSugerencias').classList.remove('hidden');
-  document.getElementById('btnEnviar').classList.remove('hidden');
-  
-  // Mostrar navegación del formulario
-  document.getElementById('formNavigation').classList.remove('hidden');
-  
-  // Inicialmente mostrar solo la primera sección
-  seccionFormularioActual = 1;
-  mostrarSeccionFormulario(1);
+// NO mostrar calificación y sugerencias aquí, están en página 2
   
   formularioEnviandose = true;
   actualizarBotonCerrarSesion();
   actualizarProgreso(4);
-}
-
-// ===================================
-// NAVEGACIÓN ENTRE SECCIONES DEL FORMULARIO
-// ===================================
-function cambiarSeccionFormulario(direccion) {
-  if (direccion === 'siguiente' && seccionFormularioActual === 1) {
-    // Validar que los campos obligatorios de la primera sección estén completos
-    const camposRequeridos = [
-      { id: 'semestre', nombre: 'Semestre' },
-      { id: 'grupo', nombre: 'Grupo Académico' },
-      { id: 'tipoAcompanamiento', nombre: 'Tipo de acompañamiento' },
-      { id: 'sedeTutoria', nombre: 'Sede' },
-      { id: 'tipoInstructor', nombre: '¿Quién impartió la tutoría?' },
-      { id: 'instructor', nombre: 'Instructor' },
-      { id: 'asignatura', nombre: 'Asignatura' },
-      { id: 'tema', nombre: 'Tema' },
-      { id: 'motivoConsulta', nombre: 'Motivo de consulta' }
-    ];
-    
-    // Verificar campos especiales
-    const tipoAcompanamiento = document.getElementById('tipoAcompanamiento').value;
-    if (tipoAcompanamiento === 'Curso y/o capacitación') {
-      const tituloCurso = document.getElementById('tituloCurso').value.trim();
-      if (!tituloCurso) {
-        mostrarMensaje('mensajeFormulario', 'Por favor complete el título del curso/capacitación', 'error');
-        return;
-      }
-    }
-    
-    const tipoInstructor = document.getElementById('tipoInstructor').value;
-    if (tipoInstructor === 'Profesor') {
-      const facultadDepartamento = document.getElementById('facultadDepartamento').value;
-      if (!facultadDepartamento) {
-        mostrarMensaje('mensajeFormulario', 'Por favor seleccione la Facultad/Departamento', 'error');
-        return;
-      }
-    }
-    
-    const asignatura = document.getElementById('asignatura').value;
-    if (asignatura === 'Otra') {
-      const otraAsignatura = document.getElementById('otraAsignatura').value.trim();
-      if (!otraAsignatura) {
-        mostrarMensaje('mensajeFormulario', 'Por favor especifique la asignatura', 'error');
-        return;
-      }
-    }
-    
-    const tema = document.getElementById('tema').value;
-    const selectTema = document.getElementById('tema');
-    if (selectTema.style.display !== 'none' && tema === 'Otro') {
-      const otroTema = document.getElementById('otroTema').value.trim();
-      if (!otroTema) {
-        mostrarMensaje('mensajeFormulario', 'Por favor especifique el tema', 'error');
-        return;
-      }
-    } else if (selectTema.style.display === 'none') {
-      const otroTema = document.getElementById('otroTema').value.trim();
-      if (!otroTema) {
-        mostrarMensaje('mensajeFormulario', 'Por favor ingrese el tema de la tutoría', 'error');
-        return;
-      }
-    }
-    
-    // Validar campos básicos
-    for (const campo of camposRequeridos) {
-      const elemento = document.getElementById(campo.id);
-      if (!elemento.value || elemento.value === '') {
-        mostrarMensaje('mensajeFormulario', `Por favor complete el campo: ${campo.nombre}`, 'error');
-        return;
-      }
-    }
-    
-    // Si todo está completo, pasar a la siguiente sección
-    seccionFormularioActual = 2;
-    mostrarSeccionFormulario(2);
-    
-  } else if (direccion === 'atras' && seccionFormularioActual === 2) {
-    seccionFormularioActual = 1;
-    mostrarSeccionFormulario(1);
-  }
-}
-
-function mostrarSeccionFormulario(seccion) {
-  const btnAtras = document.getElementById('btnAtras');
-  const btnSiguiente = document.getElementById('btnSiguiente');
-  const btnEnviar = document.getElementById('btnEnviar');
-  
-  // Ocultar mensaje de error si existe
-  document.getElementById('mensajeFormulario').innerHTML = '';
-  
-  if (seccion === 1) {
-    // MOSTRAR SECCIÓN 1
-    // Mostrar todos los campos de la primera sección
-    const camposSeccion1 = [
-      'semestre', 'grupo', 'tipoAcompanamiento', 'grupoTituloCurso',
-      'sedeTutoria', 'tipoInstructor', 'grupoFacultadDepartamento',
-      'grupoInstructor', 'grupoMateria', 'grupoTema', 'grupoMotivo'
-    ];
-    
-    camposSeccion1.forEach(id => {
-      const elemento = document.getElementById(id);
-      if (elemento) {
-        // Solo mostrar si es un grupo que ya estaba visible
-        if (id === 'semestre' || id === 'grupo' || id === 'tipoAcompanamiento' || 
-            id === 'sedeTutoria' || id === 'tipoInstructor') {
-          elemento.closest('.form-group').classList.remove('hidden');
-        } else if (!elemento.classList.contains('form-group')) {
-          elemento.classList.remove('hidden');
-        } else {
-          elemento.classList.remove('hidden');
-        }
-      }
-    });
-    
-    // Ocultar segunda sección
-    document.getElementById('grupoCalificacion').classList.add('hidden');
-    document.getElementById('grupoSugerencias').classList.add('hidden');
-    btnEnviar.classList.add('hidden');
-    
-    // Mostrar flecha derecha, ocultar flecha izquierda
-    btnAtras.classList.add('hidden');
-    btnSiguiente.classList.remove('hidden');
-    
-    // Hacer scroll al inicio del formulario
-    setTimeout(() => {
-      document.getElementById('formTutoria').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-    
-  } else if (seccion === 2) {
-    // OCULTAR SECCIÓN 1
-    // Ocultar todos los campos de la primera sección
-    const fieldsToHide = document.querySelectorAll('#formTutoria .form-group:not(#grupoCalificacion):not(#grupoSugerencias)');
-    fieldsToHide.forEach(field => {
-      field.classList.add('hidden');
-    });
-    
-    // MOSTRAR SECCIÓN 2
-    document.getElementById('grupoCalificacion').classList.remove('hidden');
-    document.getElementById('grupoSugerencias').classList.remove('hidden');
-    btnEnviar.classList.remove('hidden');
-    
-    // Mostrar flecha izquierda, ocultar flecha derecha
-    btnAtras.classList.remove('hidden');
-    btnSiguiente.classList.add('hidden');
-    
-    // Hacer scroll a la sección de calificación
-    setTimeout(() => {
-      document.getElementById('grupoCalificacion').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
 }
 
 function toggleOtroTema() {
@@ -1400,10 +1239,6 @@ else {
     document.getElementById('btnEnviar').classList.add('hidden');
     formularioEnviandose = false;
     
-    // Ocultar navegación del formulario
-    document.getElementById('formNavigation').classList.add('hidden');
-    seccionFormularioActual = 1;
-    
     setTimeout(() => {
       modal.style.display = 'none';
       modal.classList.add('hidden');
@@ -1420,10 +1255,16 @@ else {
 }
 
 function cerrarSesion() {
+
+// Resetear paginación
+  paginaFormularioActual = 1;
+  document.getElementById('paginaFormulario1').classList.remove('hidden');
+  document.getElementById('paginaFormulario2').classList.add('hidden');
+  document.getElementById('btnEnviar').classList.add('hidden');
+  
   datosEstudiante = null;
   instructorActual = null;
   formularioEnviandose = false;
-  seccionFormularioActual = 1; // Resetear sección
   
   // REACTIVAR BOTÓN DE ENVIAR
   const btnEnviar = document.getElementById('btnEnviar');
@@ -2703,4 +2544,124 @@ window.addEventListener('load', function() {
 // Prevenir que el navegador restaure el scroll al usar el botón de retroceso
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
+}
+
+// ===================================
+// FUNCIONES DE PAGINACIÓN
+// ===================================
+function validarPagina1() {
+  const semestre = document.getElementById('semestre').value;
+  const grupo = document.getElementById('grupo').value;
+  const tipoAcompanamiento = document.getElementById('tipoAcompanamiento').value;
+  const sedeTutoria = document.getElementById('sedeTutoria').value;
+  const tipoInstructor = document.getElementById('tipoInstructor').value;
+  const instructor = document.getElementById('instructor').value;
+  const asignatura = document.getElementById('asignatura').value;
+  const motivoConsulta = document.getElementById('motivoConsulta').value;
+
+  // Validar campos básicos
+  if (!semestre || !grupo || !tipoAcompanamiento || !sedeTutoria || !tipoInstructor || !instructor || !asignatura || !motivoConsulta) {
+    return { valido: false, mensaje: 'Por favor complete todos los campos obligatorios de esta sección' };
+  }
+
+  // Validar título del curso si es necesario
+  if (tipoAcompanamiento === 'Curso y/o capacitación') {
+    const tituloCurso = document.getElementById('tituloCurso').value.trim();
+    if (!tituloCurso) {
+      return { valido: false, mensaje: 'Por favor ingrese el título del curso/capacitación' };
+    }
+  }
+
+  // Validar facultad/departamento si es profesor
+  if (tipoInstructor === 'Profesor') {
+    const facultadDepartamento = document.getElementById('facultadDepartamento').value;
+    if (!facultadDepartamento) {
+      return { valido: false, mensaje: 'Por favor seleccione una facultad/departamento' };
+    }
+  }
+
+  // Validar asignatura personalizada si es necesaria
+  if (asignatura === 'Otra') {
+    const otraAsignatura = document.getElementById('otraAsignatura').value.trim();
+    if (!otraAsignatura) {
+      return { valido: false, mensaje: 'Por favor especifique la asignatura' };
+    }
+  }
+
+  // Validar tema
+  const selectTema = document.getElementById('tema');
+  const inputTema = document.getElementById('otroTema');
+  
+  if (selectTema.style.display === 'none') {
+    // Si el select está oculto, validar el input
+    if (!inputTema.value.trim()) {
+      return { valido: false, mensaje: 'Por favor ingrese el tema de la tutoría' };
+    }
+  } else {
+    // Si el select está visible
+    const tema = selectTema.value;
+    if (!tema) {
+      return { valido: false, mensaje: 'Por favor seleccione un tema' };
+    }
+    
+    if (tema === 'Otro') {
+      if (!inputTema.value.trim()) {
+        return { valido: false, mensaje: 'Por favor especifique el tema' };
+      }
+    }
+  }
+
+  return { valido: true };
+}
+
+function avanzarPagina() {
+  if (paginaFormularioActual === 1) {
+    // Validar página 1 antes de avanzar
+    const validacion = validarPagina1();
+    
+    if (!validacion.valido) {
+      mostrarMensaje('mensajeFormulario', validacion.mensaje, 'error');
+      return;
+    }
+    
+    // Ocultar página 1, mostrar página 2
+    document.getElementById('paginaFormulario1').classList.add('hidden');
+    document.getElementById('paginaFormulario2').classList.remove('hidden');
+    document.getElementById('btnEnviar').classList.remove('hidden');
+    document.getElementById('mensajeFormulario').innerHTML = '';
+    
+    paginaFormularioActual = 2;
+    
+    // Scroll al inicio del formulario
+    setTimeout(() => {
+      document.getElementById('paginaFormulario2').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }, 100);
+    
+    actualizarProgreso(4);
+  }
+}
+
+function retrocederPagina() {
+  if (paginaFormularioActual === 2) {
+    // Ocultar página 2, mostrar página 1
+    document.getElementById('paginaFormulario2').classList.add('hidden');
+    document.getElementById('paginaFormulario1').classList.remove('hidden');
+    document.getElementById('btnEnviar').classList.add('hidden');
+    document.getElementById('mensajeFormulario').innerHTML = '';
+    
+    paginaFormularioActual = 1;
+    
+    // Scroll al inicio del formulario
+    setTimeout(() => {
+      document.getElementById('paginaFormulario1').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }, 100);
+    
+    actualizarProgreso(3);
+  }
 }
