@@ -1330,23 +1330,33 @@ select option[value="Otro"] {
   select option[value="Otro"] {
     font-weight: bold !important;
   }
-
+/* ===================================
+   PAGINACIÓN DEL FORMULARIO
+   =================================== */
+.pagina-formulario {
+  animation: fadeInPage 0.4s ease;
 }
 
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
-/* ===================================
-   NAVEGACIÓN DEL FORMULARIO (FLECHAS)
-   =================================== */
-.form-navigation {
+.navegacion-formulario {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
-  margin: 30px 0;
-  padding: 20px 0;
+  margin: 30px 0 20px 0;
+  gap: 20px;
 }
 
-.nav-arrow {
+.btn-flecha {
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -1362,42 +1372,33 @@ select option[value="Otro"] {
   box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
 }
 
-.nav-arrow:hover {
+.btn-flecha:hover {
   background: #2a5298;
   transform: scale(1.1);
   box-shadow: 0 6px 16px rgba(30, 60, 114, 0.4);
 }
 
-.nav-arrow:active {
+.btn-flecha:active {
   transform: scale(0.95);
 }
 
-.nav-arrow.hidden {
-  display: none;
+.btn-flecha-izquierda {
+  transform: rotate(180deg);
 }
 
-@media (max-width: 768px) {
-  .form-navigation {
-    gap: 30px;
-    margin: 25px 0;
-  }
-  
-  .nav-arrow {
-    width: 55px;
-    height: 55px;
-    font-size: 24px;
-  }
+.btn-flecha-izquierda:hover {
+  transform: rotate(180deg) scale(1.1);
+}
+
+.btn-flecha-izquierda:active {
+  transform: rotate(180deg) scale(0.95);
 }
 
 @media (max-width: 480px) {
-  .form-navigation {
-    gap: 25px;
-    margin: 20px 0;
-  }
-  
-  .nav-arrow {
+  .btn-flecha {
     width: 50px;
     height: 50px;
-    font-size: 22px;
+    font-size: 24px;
   }
+}
 }
