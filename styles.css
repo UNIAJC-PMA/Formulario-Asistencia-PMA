@@ -1330,6 +1330,10 @@ select option[value="Otro"] {
   select option[value="Otro"] {
     font-weight: bold !important;
   }
+
+  }
+
+
 /* ===================================
    PAGINACIÓN DEL FORMULARIO
    =================================== */
@@ -1400,5 +1404,4 @@ select option[value="Otro"] {
     height: 50px;
     font-size: 24px;
   }
-}
 }
