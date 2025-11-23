@@ -1053,7 +1053,29 @@ function mostrarSeccionFormulario(seccion) {
   document.getElementById('mensajeFormulario').innerHTML = '';
   
   if (seccion === 1) {
-    // PRIMERA SECCIÓN: Mostrar campos desde semestre hasta motivo de consulta
+    // MOSTRAR SECCIÓN 1
+    // Mostrar todos los campos de la primera sección
+    const camposSeccion1 = [
+      'semestre', 'grupo', 'tipoAcompanamiento', 'grupoTituloCurso',
+      'sedeTutoria', 'tipoInstructor', 'grupoFacultadDepartamento',
+      'grupoInstructor', 'grupoMateria', 'grupoTema', 'grupoMotivo'
+    ];
+    
+    camposSeccion1.forEach(id => {
+      const elemento = document.getElementById(id);
+      if (elemento) {
+        // Solo mostrar si es un grupo que ya estaba visible
+        if (id === 'semestre' || id === 'grupo' || id === 'tipoAcompanamiento' || 
+            id === 'sedeTutoria' || id === 'tipoInstructor') {
+          elemento.closest('.form-group').classList.remove('hidden');
+        } else if (!elemento.classList.contains('form-group')) {
+          elemento.classList.remove('hidden');
+        } else {
+          elemento.classList.remove('hidden');
+        }
+      }
+    });
+    
     // Ocultar segunda sección
     document.getElementById('grupoCalificacion').classList.add('hidden');
     document.getElementById('grupoSugerencias').classList.add('hidden');
@@ -1069,7 +1091,14 @@ function mostrarSeccionFormulario(seccion) {
     }, 100);
     
   } else if (seccion === 2) {
-    // SEGUNDA SECCIÓN: Mostrar calificación y sugerencias
+    // OCULTAR SECCIÓN 1
+    // Ocultar todos los campos de la primera sección
+    const fieldsToHide = document.querySelectorAll('#formTutoria .form-group:not(#grupoCalificacion):not(#grupoSugerencias)');
+    fieldsToHide.forEach(field => {
+      field.classList.add('hidden');
+    });
+    
+    // MOSTRAR SECCIÓN 2
     document.getElementById('grupoCalificacion').classList.remove('hidden');
     document.getElementById('grupoSugerencias').classList.remove('hidden');
     btnEnviar.classList.remove('hidden');
