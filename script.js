@@ -1080,18 +1080,11 @@ async function guardarFormulario(event) {
     }, 100);
     
     setTimeout(() => {
-      grupoCalificacion.style.background = '#fff3cd';
-      grupoCalificacion.style.padding = '20px';
-      grupoCalificacion.style.borderRadius = '8px';
-      grupoCalificacion.style.border = '3px solid #ffffffff';
-      grupoCalificacion.style.transition = 'all 0.3s';
-      grupoCalificacion.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5)';
+      // Agregar clase CSS en lugar de estilos inline
+      grupoCalificacion.classList.add('resaltar-campo');
       
       setTimeout(() => {
-        grupoCalificacion.style.background = '';
-        grupoCalificacion.style.padding = '';
-        grupoCalificacion.style.border = '';
-        grupoCalificacion.style.boxShadow = '';
+        grupoCalificacion.classList.remove('resaltar-campo');
       }, 2000);
     }, 600);
     
@@ -2632,13 +2625,8 @@ function avanzarPagina() {
     
     paginaFormularioActual = 2;
     
-    // Scroll al inicio del formulario
-    setTimeout(() => {
-      document.getElementById('paginaFormulario2').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
-    }, 100);
+   // Scroll al inicio de la página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     actualizarProgreso(4);
   }
@@ -2654,13 +2642,8 @@ function retrocederPagina() {
     
     paginaFormularioActual = 1;
     
-    // Scroll al inicio del formulario
-    setTimeout(() => {
-      document.getElementById('paginaFormulario1').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
-    }, 100);
+// Scroll al inicio de la página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     actualizarProgreso(3);
   }
