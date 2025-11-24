@@ -1569,13 +1569,21 @@ function mostrarEstadisticas(tipo, botonClickeado) {
 
   const grid = document.getElementById('contenidoEstadisticas');
   
-  // GENERAL: Solo 3 cards
+  // GENERAL: 4 cards (agregando Beneficiados)
   if (tipo === 'general') {
+    // Calcular estudiantes únicos (beneficiados)
+    const estudiantesUnicos = new Set(datosFiltrados.map(item => item.documento));
+    const cantidadBeneficiados = estudiantesUnicos.size;
+    
     grid.innerHTML = `
       <div class="stats-grid">
         <div class="stat-card">
           <h3>${stats.total}</h3>
           <p>Total de Registros</p>
+        </div>
+        <div class="stat-card">
+          <h3>${cantidadBeneficiados}</h3>
+          <p>Beneficiados</p>
         </div>
         <div class="stat-card">
           <h3>${promedioCalificacion}</h3>
