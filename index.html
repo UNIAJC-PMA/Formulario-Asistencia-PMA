@@ -418,27 +418,88 @@
 <!-- PÁGINA 2 DEL FORMULARIO -->
 <div id="paginaFormulario2" class="pagina-formulario hidden">
   <div class="form-group" id="grupoCalificacion">
-    <label>Calificación de la tutoría *</label>
-    <p class="texto-calificacion">
-      Evalúe la calidad de la tutoría recibida<br>
-      1 = Deficiente<br>
-      5 = Excelente
-    </p>
-    <div class="rating">
-      <input type="radio" name="calificacion" id="cal1" value="1">
-      <label for="cal1">1</label>
-      <input type="radio" name="calificacion" id="cal2" value="2">
-      <label for="cal2">2</label>
-      <input type="radio" name="calificacion" id="cal3" value="3">
-      <label for="cal3">3</label>
-      <input type="radio" name="calificacion" id="cal4" value="4">
-      <label for="cal4">4</label>
-      <input type="radio" name="calificacion" id="cal5" value="5">
-      <label for="cal5">5</label>
-    </div>
+  <label>Calificación de la tutoría *</label>
+  <p class="texto-calificacion">
+    Evalúe la calidad de la tutoría recibida<br>
+    1 = Deficiente<br>
+    5 = Excelente
+  </p>
+  <div class="rating">
+    <input type="radio" name="calificacion" id="cal1" value="1">
+    <label for="cal1">1</label>
+    <input type="radio" name="calificacion" id="cal2" value="2">
+    <label for="cal2">2</label>
+    <input type="radio" name="calificacion" id="cal3" value="3">
+    <label for="cal3">3</label>
+    <input type="radio" name="calificacion" id="cal4" value="4">
+    <label for="cal4">4</label>
+    <input type="radio" name="calificacion" id="cal5" value="5">
+    <label for="cal5">5</label>
   </div>
+</div>
 
-  <div class="form-group" id="grupoSugerencias">
+<!-- TÍTULO SECCIÓN OPCIONAL -->
+<h3 class="seccion-opcional-titulo">Ayúdanos a mejorar (Opcional)</h3>
+
+<div class="form-group">
+  <label>¿Se resolvieron tus dudas?</label>
+  <div class="rating">
+    <input type="radio" name="dudas_resueltas" id="dudas1" value="1">
+    <label for="dudas1">1</label>
+    <input type="radio" name="dudas_resueltas" id="dudas2" value="2">
+    <label for="dudas2">2</label>
+    <input type="radio" name="dudas_resueltas" id="dudas3" value="3">
+    <label for="dudas3">3</label>
+    <input type="radio" name="dudas_resueltas" id="dudas4" value="4">
+    <label for="dudas4">4</label>
+    <input type="radio" name="dudas_resueltas" id="dudas5" value="5">
+    <label for="dudas5">5</label>
+  </div>
+</div>
+  
+<div class="form-group">
+  <label>¿El tutor demostró dominio del tema?</label>
+  <div class="rating">
+    <input type="radio" name="dominio_tema" id="dominio1" value="1">
+    <label for="dominio1">1</label>
+    <input type="radio" name="dominio_tema" id="dominio2" value="2">
+    <label for="dominio2">2</label>
+    <input type="radio" name="dominio_tema" id="dominio3" value="3">
+    <label for="dominio3">3</label>
+    <input type="radio" name="dominio_tema" id="dominio4" value="4">
+    <label for="dominio4">4</label>
+    <input type="radio" name="dominio_tema" id="dominio5" value="5">
+    <label for="dominio5">5</label>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Ambiente adecuado para concentrarte</label>
+  <div class="rating">
+    <input type="radio" name="ambiente" id="ambiente1" value="1">
+    <label for="ambiente1">1</label>
+    <input type="radio" name="ambiente" id="ambiente2" value="2">
+    <label for="ambiente2">2</label>
+    <input type="radio" name="ambiente" id="ambiente3" value="3">
+    <label for="ambiente3">3</label>
+    <input type="radio" name="ambiente" id="ambiente4" value="4">
+    <label for="ambiente4">4</label>
+    <input type="radio" name="ambiente" id="ambiente5" value="5">
+    <label for="ambiente5">5</label>
+  </div>
+</div>
+  
+<div class="form-group">
+  <label>¿Recomendarías el PMA?</label>
+  <div class="rating rating-si-no">
+    <input type="radio" name="recomienda_pma" id="pma_si" value="Si">
+    <label for="pma_si" class="label-si-no">Sí</label>
+    <input type="radio" name="recomienda_pma" id="pma_no" value="No">
+    <label for="pma_no" class="label-si-no">No</label>
+  </div>
+</div>
+
+<div class="form-group" id="grupoSugerencias">
     <label>Sugerencias o Comentarios</label>
     <textarea id="sugerencias" class="uppercase-input" placeholder="Escriba aquí sus sugerencias, comentarios o recomendaciones" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,.\-]/g, '')" onblur="limpiarEspacios(this)" autocomplete="off"></textarea>
     <label class="checkbox-label">
