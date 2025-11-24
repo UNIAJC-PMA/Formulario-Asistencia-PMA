@@ -1059,34 +1059,36 @@ async function guardarFormulario(event) {
   
   const btnEnviar = document.getElementById('btnEnviar');
   
-  // Validar la calificación
+  // ===================================
+  // VALIDACIÓN DE TODAS LAS CALIFICACIONES
+  // ===================================
   const calificacionRadio = document.querySelector('input[name="calificacion"]:checked');
+  const dudasResueltasRadio = document.querySelector('input[name="dudas_resueltas"]:checked');
+  const dominioTemaRadio = document.querySelector('input[name="dominio_tema"]:checked');
+  const ambienteRadio = document.querySelector('input[name="ambiente"]:checked');
+  const recomendaPmaRadio = document.querySelector('input[name="recomienda_pma"]:checked');
   
-  if (!calificacionRadio) {
-    const grupoCalificacion = document.getElementById('grupoCalificacion');
+  // Validar que todas las calificaciones estén respondidas
+  if (!calificacionRadio || !dudasResueltasRadio || !dominioTemaRadio || !ambienteRadio || !recomendaPmaRadio) {
+    let camposFaltantes = [];
     
-    if (grupoCalificacion.classList.contains('hidden')) {
-      mostrarMensaje('mensajeFormulario', 'Debe completar el formulario hasta la sección de calificación', 'error');
-      return;
-    }
+    if (!calificacionRadio) camposFaltantes.push('Calificación de la tutoría');
+    if (!dudasResueltasRadio) camposFaltantes.push('¿Se resolvieron tus dudas?');
+    if (!dominioTemaRadio) camposFaltantes.push('¿El tutor demostró dominio del tema?');
+    if (!ambienteRadio) camposFaltantes.push('¿Ambiente adecuado para concentrarte?');
+    if (!recomendaPmaRadio) camposFaltantes.push('¿Recomendarías el PMA?');
     
-    mostrarMensaje('mensajeFormulario', 'seleccione una calificación para la tutoría', 'error');
+    mostrarMensaje('mensajeFormulario', 
+      `Por favor responde todas las preguntas de calificación: ${camposFaltantes.join(', ')}`, 
+      'error');
     
+    // Scroll al mensaje de error
     setTimeout(() => {
-      grupoCalificacion.scrollIntoView({ 
+      document.getElementById('mensajeFormulario').scrollIntoView({ 
         behavior: 'smooth', 
         block: 'center' 
       });
     }, 100);
-    
-    setTimeout(() => {
-      // Agregar clase CSS en lugar de estilos inline
-      grupoCalificacion.classList.add('resaltar-campo');
-      
-      setTimeout(() => {
-        grupoCalificacion.classList.remove('resaltar-campo');
-      }, 2000);
-    }, 600);
     
     return;
   }
@@ -1188,7 +1190,7 @@ else {
   // Obtener el valor de facultad_departamento (puede estar vacío si es tutor)
   const facultadDepartamentoValue = document.getElementById('facultadDepartamento').value || null;
   
-  const datos = {
+const datos = {
     documento: datosEstudiante.documento,
     nombres: datosEstudiante.nombres,
     apellidos: datosEstudiante.apellidos,
@@ -1207,6 +1209,10 @@ else {
     tema: tema,
     motivo_consulta: document.getElementById('motivoConsulta').value,
     calificacion: parseInt(calificacionRadio.value),
+    dudas_resueltas: parseInt(dudasResueltasRadio.value),
+    dominio_tema: parseInt(dominioTemaRadio.value),
+    ambiente: parseInt(ambienteRadio.value),
+    recomienda_pma: parseInt(recomendaPmaRadio.value),
     sugerencias: document.getElementById('sugerencias').value.toUpperCase() || 'Ninguna',
     fecha: fechaISO
   };
@@ -2010,6 +2016,10 @@ function generarExcelCompleto(datos, nombreArchivo) {
       'Tema': fila.tema,
       'Motivo Consulta': fila.motivo_consulta || '',
       'Calificación': fila.calificacion,
+      'Dudas Resueltas': fila.dudas_resueltas || '',
+      'Dominio del Tema': fila.dominio_tema || '',
+      'Ambiente': fila.ambiente || '',
+      'Recomienda PMA': fila.recomienda_pma || '',
       'Sugerencias': fila.sugerencias || ''
     };
   });
@@ -2039,11 +2049,12 @@ function generarExcelCompleto(datos, nombreArchivo) {
 
   ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
 
-  ws['!cols'] = [
+ws['!cols'] = [
     { wch: 12 }, { wch: 8 }, { wch: 12 }, { wch: 20 }, { wch: 20 },
     { wch: 35 }, { wch: 35 }, { wch: 10 }, { wch: 10 }, { wch: 20 },
     { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 40 },
-    { wch: 25 }, { wch: 30 }, { wch: 30 }, { wch: 25 }, { wch: 12 }, { wch: 40 }
+    { wch: 25 }, { wch: 30 }, { wch: 30 }, { wch: 25 }, { wch: 12 },
+    { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 15 }, { wch: 40 }
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, "Registros Completos");
