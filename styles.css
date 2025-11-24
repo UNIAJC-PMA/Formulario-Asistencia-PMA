@@ -1414,3 +1414,17 @@ select option[value="Otro"] {
     font-size: 24px;
   }
 }
+
+/* ===================================
+   MAYOR SEPARACIÓN ENTRE PREGUNTAS
+   =================================== */
+.form-group {
+  margin-bottom: 30px !important; /* Aumentado de 18px a 30px */
+}
+
+@media (max-width: 480px) {
+  .seccion-opcional-titulo {
+    font-size: 14px;
+    margin: 30px 0 20px 0;
+  }
+}
