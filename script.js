@@ -1507,7 +1507,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     sedesTutorias: {},
     calificacionesPorInstructor: {},
     facultadDepartamento: {},
-    sumaCalificaciones: 0
+    sumaCalificacionesTotal: 0
   };
 
   datosFiltrados.forEach(item => {
@@ -1521,13 +1521,20 @@ function mostrarEstadisticas(tipo, botonClickeado) {
 
     stats.sedesTutorias[sede] = (stats.sedesTutorias[sede] || 0) + 1;
 
+    // NUEVO CÁLCULO: Promedio de 3 preguntas por tutoría
+    const calificacionTutoria = item.calificacion || 0;
+    const dudasResueltas = item.dudas_resueltas || 0;
+    const dominioTema = item.dominio_tema || 0;
+    
+    const promedioTutoria = (calificacionTutoria + dudasResueltas + dominioTema) / 3;
+    
     if (!stats.calificacionesPorInstructor[instructor]) {
       stats.calificacionesPorInstructor[instructor] = { suma: 0, cantidad: 0 };
     }
-    stats.calificacionesPorInstructor[instructor].suma += item.calificacion;
+    stats.calificacionesPorInstructor[instructor].suma += promedioTutoria;
     stats.calificacionesPorInstructor[instructor].cantidad += 1;
 
-    stats.sumaCalificaciones += item.calificacion;
+    stats.sumaCalificacionesTotal += promedioTutoria;
 
     // Para profesores: contar por facultad/departamento
     if (tipo === 'profesores' && item.facultad_departamento) {
@@ -1535,7 +1542,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     }
   });
 
-  const promedioCalificacion = (stats.sumaCalificaciones / stats.total).toFixed(2);
+  const promedioCalificacion = (stats.sumaCalificacionesTotal / stats.total).toFixed(2);
 
   const promediosPorInstructor = {};
   Object.keys(stats.calificacionesPorInstructor).forEach(instructor => {
@@ -1790,6 +1797,7 @@ if (tipo === 'profesores') {
 
   document.getElementById('detallesStats').innerHTML = detalles;
 }
+
 
 // ===================================
 // DESCARGAR DATOS
