@@ -423,6 +423,8 @@ function mostrarConfirmacion() {
   }
 
   const nombreCompleto = `${primerNombre} ${segundoNombre} ${primerApellido} ${segundoApellido}`.replace(/\s+/g, ' ');
+  const semestre = document.getElementById('regSemestre').value;
+  const grupo = document.getElementById('regGrupo').value;
 
   const html = `
     <div class="confirmation-item">
@@ -444,6 +446,14 @@ function mostrarConfirmacion() {
     <div class="confirmation-item">
       <div class="confirmation-label">Sede:</div>
       <div class="confirmation-value">${sede}</div>
+    </div>
+    <div class="confirmation-item">
+      <div class="confirmation-label">Semestre:</div>
+      <div class="confirmation-value">${semestre}</div>
+    </div>
+    <div class="confirmation-item">
+      <div class="confirmation-label">Grupo:</div>
+      <div class="confirmation-value">${grupo}</div>
     </div>
   `;
 
@@ -512,7 +522,7 @@ async function registrarEstudiante(event) {
   
   mostrarCargando('mensajeRegistro');
 
-  const datos = {
+const datos = {
     documento: doc,
     primer_nombre: document.getElementById('regPrimerNombre').value.toUpperCase(),
     segundo_nombre: document.getElementById('regSegundoNombre').value.toUpperCase() || null,
@@ -520,7 +530,9 @@ async function registrarEstudiante(event) {
     segundo_apellido: document.getElementById('regSegundoApellido').value.toUpperCase(),
     facultad: document.getElementById('regFacultad').value,
     programa: document.getElementById('regPrograma').value,
-    sede: document.getElementById('regSede').value
+    sede: document.getElementById('regSede').value,
+    semestre: parseInt(document.getElementById('regSemestre').value),
+    grupo: document.getElementById('regGrupo').value.toUpperCase()
   };
 
   try {
@@ -612,7 +624,9 @@ async function iniciarSesion(event) {
       nombreCensurado: censurarNombre(nombreCompleto),
       facultad: estudiante.facultad,
       programa: estudiante.programa,
-      sede: estudiante.sede || ''
+      sede: estudiante.sede || '',
+      semestre: estudiante.semestre,
+      grupo: estudiante.grupo
     };
 
     formularioEnviandose = false;
@@ -1196,8 +1210,8 @@ const datos = {
     apellidos: datosEstudiante.apellidos,
     facultad: datosEstudiante.facultad,
     programa: datosEstudiante.programa,
-    semestre: parseInt(document.getElementById('semestre').value),
-    grupo: document.getElementById('grupo').value.toUpperCase(),
+    semestre: datosEstudiante.semestre,
+    grupo: datosEstudiante.grupo,
     tipo_acompanamiento: tipoAcompanamiento,
     titulo_curso: tituloCurso,
     sede_estudiante: datosEstudiante.sede,
@@ -2570,8 +2584,6 @@ if ('scrollRestoration' in window.history) {
 // FUNCIONES DE PAGINACIÓN
 // ===================================
 function validarPagina1() {
-  const semestre = document.getElementById('semestre').value;
-  const grupo = document.getElementById('grupo').value;
   const tipoAcompanamiento = document.getElementById('tipoAcompanamiento').value;
   const sedeTutoria = document.getElementById('sedeTutoria').value;
   const tipoInstructor = document.getElementById('tipoInstructor').value;
@@ -2580,7 +2592,7 @@ function validarPagina1() {
   const motivoConsulta = document.getElementById('motivoConsulta').value;
 
   // Validar campos básicos
-  if (!semestre || !grupo || !tipoAcompanamiento || !sedeTutoria || !tipoInstructor || !instructor || !asignatura || !motivoConsulta) {
+  if (!tipoAcompanamiento || !sedeTutoria || !tipoInstructor || !instructor || !asignatura || !motivoConsulta) {
     return { valido: false, mensaje: 'Por favor complete todos los campos obligatorios de esta sección' };
   }
 
