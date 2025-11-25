@@ -401,6 +401,13 @@ function cargarProgramas() {
 // CONFIRMACIÓN Y REGISTRO
 // ===================================
 function mostrarConfirmacion() {
+  // Validar que el formulario sea válido antes de continuar
+  const form = document.getElementById('formRegistro');
+  if (!form.checkValidity()) {
+    form.reportValidity(); // Muestra los mensajes de required del navegador
+    return;
+  }
+  
   const doc = document.getElementById('regDocumento').value;
   
   const validacion = validarDocumento(doc);
@@ -416,12 +423,7 @@ function mostrarConfirmacion() {
   const facultad = document.getElementById('regFacultad').value;
   const programa = document.getElementById('regPrograma').value;
   const sede = document.getElementById('regSede').value;
-
-  if (!doc || !primerNombre || !primerApellido || !segundoApellido || !facultad || !programa || !sede) {
-    mostrarMensaje('mensajeRegistro', 'Por favor complete todos los campos obligatorios', 'error');
-    return;
-  }
-
+  
   const nombreCompleto = `${primerNombre} ${segundoNombre} ${primerApellido} ${segundoApellido}`.replace(/\s+/g, ' ');
   const semestre = document.getElementById('regSemestre').value;
   const grupo = document.getElementById('regGrupo').value;
@@ -2242,6 +2244,9 @@ function obtenerNombreFacultad(codigo) {
 window.onload = function() {
   console.log('Sistema PMA con Supabase iniciado');
   console.log('Los datos se cargarán solo cuando sean necesarios.');
+  
+  // Agregar event listener al botón Continuar
+  document.getElementById('btnContinuar').addEventListener('click', mostrarConfirmacion);
 };
 
 // ===================================
