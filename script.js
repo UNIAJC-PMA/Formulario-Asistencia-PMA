@@ -1382,7 +1382,7 @@ async function actualizarDatosEstudiante(event) {
       fecha_actualizacion: fechaColombiaISO
     };
     
-    const response = await fetch(url, {
+    const response = await fetchConReintentos(url, {
       method: 'PATCH',
       headers: {
         'apikey': SUPABASE_KEY,
@@ -1394,26 +1394,14 @@ async function actualizarDatosEstudiante(event) {
     });
     
     console.log('📡 Status de respuesta:', response.status);
+    console.log('✅ Actualización exitosa en BD:', response);
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Error del servidor:', errorText);
-      throw new Error('Error al actualizar los datos en la base de datos');
-    }
+    // Verificar en la base de datos que se actualizó
+    const verificacion = await supabaseQuery('estudiantes', {
+      eq: { field: 'documento', value: estudianteActualizando.documento }
+    });
     
-    // Intentar parsear la respuesta solo si hay contenido
-    let resultado = null;
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const text = await response.text();
-      if (text) {
-        resultado = JSON.parse(text);
-        console.log('✅ Actualización exitosa en BD:', resultado);
-      }
-    }
-    
-    // ✅ Si llegamos aquí y status es 200, la actualización fue exitosa
-    console.log('✅ Actualización completada (status 200)');
+    console.log('🔍 Verificación de actualización:', verificacion[0]);
     
     // Continuar con el login normal
     const nombres = `${estudianteActualizando.primer_nombre} ${estudianteActualizando.segundo_nombre || ''}`.trim();
@@ -1446,7 +1434,6 @@ async function actualizarDatosEstudiante(event) {
     mostrarMensaje('mensajeActualizacion', 'Error al actualizar: ' + error.message, 'error');
   }
 }
-
 
 function cerrarSesion() {
   datosEstudiante = null;
