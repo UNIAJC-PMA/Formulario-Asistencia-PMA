@@ -538,7 +538,7 @@ const datos = {
     sede: document.getElementById('regSede').value,
     semestre: parseInt(document.getElementById('regSemestre').value),
     grupo: document.getElementById('regGrupo').value.toUpperCase(),
-    fecha_actualizacion: new Date().toISOString()  // ← AGREGAR ESTA LÍNEA
+    fecha_actualizacion: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' })).toISOString()  // ← Hora de Colombia
   };
 
   try {
@@ -1291,29 +1291,39 @@ const datos = {
 function verificarActualizacionSemestral(estudiante) {
   // Si no hay fecha de última actualización, usar fecha de creación o considerar que necesita actualizar
   if (!estudiante.fecha_actualizacion && !estudiante.created_at) {
+    console.log('⚠️ No hay fecha de actualización ni creación, pidiendo actualización');
     return true; // Primera vez, pedir actualización
   }
   
+  // 🕐 USAR HORA DE COLOMBIA PARA TODO EL CÁLCULO
   const ultimaActualizacion = estudiante.fecha_actualizacion 
     ? new Date(estudiante.fecha_actualizacion) 
     : new Date(estudiante.created_at);
   
-  const ahora = new Date();
+  // Convertir a hora de Colombia
+  const ultimaActualizacionColombia = new Date(ultimaActualizacion.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+  const ahoraColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
   
   // ⏱️ PARA PRUEBAS: 2 MINUTOS (120 segundos)
-  const segundosTranscurridos = (ahora - ultimaActualizacion) / 1000;
+  const segundosTranscurridos = (ahoraColombia - ultimaActualizacionColombia) / 1000;
   const LIMITE_SEGUNDOS = 120; // 2 minutos
   
+  console.log('🕐 Última actualización (Colombia):', ultimaActualizacionColombia.toLocaleString('es-CO'));
+  console.log('🕐 Ahora (Colombia):', ahoraColombia.toLocaleString('es-CO'));
   console.log(`🕐 Tiempo transcurrido: ${Math.floor(segundosTranscurridos)} segundos de ${LIMITE_SEGUNDOS}`);
+  console.log(`🕐 ¿Necesita actualizar? ${segundosTranscurridos > LIMITE_SEGUNDOS ? 'SÍ' : 'NO'}`);
   
   return segundosTranscurridos > LIMITE_SEGUNDOS;
   
   // 📅 PARA PRODUCCIÓN: DESCOMENTAR ESTAS LÍNEAS Y COMENTAR LAS DE ARRIBA
   /*
-  const mesesTranscurridos = (ahora - ultimaActualizacion) / (1000 * 60 * 60 * 24 * 30);
+  const mesesTranscurridos = (ahoraColombia - ultimaActualizacionColombia) / (1000 * 60 * 60 * 24 * 30);
   const LIMITE_MESES = 4; // 4 meses
   
+  console.log('🕐 Última actualización (Colombia):', ultimaActualizacionColombia.toLocaleString('es-CO'));
+  console.log('🕐 Ahora (Colombia):', ahoraColombia.toLocaleString('es-CO'));
   console.log(`📅 Meses transcurridos: ${mesesTranscurridos.toFixed(1)} de ${LIMITE_MESES}`);
+  console.log(`📅 ¿Necesita actualizar? ${mesesTranscurridos > LIMITE_MESES ? 'SÍ' : 'NO'}`);
   
   return mesesTranscurridos > LIMITE_MESES;
   */
@@ -1353,6 +1363,13 @@ async function actualizarDatosEstudiante(event) {
   mostrarCargando('mensajeActualizacion');
   
   try {
+    // 🕐 OBTENER FECHA Y HORA EN COLOMBIA (UTC-5)
+    const ahora = new Date();
+    const fechaColombia = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+    const fechaColombiaISO = fechaColombia.toISOString();
+    
+    console.log('🕐 Actualizando con fecha Colombia:', fechaColombiaISO);
+    
     // Actualizar SOLO semestre y grupo en la base de datos
     const url = `${SUPABASE_URL}/rest/v1/estudiantes?documento=eq.${estudianteActualizando.documento}`;
     
@@ -1362,18 +1379,23 @@ async function actualizarDatosEstudiante(event) {
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
+        'Prefer': 'return=representation'  // ← CAMBIO: Para recibir confirmación
       },
       body: JSON.stringify({
         semestre: nuevoSemestre,
         grupo: nuevoGrupo,
-        fecha_actualizacion: new Date().toISOString()
+        fecha_actualizacion: fechaColombiaISO  // ← Ahora en hora de Colombia
       })
     });
     
     if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Error del servidor:', errorData);
       throw new Error('Error al actualizar los datos');
     }
+    
+    const resultado = await response.json();
+    console.log('Actualización exitosa:', resultado);
     
     // Continuar con el login normal con datos actualizados
     const nombres = `${estudianteActualizando.primer_nombre} ${estudianteActualizando.segundo_nombre || ''}`.trim();
@@ -1399,7 +1421,7 @@ async function actualizarDatosEstudiante(event) {
     actualizarBotonCerrarSesion();
     actualizarProgreso(1);
     
-    console.log('✅ Semestre y grupo actualizados correctamente');
+    console.log('Semestre y grupo actualizados correctamente');
     
   } catch (error) {
     mostrarMensaje('mensajeActualizacion', 'Error al actualizar: ' + error.message, 'error');
