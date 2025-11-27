@@ -1390,12 +1390,12 @@ async function actualizarDatosEstudiante(event) {
     
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('Error del servidor:', errorData);
+      console.error('❌ Error del servidor:', errorData);
       throw new Error('Error al actualizar los datos');
     }
     
     const resultado = await response.json();
-    console.log('Actualización exitosa:', resultado);
+    console.log('✅ Actualización exitosa:', resultado);
     
     // Continuar con el login normal con datos actualizados
     const nombres = `${estudianteActualizando.primer_nombre} ${estudianteActualizando.segundo_nombre || ''}`.trim();
