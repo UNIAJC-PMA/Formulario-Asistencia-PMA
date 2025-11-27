@@ -1362,13 +1362,25 @@ async function actualizarDatosEstudiante(event) {
   mostrarCargando('mensajeActualizacion');
   
   try {
-    // 🕐 OBTENER FECHA Y HORA EN COLOMBIA (UTC-5)
-const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString();
+    // 🕐 OBTENER FECHA EN COLOMBIA
+    const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString();
     
-    console.log('🕐 Actualizando con fecha Colombia:', fechaColombiaISO);
+    console.log('🕐 Fecha a guardar:', fechaColombiaISO);
+    console.log('📋 Datos a actualizar:', {
+      documento: estudianteActualizando.documento,
+      semestre: nuevoSemestre,
+      grupo: nuevoGrupo,
+      fecha_actualizacion: fechaColombiaISO
+    });
     
-    // Actualizar SOLO semestre y grupo en la base de datos
+    // ✅ ACTUALIZAR EN LA BASE DE DATOS
     const url = `${SUPABASE_URL}/rest/v1/estudiantes?documento=eq.${estudianteActualizando.documento}`;
+    
+    const datosActualizar = {
+      semestre: nuevoSemestre,
+      grupo: nuevoGrupo,
+      fecha_actualizacion: fechaColombiaISO
+    };
     
     const response = await fetch(url, {
       method: 'PATCH',
@@ -1376,25 +1388,28 @@ const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': 'return=representation'  // ← CAMBIO: Para recibir confirmación
+        'Prefer': 'return=representation'
       },
-      body: JSON.stringify({
-        semestre: nuevoSemestre,
-        grupo: nuevoGrupo,
-        fecha_actualizacion: fechaColombiaISO  // ← Ahora en hora de Colombia
-      })
+      body: JSON.stringify(datosActualizar)
     });
     
+    console.log('📡 Status de respuesta:', response.status);
+    
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error('❌ Error del servidor:', errorData);
-      throw new Error('Error al actualizar los datos');
+      const errorText = await response.text();
+      console.error('❌ Error del servidor:', errorText);
+      throw new Error('Error al actualizar los datos en la base de datos');
     }
     
     const resultado = await response.json();
-    console.log('✅ Actualización exitosa:', resultado);
+    console.log('✅ Actualización exitosa en BD:', resultado);
     
-    // Continuar con el login normal con datos actualizados
+    // ✅ VERIFICAR QUE SÍ SE ACTUALIZÓ
+    if (!resultado || resultado.length === 0) {
+      throw new Error('No se recibió confirmación de la actualización');
+    }
+    
+    // Continuar con el login normal
     const nombres = `${estudianteActualizando.primer_nombre} ${estudianteActualizando.segundo_nombre || ''}`.trim();
     const apellidos = `${estudianteActualizando.primer_apellido} ${estudianteActualizando.segundo_apellido}`.trim();
     const nombreCompleto = `${nombres} ${apellidos}`;
@@ -1406,9 +1421,9 @@ const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString
       nombreCensurado: censurarNombre(nombreCompleto),
       facultad: estudianteActualizando.facultad,
       programa: estudianteActualizando.programa,
-      sede: estudianteActualizando.sede, // ← MANTIENE LA SEDE ORIGINAL
-      semestre: nuevoSemestre,          // ← ACTUALIZADO
-      grupo: nuevoGrupo                 // ← ACTUALIZADO
+      sede: estudianteActualizando.sede,
+      semestre: nuevoSemestre,
+      grupo: nuevoGrupo
     };
     
     formularioEnviandose = false;
@@ -1418,9 +1433,10 @@ const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString
     actualizarBotonCerrarSesion();
     actualizarProgreso(1);
     
-    console.log('Semestre y grupo actualizados correctamente');
+    console.log('✅ Sesión iniciada con datos actualizados');
     
   } catch (error) {
+    console.error('❌ Error completo:', error);
     mostrarMensaje('mensajeActualizacion', 'Error al actualizar: ' + error.message, 'error');
   }
 }
