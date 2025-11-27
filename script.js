@@ -1382,15 +1382,16 @@ async function actualizarDatosEstudiante(event) {
       fecha_actualizacion: fechaColombiaISO
     };
     
-const response = await fetch(url, {
-  method: 'PATCH',
-  headers: {
-    'apikey': SUPABASE_KEY,
-    'Authorization': `Bearer ${SUPABASE_KEY}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(datosActualizar)
-});
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(datosActualizar)
+    });
     
     console.log('📡 Status de respuesta:', response.status);
     
@@ -1400,11 +1401,19 @@ const response = await fetch(url, {
       throw new Error('Error al actualizar los datos en la base de datos');
     }
     
-    const resultado = await response.json();
-    console.log('✅ Actualización exitosa en BD:', resultado);
+    // Intentar parsear la respuesta solo si hay contenido
+    let resultado = null;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const text = await response.text();
+      if (text) {
+        resultado = JSON.parse(text);
+        console.log('✅ Actualización exitosa en BD:', resultado);
+      }
+    }
     
-// ✅ Si llegamos aquí y status es 200, la actualización fue exitosa
-console.log('✅ Actualización completada (status 200)');
+    // ✅ Si llegamos aquí y status es 200, la actualización fue exitosa
+    console.log('✅ Actualización completada (status 200)');
     
     // Continuar con el login normal
     const nombres = `${estudianteActualizando.primer_nombre} ${estudianteActualizando.segundo_nombre || ''}`.trim();
