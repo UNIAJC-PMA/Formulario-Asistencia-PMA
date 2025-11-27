@@ -538,7 +538,7 @@ const datos = {
     sede: document.getElementById('regSede').value,
     semestre: parseInt(document.getElementById('regSemestre').value),
     grupo: document.getElementById('regGrupo').value.toUpperCase(),
-    fecha_actualizacion: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' })).toISOString()  // ← Hora de Colombia
+    fecha_actualizacion: new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString()
   };
 
   try {
@@ -1296,13 +1296,12 @@ function verificarActualizacionSemestral(estudiante) {
   }
   
   // 🕐 USAR HORA DE COLOMBIA PARA TODO EL CÁLCULO
-  const ultimaActualizacion = estudiante.fecha_actualizacion 
-    ? new Date(estudiante.fecha_actualizacion) 
-    : new Date(estudiante.created_at);
-  
-  // Convertir a hora de Colombia
-  const ultimaActualizacionColombia = new Date(ultimaActualizacion.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-  const ahoraColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+const ultimaActualizacion = estudiante.fecha_actualizacion 
+  ? new Date(estudiante.fecha_actualizacion) 
+  : new Date(estudiante.created_at);
+
+const ahoraColombia = new Date(Date.now() - (5 * 60 * 60 * 1000));
+const ultimaActualizacionColombia = new Date(ultimaActualizacion.getTime() - (5 * 60 * 60 * 1000));
   
   // ⏱️ PARA PRUEBAS: 2 MINUTOS (120 segundos)
   const segundosTranscurridos = (ahoraColombia - ultimaActualizacionColombia) / 1000;
@@ -1364,9 +1363,7 @@ async function actualizarDatosEstudiante(event) {
   
   try {
     // 🕐 OBTENER FECHA Y HORA EN COLOMBIA (UTC-5)
-    const ahora = new Date();
-    const fechaColombia = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-    const fechaColombiaISO = fechaColombia.toISOString();
+const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString();
     
     console.log('🕐 Actualizando con fecha Colombia:', fechaColombiaISO);
     
