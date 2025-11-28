@@ -230,11 +230,24 @@
         
 <div class="form-group">
   <label>Sede donde estudia *</label>
-  <select id="regSede" required>
+  <select id="regSede" required onchange="toggleNotificaciones()">
     <option value="">Seleccione una sede</option>
     <option value="Norte">Norte</option>
     <option value="Sur">Sur</option>
     <option value="Virtual">Virtual</option>
+  </select>
+</div>
+
+<div class="form-group hidden" id="grupoNotificaciones">
+  <label>¿Desea recibir notificaciones? *</label>
+  <div class="alert-box" style="margin-bottom: 15px; background: #fff3cd; border-color: #ffc107;">
+    <strong>Importante:</strong>
+    Las notificaciones te permitirán enterarte de cambios en horarios, cancelaciones de tutorías o información relevante del PMA.
+  </div>
+  <select id="regNotificaciones" required>
+    <option value="">Seleccione una opción</option>
+    <option value="Si">Sí, acepto recibir notificaciones</option>
+    <option value="No">No, gracias</option>
   </select>
 </div>
 
