@@ -1490,11 +1490,11 @@ async function cambiarTab(event, tab) {
   document.getElementById('tabEstadisticas').classList.add('hidden');
   document.getElementById('tabGraficas').classList.add('hidden');
   document.getElementById('tabDescargas').classList.add('hidden');
-  document.getElementById('tabNotificaciones').classList.add('hidden'); // NUEVA LÍNEA
   
   if (tab === 'estadisticas') {
     document.getElementById('tabEstadisticas').classList.remove('hidden');
     
+    // CARGAR DATOS DE ESTADÍSTICAS
     if (datosCache.tutoresNorte.length === 0) {
       document.getElementById('statsGrid').innerHTML = '<div class="loader"></div><p style="text-align: center; color: #666; margin-top: 15px;">Cargando datos...</p>';
       try {
@@ -1505,6 +1505,7 @@ async function cambiarTab(event, tab) {
       }
     }
     
+    // Cargar estadísticas si no existen
     if (!window.datosFormulariosGlobal) {
       await cargarEstadisticas();
     }
@@ -1512,6 +1513,7 @@ async function cambiarTab(event, tab) {
   } else if (tab === 'graficas') {
     document.getElementById('tabGraficas').classList.remove('hidden');
     
+    // CARGAR DATOS PARA GRÁFICAS (solo necesita formularios)
     if (!window.datosFormulariosGlobal) {
       const container = document.querySelector('#tabGraficas .chart-container');
       const contenidoOriginal = container.innerHTML;
@@ -1527,17 +1529,13 @@ async function cambiarTab(event, tab) {
       }
     }
     
+    // Crear/actualizar gráfica
     if (!graficoTutorias) {
       actualizarGrafica();
     }
     
   } else if (tab === 'descargas') {
     document.getElementById('tabDescargas').classList.remove('hidden');
-    
-  } else if (tab === 'notificaciones') {
-    // NUEVO BLOQUE
-    document.getElementById('tabNotificaciones').classList.remove('hidden');
-    document.getElementById('mensajeNotificaciones').innerHTML = '';
   }
 }
 
@@ -2846,155 +2844,3 @@ function retrocederPagina() {
     actualizarProgreso(3);
   }
 }
-
-
-
-// ===================================
-// SISTEMA DE NOTIFICACIONES PUSH - PANEL ADMIN
-// ===================================
-
-// URL de tu Edge Function
-const EDGE_FUNCTION_URL = 'https://vkfjttukyrtiumzfmyuk.supabase.co/functions/v1/super-responder';
-
-// 🔑 Service Role Key - PÉGALA AQUÍ (Settings > API > service_role)
-const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjQ1NTQyNCwiZXhwIjoyMDc4MDMxNDI0fQ.85OMPq252TQkqx5VYDFpjncaLiV7JJ1flPvO-Jp1ZE0';
-
-// ===================================
-// FUNCIÓN: Enviar notificación push a todos
-// ===================================
-async function enviarNotificacionATodos(event) {
-  event.preventDefault();
-  
-  const titulo = document.getElementById('notifTitulo').value.trim();
-  const mensaje = document.getElementById('notifMensaje').value.trim();
-  const urlDestino = document.getElementById('notifUrl').value.trim() || '/';
-  
-  if (!titulo || !mensaje) {
-    mostrarMensaje('mensajeNotificaciones', 'Complete todos los campos obligatorios', 'error');
-    return;
-  }
-  
-  // Confirmar envío
-  const confirmar = confirm(
-    `¿Enviar esta notificación a TODOS los usuarios suscritos?\n\n` +
-    `Título: ${titulo}\n` +
-    `Mensaje: ${mensaje}`
-  );
-  
-  if (!confirmar) return;
-  
-  const btnEnviar = event.target;
-  btnEnviar.disabled = true;
-  btnEnviar.textContent = '⏳ Enviando...';
-  
-  mostrarCargando('mensajeNotificaciones');
-  
-  try {
-    const response = await fetch(EDGE_FUNCTION_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SERVICE_ROLE_KEY}`
-      },
-      body: JSON.stringify({
-        title: titulo,
-        body: mensaje,
-        url: urlDestino,
-        icon: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png',
-        badge: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png'
-      })
-    });
-    
-    const resultado = await response.json();
-    
-    if (response.ok) {
-      mostrarMensaje(
-        'mensajeNotificaciones',
-        `✅ Notificación enviada correctamente a ${resultado.sent} usuario(s)`,
-        'success'
-      );
-      
-      // Limpiar formulario
-      document.getElementById('formEnviarNotificacion').reset();
-    } else {
-      mostrarMensaje(
-        'mensajeNotificaciones',
-        `❌ Error: ${resultado.error || 'No se pudo enviar'}`,
-        'error'
-      );
-    }
-  } catch (error) {
-    mostrarMensaje(
-      'mensajeNotificaciones',
-      `❌ Error de conexión: ${error.message}`,
-      'error'
-    );
-  } finally {
-    btnEnviar.disabled = false;
-    btnEnviar.textContent = 'Enviar Notificación';
-  }
-}
-
-// ===================================
-// FUNCIÓN: Ver suscripciones activas
-// ===================================
-async function verSuscripcionesActivas() {
-  mostrarCargando('mensajeNotificaciones');
-  
-  try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions?select=count`, {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'count=exact'
-      }
-    });
-    
-    const count = response.headers.get('Content-Range')?.split('/')[1] || 0;
-    
-    mostrarMensaje(
-      'mensajeNotificaciones',
-      `📊 Usuarios suscritos actualmente: ${count}`,
-      'success'
-    );
-  } catch (error) {
-    mostrarMensaje(
-      'mensajeNotificaciones',
-      `❌ Error al consultar suscripciones: ${error.message}`,
-      'error'
-    );
-  }
-}
-
-// ===================================
-// FUNCIÓN: Plantillas rápidas
-// ===================================
-function aplicarPlantillaNotificacion(tipo) {
-  const titulo = document.getElementById('notifTitulo');
-  const mensaje = document.getElementById('notifMensaje');
-  
-  const plantillas = {
-    suspension: {
-      titulo: '🚫 Tutorías Suspendidas',
-      mensaje: 'Las tutorías de hoy están suspendidas. Más información en la oficina del PMA.'
-    },
-    actividad: {
-      titulo: '📚 Nueva Actividad',
-      mensaje: 'Se ha programado una nueva actividad académica. Consulta los detalles en el PMA.'
-    },
-    horario: {
-      titulo: '⏰ Cambio de Horario',
-      mensaje: 'Se ha modificado el horario de atención. Verifica los nuevos horarios disponibles.'
-    },
-    recordatorio: {
-      titulo: '📢 Recordatorio PMA',
-      mensaje: 'Te recordamos que el PMA está disponible para ayudarte con tus dudas académicas.'
-    }
-  };
-  
-  if (plantillas[tipo]) {
-    titulo.value = plantillas[tipo].titulo;
-    mensaje.value = plantillas[tipo].mensaje;
-  }
-}
-
