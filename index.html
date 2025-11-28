@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PMA - Asistencia a Tutorías</title>
   <link rel="icon" type="image/png" href="https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png">
-  
-  <!-- Sistema de Notificaciones Push -->
-  <script src="push.js" defer></script>
-  
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -627,7 +623,6 @@
         <button class="admin-tab active" onclick="cambiarTab(event, 'descargas')">Descargar Datos</button>
         <button class="admin-tab" onclick="cambiarTab(event, 'estadisticas')">Estadísticas</button>
         <button class="admin-tab" onclick="cambiarTab(event, 'graficas')">Gráficas</button>
-        <button class="admin-tab" onclick="cambiarTab(event, 'notificaciones')">Enviar Notificación</button>
       </div>
 
       <div id="tabEstadisticas" class="hidden">
@@ -680,92 +675,6 @@
           <button class="btn btn-secondary" onclick="descargarTodo()">Descargar Todos los Registros</button>
         </div>
       </div>
-
-      <!-- Tab de Notificaciones -->
-<div id="tabNotificaciones" class="hidden">
-  <div class="chart-container">
-    <h3 class="chart-title">📢 Enviar Notificación Push</h3>
-    <p class="texto-descargas">
-      Envía notificaciones instantáneas a todos los usuarios que tienen activadas las notificaciones del PMA.
-    </p>
-    
-    <div id="mensajeNotificaciones"></div>
-    
-    <!-- Botón para ver suscripciones -->
-    <button class="btn btn-secondary" onclick="verSuscripcionesActivas()" style="margin-bottom: 20px;">
-      📊 Ver Usuarios Suscritos
-    </button>
-    
-    <!-- Plantillas rápidas -->
-    <div class="form-group">
-      <label>Plantillas Rápidas</label>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-        <button class="btn btn-secondary" onclick="aplicarPlantillaNotificacion('suspension')" style="flex: 1; min-width: 150px; margin: 0;">
-          🚫 Suspensión
-        </button>
-        <button class="btn btn-secondary" onclick="aplicarPlantillaNotificacion('actividad')" style="flex: 1; min-width: 150px; margin: 0;">
-          📚 Actividad
-        </button>
-        <button class="btn btn-secondary" onclick="aplicarPlantillaNotificacion('horario')" style="flex: 1; min-width: 150px; margin: 0;">
-          ⏰ Horario
-        </button>
-        <button class="btn btn-secondary" onclick="aplicarPlantillaNotificacion('recordatorio')" style="flex: 1; min-width: 150px; margin: 0;">
-          📢 Recordatorio
-        </button>
-      </div>
-    </div>
-    
-    <!-- Formulario de notificación -->
-    <form id="formEnviarNotificacion" onsubmit="enviarNotificacionATodos(event)">
-      <div class="form-group">
-        <label>Título de la Notificación *</label>
-        <input 
-          type="text" 
-          id="notifTitulo" 
-          required 
-          maxlength="50"
-          placeholder="Ej: Tutorías suspendidas hoy"
-          class="uppercase-input"
-        >
-        <small style="color: #666; font-size: 12px;">Máximo 50 caracteres</small>
-      </div>
-      
-      <div class="form-group">
-        <label>Mensaje *</label>
-        <textarea 
-          id="notifMensaje" 
-          required 
-          maxlength="150"
-          placeholder="Escribe el mensaje que verán los usuarios..."
-          class="uppercase-input"
-          style="min-height: 100px;"
-        ></textarea>
-        <small style="color: #666; font-size: 12px;">Máximo 150 caracteres</small>
-      </div>
-      
-      <div class="form-group">
-        <label>URL de Destino (Opcional)</label>
-        <input 
-          type="text" 
-          id="notifUrl" 
-          placeholder="/"
-          value="/"
-        >
-        <small style="color: #666; font-size: 12px;">
-          Página a la que se redirigirá al hacer click en la notificación
-        </small>
-      </div>
-      
-      <div class="alert-box" style="margin-bottom: 20px;">
-        <strong>⚠️ Importante:</strong>
-        Esta notificación se enviará a TODOS los usuarios que tengan activadas las notificaciones del PMA.
-        Asegúrate de que el mensaje sea claro y relevante.
-      </div>
-      
-      <button type="submit" class="btn">Enviar Notificación</button>
-    </form>
-  </div>
-</div>
 
       <button type="button" class="btn btn-secondary btn-cerrar-admin" onclick="cerrarSesionAdmin()">Cerrar Sesión</button>
     </div>
