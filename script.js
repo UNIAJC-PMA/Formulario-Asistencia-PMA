@@ -2857,7 +2857,7 @@ function retrocederPagina() {
 const EDGE_FUNCTION_URL = 'https://vkfjttukyrtiumzfmyuk.supabase.co/functions/v1/send-push-notification';
 
 // 🔑 Service Role Key - PÉGALA AQUÍ (Settings > API > service_role)
-const SERVICE_ROLE_KEY = 'TU_SERVICE_ROLE_KEY_AQUI';
+const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjQ1NTQyNCwiZXhwIjoyMDc4MDMxNDI0fQ.85OMPq252TQkqx5VYDFpjncaLiV7JJ1flPvO-Jp1ZE0';
 
 // ===================================
 // FUNCIÓN: Enviar notificación push a todos
