@@ -1,16 +1,13 @@
 // ===================================
-// CONFIGURACIÓN DE NOTIFICACIONES PUSH
+// SISTEMA DE NOTIFICACIONES PUSH - PMA
 // ===================================
 
-// 🔑 Clave pública VAPID
 const VAPID_PUBLIC_KEY = 'BIktOgjhM2TEiwx1S0r9hOrCZrQWeVjgPytVj5gzFohWjVilSxfz1ouOlrxdBxLC_DK8P8I6D7EJgjtU0McG96I';
-
-// URL de tu proyecto Supabase
 const SUPABASE_URL = 'https://vkfjttukyrtiumzfmyuk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NTU0MjQsImV4cCI6MjA3ODAzMTQyNH0.eU8GeI8IVazXydMDwY98TUzT9xvjhcbXBu6cruCPiEk';
 
 // ===================================
-// FUNCIÓN: Convertir clave VAPID a formato Uint8Array
+// FUNCIÓN: Convertir VAPID a Uint8Array
 // ===================================
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -32,62 +29,22 @@ function urlBase64ToUint8Array(base64String) {
 // ===================================
 async function registrarServiceWorker() {
   if (!('serviceWorker' in navigator)) {
-    console.warn('❌ Este navegador no soporta Service Workers');
+    console.warn('❌ Service Workers no soportados');
     return null;
   }
 
   try {
     const registration = await navigator.serviceWorker.register('/service-worker.js');
-    console.log('✅ Service Worker registrado:', registration);
+    console.log('✅ Service Worker registrado:', registration.scope);
+    
+    // Esperar a que esté activo
+    await navigator.serviceWorker.ready;
+    console.log('✅ Service Worker listo');
+    
     return registration;
   } catch (error) {
-    console.error('❌ Error al registrar Service Worker:', error);
+    console.error('❌ Error registrando Service Worker:', error);
     return null;
-  }
-}
-
-// ===================================
-// FUNCIÓN: Solicitar permiso de notificaciones
-// ===================================
-async function solicitarPermisoNotificaciones() {
-  if (!('Notification' in window)) {
-    alert('Este navegador no soporta notificaciones');
-    return false;
-  }
-
-  if (Notification.permission === 'granted') {
-    console.log('✅ Permiso de notificaciones ya concedido');
-    return true;
-  }
-
-  if (Notification.permission === 'denied') {
-    alert('Las notificaciones están bloqueadas. Por favor, habilítalas en la configuración de tu navegador.');
-    return false;
-  }
-
-  // Mostrar mensaje personalizado antes de pedir permiso
-  const aceptar = confirm(
-    '📢 Activar Notificaciones del PMA\n\n' +
-    'Recibirás avisos importantes sobre:\n' +
-    '• Suspensión de tutorías\n' +
-    '• Actividades extracurriculares\n' +
-    '• Cambios de horario\n\n' +
-    '¿Deseas activar las notificaciones?'
-  );
-
-  if (!aceptar) {
-    console.log('❌ Usuario rechazó activar notificaciones');
-    return false;
-  }
-
-  const permission = await Notification.requestPermission();
-  
-  if (permission === 'granted') {
-    console.log('✅ Permiso de notificaciones concedido');
-    return true;
-  } else {
-    console.log('❌ Permiso de notificaciones denegado');
-    return false;
   }
 }
 
@@ -103,10 +60,10 @@ async function crearSuscripcionPush(registration) {
       applicationServerKey: applicationServerKey
     });
 
-    console.log('✅ Suscripción push creada:', subscription);
+    console.log('✅ Suscripción push creada');
     return subscription;
   } catch (error) {
-    console.error('❌ Error al crear suscripción push:', error);
+    console.error('❌ Error creando suscripción:', error);
     return null;
   }
 }
@@ -137,90 +94,127 @@ async function guardarSuscripcionEnSupabase(subscription) {
     });
 
     if (response.ok || response.status === 409) {
-      console.log('✅ Suscripción guardada en Supabase');
+      console.log('✅ Suscripción guardada en base de datos');
       return true;
     } else {
-      console.error('❌ Error al guardar suscripción:', response.status);
+      console.error('❌ Error guardando suscripción:', response.status);
       return false;
     }
   } catch (error) {
-    console.error('❌ Error al guardar suscripción:', error);
+    console.error('❌ Error:', error);
     return false;
   }
 }
 
 // ===================================
-// FUNCIÓN PRINCIPAL: Inicializar notificaciones
+// FUNCIÓN PRINCIPAL: Solicitar notificaciones manualmente
 // ===================================
-async function inicializarNotificaciones() {
-  console.log('🔔 Inicializando sistema de notificaciones...');
+async function solicitarNotificacionesManual() {
+  console.log('🔔 Solicitando permiso de notificaciones...');
 
-  // Paso 1: Registrar Service Worker
+  // Verificar soporte
+  if (!('Notification' in window)) {
+    alert('❌ Tu navegador no soporta notificaciones');
+    return { activado: false, error: 'no-soportado' };
+  }
+
+  if (!('serviceWorker' in navigator)) {
+    alert('❌ Tu navegador no soporta Service Workers');
+    return { activado: false, error: 'no-service-worker' };
+  }
+
+  // Si ya está denegado
+  if (Notification.permission === 'denied') {
+    alert('❌ Las notificaciones están bloqueadas. Por favor, actívalas en la configuración de tu navegador.');
+    return { activado: false, error: 'denegado' };
+  }
+
+  // Si ya está concedido, verificar suscripción existente
+  if (Notification.permission === 'granted') {
+    console.log('✅ Permiso ya concedido');
+    
+    const registration = await registrarServiceWorker();
+    if (!registration) {
+      return { activado: false, error: 'service-worker-error' };
+    }
+
+    const existingSub = await registration.pushManager.getSubscription();
+    
+    if (existingSub) {
+      console.log('✅ Ya existe suscripción activa');
+      await guardarSuscripcionEnSupabase(existingSub);
+      return { activado: true, yaExistia: true };
+    }
+
+    // Crear nueva suscripción
+    const subscription = await crearSuscripcionPush(registration);
+    if (!subscription) {
+      return { activado: false, error: 'subscription-error' };
+    }
+
+    const guardado = await guardarSuscripcionEnSupabase(subscription);
+    
+    if (guardado) {
+      // Mostrar notificación de prueba
+      new Notification('¡Notificaciones Activadas! 🎉', {
+        body: 'Recibirás avisos importantes del PMA',
+        icon: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png'
+      });
+      return { activado: true, yaExistia: false };
+    }
+    
+    return { activado: false, error: 'save-error' };
+  }
+
+  // Solicitar permiso por primera vez
+  const permission = await Notification.requestPermission();
+  
+  if (permission !== 'granted') {
+    console.log('❌ Permiso denegado por el usuario');
+    return { activado: false, error: 'usuario-rechazo' };
+  }
+
+  console.log('✅ Permiso concedido');
+
+  // Registrar Service Worker
   const registration = await registrarServiceWorker();
   if (!registration) {
-    console.warn('❌ No se pudo registrar el Service Worker');
-    return false;
+    return { activado: false, error: 'service-worker-error' };
   }
 
-  // Esperar a que el Service Worker esté listo
-  await navigator.serviceWorker.ready;
-
-  // Paso 2: Verificar si ya existe una suscripción
-  const existingSubscription = await registration.pushManager.getSubscription();
-  
-  if (existingSubscription) {
-    console.log('✅ Ya existe una suscripción activa');
-    await guardarSuscripcionEnSupabase(existingSubscription);
-    return true;
-  }
-
-  // Paso 3: Solicitar permiso
-  const permisoOtorgado = await solicitarPermisoNotificaciones();
-  if (!permisoOtorgado) {
-    return false;
-  }
-
-  // Paso 4: Crear suscripción
+  // Crear suscripción
   const subscription = await crearSuscripcionPush(registration);
   if (!subscription) {
-    console.error('❌ No se pudo crear la suscripción');
-    return false;
+    return { activado: false, error: 'subscription-error' };
   }
 
-  // Paso 5: Guardar en Supabase
+  // Guardar en base de datos
   const guardado = await guardarSuscripcionEnSupabase(subscription);
   
   if (guardado) {
-    console.log('✅ Notificaciones activadas correctamente');
-    
-    // Mostrar notificación de prueba
-    if (Notification.permission === 'granted') {
-      new Notification('¡Notificaciones Activadas!', {
-        body: 'Recibirás avisos importantes del PMA',
-        icon: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png',
-        badge: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png'
-      });
-    }
-    
-    return true;
+    // Notificación de éxito
+    new Notification('¡Notificaciones Activadas! 🎉', {
+      body: 'Recibirás avisos importantes del PMA',
+      icon: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png'
+    });
+    return { activado: true, yaExistia: false };
   }
 
-  return false;
+  return { activado: false, error: 'save-error' };
 }
 
 // ===================================
-// FUNCIÓN: Verificar estado de notificaciones
+// FUNCIÓN: Verificar estado actual
 // ===================================
 function verificarEstadoNotificaciones() {
   if (!('Notification' in window)) {
     return 'no-soportado';
   }
-  
   return Notification.permission; // 'default', 'granted', 'denied'
 }
 
 // ===================================
-// FUNCIÓN: Desuscribirse de notificaciones
+// FUNCIÓN: Desuscribirse
 // ===================================
 async function desuscribirNotificaciones() {
   if (!('serviceWorker' in navigator)) {
@@ -255,28 +249,25 @@ async function desuscribirNotificaciones() {
 }
 
 // ===================================
-// AUTO-INICIALIZACIÓN
+// AUTO-INICIALIZACIÓN (Registrar Service Worker solamente)
 // ===================================
-// Intentar activar notificaciones al cargar la página
 window.addEventListener('load', async () => {
-  // Esperar 3 segundos para no interferir con la carga inicial
-  setTimeout(async () => {
-    const estado = verificarEstadoNotificaciones();
-    
-    if (estado === 'default') {
-      // Primera vez, preguntar al usuario
-      console.log('🔔 Primera vez detectada, preparando para solicitar permiso...');
-      // No iniciamos automáticamente, esperamos interacción del usuario
-    } else if (estado === 'granted') {
-      // Ya tiene permiso, renovar suscripción si es necesario
-      await inicializarNotificaciones();
+  // Solo registrar el Service Worker, NO pedir permisos automáticamente
+  if ('serviceWorker' in navigator) {
+    try {
+      await registrarServiceWorker();
+      console.log('✅ Service Worker inicializado automáticamente');
+    } catch (error) {
+      console.error('❌ Error inicializando Service Worker:', error);
     }
-  }, 3000);
+  }
 });
 
+// ===================================
 // Exportar funciones para uso manual
+// ===================================
 window.PushNotifications = {
-  inicializar: inicializarNotificaciones,
+  solicitar: solicitarNotificacionesManual,
   desuscribir: desuscribirNotificaciones,
   verificarEstado: verificarEstadoNotificaciones
 };
