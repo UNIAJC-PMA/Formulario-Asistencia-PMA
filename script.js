@@ -1016,19 +1016,6 @@ function toggleOtroTema() {
   }
 }
 
-function toggleSugerencias() {
-  const checkbox = document.getElementById('ningunaSugerencia');
-  const textarea = document.getElementById('sugerencias');
-  
-  if (checkbox.checked) {
-    textarea.value = 'Ninguna';
-    textarea.disabled = true;
-  } else {
-    textarea.value = '';
-    textarea.disabled = false;
-  }
-}
-
 // Agregar listener para calificación
 document.addEventListener('DOMContentLoaded', function() {
   const calificaciones = document.querySelectorAll('input[name="calificacion"]');
