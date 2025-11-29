@@ -42,7 +42,7 @@ background-position: center, left center, right top;
 /* Panel de Administración más ancho en PC */
 @media (min-width: 769px) {
   .container:has(#pantallaAdmin:not(.hidden)) {
-    max-width: 95vw;
+    max-width: 85vw;
   }
 }
 
