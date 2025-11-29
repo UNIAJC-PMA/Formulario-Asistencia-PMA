@@ -1,11 +1,7 @@
 // URL y KEY optimizadas - Construcción más eficiente
 const SUPABASE_URL = `https://vkfjttukyrtiumzfmyuk.supabase.co`;
+
 const SUPABASE_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrZmp0dHVreXJ0aXVtemZteXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NTU0MjQsImV4cCI6MjA3ODAzMTQyNH0.eU8GeI8IVazXydMDwY98TUzT9xvjhcbXBu6cruCPiEk`;
-
-// OneSignal Credentials
-const ONESIGNAL_APP_ID = "af1f6666-7815-49df-b39f-b29ca8ecfad2";
-const ONESIGNAL_REST_API_KEY = "os_v2_app_v4pwmztycve57m47wkokr3h22k6wpstpfmcun2uhdec3wbwaq55t63cbgmhflyyq3vcoumaswqq4dambk3jfza3k5tvaassrgbn7uaa";
-
 
 // Variables globales
 let datosEstudiante = null;
@@ -532,114 +528,66 @@ async function verificarDocumento(event) {
   }
 }
 
+// FUNCIÓN MODIFICADA: Registrar estudiante (sin verificación de documento duplicado)
 async function registrarEstudiante(event) {
   event.preventDefault();
   
-  if (!estudianteActualizando) {
-    const doc = document.getElementById('regDocumentoMostrar').value;
-    const btnRegistro = document.getElementById('btnConfirmarRegistro');
-    
-    // Desactivar botón para evitar doble click
-    btnRegistro.disabled = true;
-    btnRegistro.textContent = '⏳ Registrando...';
-    btnRegistro.style.opacity = '0.6';
-    btnRegistro.style.cursor = 'not-allowed';
-    
-    mostrarCargando('mensajeRegistro');
+  const doc = document.getElementById('regDocumentoMostrar').value;
+  const btnRegistro = document.getElementById('btnConfirmarRegistro');
+  
+  // Desactivar botón para evitar doble click
+  btnRegistro.disabled = true;
+  btnRegistro.textContent = '⏳ Registrando...';
+  btnRegistro.style.opacity = '0.6';
+  btnRegistro.style.cursor = 'not-allowed';
+  
+  mostrarCargando('mensajeRegistro');
 
-    const datos = {
-      documento: doc,
-      primer_nombre: document.getElementById('regPrimerNombre').value.toUpperCase(),
-      segundo_nombre: document.getElementById('regSegundoNombre').value.toUpperCase() || null,
-      primer_apellido: document.getElementById('regPrimerApellido').value.toUpperCase(),
-      segundo_apellido: document.getElementById('regSegundoApellido').value.toUpperCase(),
-      facultad: document.getElementById('regFacultad').value,
-      programa: document.getElementById('regPrograma').value,
-      sede: document.getElementById('regSede').value,
-      semestre: parseInt(document.getElementById('regSemestre').value),
-      grupo: document.getElementById('regGrupo').value.toUpperCase(),
-      notificaciones: document.getElementById('regSede').value === 'Norte' ? document.getElementById('regNotificaciones').value : null,
-      fecha_actualizacion: new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString()
-    };
+const datos = {
+    documento: doc,
+    primer_nombre: document.getElementById('regPrimerNombre').value.toUpperCase(),
+    segundo_nombre: document.getElementById('regSegundoNombre').value.toUpperCase() || null,
+    primer_apellido: document.getElementById('regPrimerApellido').value.toUpperCase(),
+    segundo_apellido: document.getElementById('regSegundoApellido').value.toUpperCase(),
+    facultad: document.getElementById('regFacultad').value,
+    programa: document.getElementById('regPrograma').value,
+    sede: document.getElementById('regSede').value,
+    semestre: parseInt(document.getElementById('regSemestre').value),
+    grupo: document.getElementById('regGrupo').value.toUpperCase(),
+    notificaciones: document.getElementById('regSede').value === 'Norte' ? document.getElementById('regNotificaciones').value : null,
+    fecha_actualizacion: new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString()
+  };
 
-    try {
-      const resultado = await supabaseInsert('estudiantes', datos);
+  try {
+    const resultado = await supabaseInsert('estudiantes', datos);
+    
+    if (resultado && resultado.length > 0) {
+      document.getElementById('mensajeRegistro').innerHTML = '';
       
-      if (resultado && resultado.length > 0) {
-        // ✅ NUEVO: Suscribir a notificaciones push si aceptó
-        if (datos.notificaciones === 'Si') {
-          try {
-            await suscribirNotificaciones(doc);
-          } catch (error) {
-            console.error('Error al suscribir notificaciones:', error);
-            // No bloqueamos el registro si falla la suscripción
-          }
-        }
-        
-        document.getElementById('mensajeRegistro').innerHTML = '';
-        
-        const modal = document.getElementById('modalExitoRegistro');
-        modal.style.display = 'flex';
-        modal.classList.remove('hidden');
-        
-        setTimeout(() => {
-          modal.style.display = 'none';
-          modal.classList.add('hidden');
-          volverInicio();
-        }, 3000);
-      } else {
-        mostrarMensaje('mensajeRegistro', 'Error: No se pudo completar el registro', 'error');
-        btnRegistro.disabled = false;
-        btnRegistro.textContent = 'Confirmar y Registrarme';
-        btnRegistro.style.opacity = '1';
-        btnRegistro.style.cursor = 'pointer';
-      }
-    } catch (error) {
-      mostrarMensaje('mensajeRegistro', error.message, 'error');
+      const modal = document.getElementById('modalExitoRegistro');
+      modal.style.display = 'flex';
+      modal.classList.remove('hidden');
+      
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+        volverInicio();
+      }, 3000);
+    } else {
+      mostrarMensaje('mensajeRegistro', 'Error: No se pudo completar el registro', 'error');
+      // Reactivar botón si falla
       btnRegistro.disabled = false;
       btnRegistro.textContent = 'Confirmar y Registrarme';
       btnRegistro.style.opacity = '1';
       btnRegistro.style.cursor = 'pointer';
     }
-  }
-}
-
-// ===================================
-// SUSCRIPCIÓN A NOTIFICACIONES PUSH
-// ===================================
-async function suscribirNotificaciones(documento) {
-  try {
-    console.log('🔔 Iniciando suscripción a notificaciones...');
-    
-    // Verificar que OneSignal esté cargado
-    if (typeof OneSignal === 'undefined') {
-      console.error('❌ OneSignal no está cargado');
-      return;
-    }
-    
-    // Solicitar permiso para notificaciones
-    await OneSignal.Slidedown.promptPush();
-    
-    // Esperar a que el usuario acepte
-    const isPushEnabled = await OneSignal.User.PushSubscription.optedIn;
-    
-    if (isPushEnabled) {
-      // Obtener el Player ID (ID único del dispositivo)
-      const playerId = await OneSignal.User.PushSubscription.id;
-      
-      console.log('✅ Suscripción exitosa. Player ID:', playerId);
-      
-      // Asociar el documento del estudiante con el Player ID
-      await OneSignal.User.addTag('documento', documento);
-      await OneSignal.User.addTag('acepta_notificaciones', 'Si');
-      
-      console.log('✅ Tags agregados correctamente');
-    } else {
-      console.log('❌ Usuario rechazó las notificaciones');
-    }
   } catch (error) {
-    console.error('❌ Error en suscripción:', error);
-    throw error;
+    mostrarMensaje('mensajeRegistro', error.message, 'error');
+    // Reactivar botón si hay error
+    btnRegistro.disabled = false;
+    btnRegistro.textContent = 'Confirmar y Registrarme';
+    btnRegistro.style.opacity = '1';
+    btnRegistro.style.cursor = 'pointer';
   }
 }
 
@@ -703,7 +651,7 @@ async function iniciarSesion(event) {
     const apellidos = `${estudiante.primer_apellido} ${estudiante.segundo_apellido}`.trim();
     const nombreCompleto = `${nombres} ${apellidos}`;
 
-datosEstudiante = {
+    datosEstudiante = {
       documento: estudiante.documento,
       nombres: nombres,
       apellidos: apellidos,
@@ -714,24 +662,6 @@ datosEstudiante = {
       semestre: estudiante.semestre,
       grupo: estudiante.grupo
     };
-
-    // ✅ AGREGAR ESTAS LÍNEAS AQUÍ:
-    // Verificar si el usuario ya había aceptado notificaciones y suscribirlo si es necesario
-    if (estudiante.notificaciones === 'Si') {
-      try {
-        const isPushEnabled = await OneSignal.User.PushSubscription.optedIn;
-        if (!isPushEnabled) {
-          // Si no está suscrito, intentar suscribir
-          await suscribirNotificaciones(estudiante.documento);
-        } else {
-          // Si ya está suscrito, actualizar tags por si acaso
-          await OneSignal.User.addTag('documento', estudiante.documento);
-          await OneSignal.User.addTag('acepta_notificaciones', 'Si');
-        }
-      } catch (error) {
-        console.error('Error al verificar/suscribir notificaciones:', error);
-      }
-    }
 
     formularioEnviandose = false;
     mostrarPantalla('pantallaFormulario');
@@ -1576,7 +1506,6 @@ async function cambiarTab(event, tab) {
   
   document.getElementById('tabEstadisticas').classList.add('hidden');
   document.getElementById('tabGraficas').classList.add('hidden');
-  document.getElementById('tabNotificaciones').classList.add('hidden');
   document.getElementById('tabDescargas').classList.add('hidden');
   
   if (tab === 'estadisticas') {
@@ -1621,9 +1550,6 @@ async function cambiarTab(event, tab) {
     if (!graficoTutorias) {
       actualizarGrafica();
     }
-    
-  } else if (tab === 'notificaciones') {
-    document.getElementById('tabNotificaciones').classList.remove('hidden');
     
   } else if (tab === 'descargas') {
     document.getElementById('tabDescargas').classList.remove('hidden');
@@ -2933,90 +2859,5 @@ function retrocederPagina() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
     actualizarProgreso(3);
-  }
-}
-
-// ===================================
-// ENVIAR NOTIFICACIÓN PUSH DESDE ADMIN
-// ===================================
-async function enviarNotificacionPush(event) {
-  event.preventDefault();
-  
-  const btnEnviar = document.getElementById('btnEnviarNotificacion');
-  const titulo = document.getElementById('notifTitulo').value.trim();
-  const mensaje = document.getElementById('notifMensaje').value.trim();
-  const url = document.getElementById('notifUrl').value.trim() || window.location.origin;
-  
-  // Validaciones
-  if (!titulo || !mensaje) {
-    mostrarMensaje('mensajeNotificacion', 'Por favor complete todos los campos obligatorios', 'error');
-    return;
-  }
-  
-  if (titulo.length > 50) {
-    mostrarMensaje('mensajeNotificacion', 'El título no puede superar los 50 caracteres', 'error');
-    return;
-  }
-  
-  if (mensaje.length > 200) {
-    mostrarMensaje('mensajeNotificacion', 'El mensaje no puede superar los 200 caracteres', 'error');
-    return;
-  }
-  
-  // Confirmar envío
-  if (!confirm(`¿Enviar notificación a todos los usuarios de Sede Norte?\n\nTítulo: ${titulo}\nMensaje: ${mensaje}`)) {
-    return;
-  }
-  
-  // Desactivar botón
-  btnEnviar.disabled = true;
-  btnEnviar.textContent = '⏳ Enviando...';
-  btnEnviar.style.opacity = '0.6';
-  mostrarCargando('mensajeNotificacion');
-  
-  try {
-    // Enviar notificación usando OneSignal REST API
-    const response = await fetch('https://onesignal.com/api/v1/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
-      },
-      body: JSON.stringify({
-        app_id: ONESIGNAL_APP_ID,
-        headings: { en: titulo },
-        contents: { en: mensaje },
-        url: url,
-        chrome_web_icon: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png',
-        chrome_web_badge: 'https://vkfjttukyrtiumzfmyuk.supabase.co/storage/v1/object/public/img/LOGO.png',
-        // Enviar solo a usuarios que aceptaron notificaciones
-        filters: [
-          { field: 'tag', key: 'acepta_notificaciones', relation: '=', value: 'Si' }
-        ]
-      })
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok && data.id) {
-      mostrarMensaje('mensajeNotificacion', 
-        `✅ Notificación enviada exitosamente a ${data.recipients || 0} usuario(s)`, 
-        'success');
-      
-      // Limpiar formulario
-      document.getElementById('formNotificacion').reset();
-    } else {
-      throw new Error(data.errors ? data.errors.join(', ') : 'Error desconocido al enviar notificación');
-    }
-  } catch (error) {
-    console.error('Error al enviar notificación:', error);
-    mostrarMensaje('mensajeNotificacion', 
-      `❌ Error al enviar notificación: ${error.message}`, 
-      'error');
-  } finally {
-    // Reactivar botón
-    btnEnviar.disabled = false;
-    btnEnviar.textContent = '📤 Enviar Notificación';
-    btnEnviar.style.opacity = '1';
   }
 }
