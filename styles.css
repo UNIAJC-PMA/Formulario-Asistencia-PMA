@@ -39,10 +39,7 @@ background-position: center, left center, right top;
   animation: fadeIn 0.4s ease;
 }
 
-/* Panel de Administración más ancho en PC */
-#pantallaAdmin {
-  max-width: 95vw;
-}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
