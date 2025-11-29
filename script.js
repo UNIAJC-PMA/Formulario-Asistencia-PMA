@@ -611,76 +611,48 @@ async function suscribirNotificaciones(documento) {
   try {
     console.log('🔔 Iniciando suscripción a notificaciones...');
     
-    // Verificar que OneSignal esté cargado
+    // Verificar que OneSignal esté disponible
     if (typeof OneSignal === 'undefined') {
-      console.error('❌ OneSignal no está cargado');
+      console.error('❌ OneSignal no disponible');
       return false;
     }
     
-    // ✅ NO llamar a init() nuevamente - ya está inicializado
-    // Esperar a que esté listo
-    await new Promise(resolve => {
-      if (window.oneSignalInitialized) {
-        resolve();
-      } else {
-        const checkInterval = setInterval(() => {
-          if (window.oneSignalInitialized) {
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 100);
-      }
-    });
+    // Esperar a que esté inicializado
+    let intentos = 0;
+    while (!window.oneSignalInitialized && intentos < 50) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      intentos++;
+    }
     
-    console.log('✅ OneSignal está listo');
+    if (!window.oneSignalInitialized) {
+      console.error('❌ Timeout esperando inicialización');
+      return false;
+    }
     
-    // Configurar los tags ANTES de solicitar permiso
+    console.log('✅ OneSignal listo');
+    
+    // Configurar tags ANTES de solicitar permiso
     await OneSignal.User.addTag('documento', documento);
     await OneSignal.User.addTag('acepta_notificaciones', 'Si');
-    
     console.log('✅ Tags configurados');
     
-    // Mostrar el prompt nativo del navegador con el slidedown de OneSignal
-    await OneSignal.Slidedown.promptPush({
-      force: true,
-      slidedown: {
-        prompts: [{
-          type: "push",
-          autoPrompt: true,
-          text: {
-            actionMessage: "¿Deseas recibir notificaciones del PMA sobre horarios, cambios y novedades?",
-            acceptButton: "Sí, acepto",
-            cancelButton: "No, gracias"
-          }
-        }]
-      }
-    });
-    
-    // Esperar un poco para que el usuario responda
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Verificar el resultado
-    const permission = await OneSignal.Notifications.permission;
+    // ⭐ MÉTODO CORRECTO: Usar Notifications.requestPermission
+    const permission = await OneSignal.Notifications.requestPermission();
     
     if (permission) {
-      console.log('✅ Usuario aceptó las notificaciones');
+      console.log('✅ Notificaciones activadas');
       
-      // Intentar obtener el ID (puede no estar disponible inmediatamente)
-      try {
-        const subscriptionId = await OneSignal.User.PushSubscription.id;
-        console.log('✅ Subscription ID:', subscriptionId);
-      } catch (e) {
-        console.log('⚠️ ID de suscripción no disponible aún');
-      }
+      // Esperar un poco para que se complete el registro
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       return true;
     } else {
-      console.log('❌ Usuario rechazó las notificaciones');
+      console.log('❌ Usuario rechazó notificaciones');
       return false;
     }
     
   } catch (error) {
-    console.error('❌ Error en suscripción:', error);
+    console.error('❌ Error:', error);
     return false;
   }
 }
@@ -759,38 +731,28 @@ datosEstudiante = {
     };
 
    // ✅ Manejar notificaciones si el usuario había aceptado previamente
+// Verificar notificaciones en login
 if (estudiante.notificaciones === 'Si') {
   try {
-    // Esperar a que OneSignal esté listo
-    await new Promise(resolve => {
-      if (window.oneSignalInitialized) {
-        resolve();
-      } else {
-        const checkInterval = setInterval(() => {
-          if (window.oneSignalInitialized) {
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 100);
+    // Esperar inicialización
+    let intentos = 0;
+    while (!window.oneSignalInitialized && intentos < 50) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      intentos++;
+    }
+    
+    if (window.oneSignalInitialized) {
+      const permission = await OneSignal.Notifications.permission;
+      
+      if (permission) {
+        // Ya tiene permisos, actualizar tags
+        await OneSignal.User.addTag('documento', estudiante.documento);
+        await OneSignal.User.addTag('acepta_notificaciones', 'Si');
+        console.log('✅ Tags actualizados');
       }
-    });
-    
-    // Verificar permisos actuales del navegador
-    const permission = await OneSignal.Notifications.permission;
-    
-    if (permission) {
-      // Ya tiene permisos, solo actualizar tags
-      await OneSignal.User.addTag('documento', estudiante.documento);
-      await OneSignal.User.addTag('acepta_notificaciones', 'Si');
-      console.log('✅ Tags de notificación actualizados');
-    } else {
-      // No tiene permisos, pero había aceptado antes
-      console.log('⚠️ Usuario había aceptado notificaciones pero no tiene permisos actuales');
-      // Opcionalmente podrías volver a solicitar
-      // await suscribirNotificaciones(estudiante.documento);
     }
   } catch (error) {
-    console.error('Error al verificar notificaciones:', error);
+    console.error('⚠️ Error verificando notificaciones:', error);
   }
 }
     
