@@ -1754,35 +1754,111 @@ function mostrarEstadisticas(tipo, botonClickeado) {
 
   const grid = document.getElementById('contenidoEstadisticas');
   
-  // GENERAL: 4 cards (agregando Beneficiados)
-  if (tipo === 'general') {
-    // Calcular estudiantes únicos (beneficiados)
-    const estudiantesUnicos = new Set(datosFiltrados.map(item => item.documento));
-    const cantidadBeneficiados = estudiantesUnicos.size;
-    
-    grid.innerHTML = `
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h3>${stats.total}</h3>
-          <p>Total de Registros</p>
-        </div>
-        <div class="stat-card">
-          <h3>${cantidadBeneficiados}</h3>
-          <p>Beneficiados</p>
-        </div>
-        <div class="stat-card">
-          <h3>${promedioCalificacion}</h3>
-          <p>Calificación Promedio</p>
-        </div>
-        <div class="stat-card">
-          <h3>${mejorInstructor.nombre}</h3>
-          <p>Mejor Calificación (${mejorInstructor.promedio})</p>
-        </div>
+// GENERAL: 4 cards
+if (tipo === 'general') {
+  // Calcular estudiantes únicos (beneficiados)
+  const estudiantesUnicos = new Set(datosFiltrados.map(item => item.documento));
+  const cantidadBeneficiados = estudiantesUnicos.size;
+  
+  grid.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>${stats.total}</h3>
+        <p>Total de Registros</p>
       </div>
-    `;
-    document.getElementById('detallesStats').innerHTML = '';
-    return;
+      <div class="stat-card">
+        <h3>${cantidadBeneficiados}</h3>
+        <p>Beneficiados</p>
+      </div>
+      <div class="stat-card">
+        <h3>${promedioCalificacion}</h3>
+        <p>Calificación Promedio</p>
+      </div>
+      <div class="stat-card">
+        <h3>${mejorInstructor.nombre}</h3>
+        <p>Mejor Calificación (${mejorInstructor.promedio})</p>
+      </div>
+    </div>
+  `;
+  
+  // ===== NUEVAS LISTAS DE TOP 5 =====
+  
+  // Top 5 Materias
+  const materiasCuenta = {};
+  datosFiltrados.forEach(item => {
+    const materia = item.asignatura || 'Sin especificar';
+    materiasCuenta[materia] = (materiasCuenta[materia] || 0) + 1;
+  });
+  
+  const top5Materias = Object.entries(materiasCuenta)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  // Top 5 Semestres
+  const semestresCuenta = {};
+  datosFiltrados.forEach(item => {
+    const semestre = item.semestre || 'Sin especificar';
+    semestresCuenta[semestre] = (semestresCuenta[semestre] || 0) + 1;
+  });
+  
+  const top5Semestres = Object.entries(semestresCuenta)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  // Top 5 Programas
+  const programasCuenta = {};
+  datosFiltrados.forEach(item => {
+    const programa = item.programa || 'Sin especificar';
+    programasCuenta[programa] = (programasCuenta[programa] || 0) + 1;
+  });
+  
+  const top5Programas = Object.entries(programasCuenta)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  // Generar HTML de las 3 listas
+  let detallesHTML = '';
+  
+  // Lista 1: Top 5 Materias
+  detallesHTML += '<div class="chart-container"><h3 class="chart-title">Top 5 Materias con Más Tutorías</h3>';
+  if (top5Materias.length > 0) {
+    top5Materias.forEach(([materia, cantidad]) => {
+      const porcentaje = ((cantidad / stats.total) * 100).toFixed(1);
+      detallesHTML += `<div class="list-item"><span>${materia}</span><strong>${cantidad} (${porcentaje}%)</strong></div>`;
+    });
+  } else {
+    detallesHTML += '<p style="text-align: center; color: #666;">No hay datos disponibles</p>';
   }
+  detallesHTML += '</div>';
+  
+  // Lista 2: Top 5 Semestres
+  detallesHTML += '<div class="chart-container"><h3 class="chart-title">Top 5 Semestres con Más Tutorías</h3>';
+  if (top5Semestres.length > 0) {
+    top5Semestres.forEach(([semestre, cantidad]) => {
+      const porcentaje = ((cantidad / stats.total) * 100).toFixed(1);
+      const semestreTexto = semestre === 'Sin especificar' ? semestre : `Semestre ${semestre}`;
+      detallesHTML += `<div class="list-item"><span>${semestreTexto}</span><strong>${cantidad} (${porcentaje}%)</strong></div>`;
+    });
+  } else {
+    detallesHTML += '<p style="text-align: center; color: #666;">No hay datos disponibles</p>';
+  }
+  detallesHTML += '</div>';
+  
+  // Lista 3: Top 5 Programas
+  detallesHTML += '<div class="chart-container"><h3 class="chart-title">Top 5 Programas con Más Tutorías</h3>';
+  if (top5Programas.length > 0) {
+    top5Programas.forEach(([programa, cantidad]) => {
+      const porcentaje = ((cantidad / stats.total) * 100).toFixed(1);
+      detallesHTML += `<div class="list-item"><span>${programa}</span><strong>${cantidad} (${porcentaje}%)</strong></div>`;
+    });
+  } else {
+    detallesHTML += '<p style="text-align: center; color: #666;">No hay datos disponibles</p>';
+  }
+  detallesHTML += '</div>';
+  
+  document.getElementById('detallesStats').innerHTML = detallesHTML;
+  return;
+}
 
   // TUTORES y PROFESORES: Cards completos
   const tituloTipo = tipo === 'tutores' ? 'Tutorías' : 'Asesorías con Profesores';
