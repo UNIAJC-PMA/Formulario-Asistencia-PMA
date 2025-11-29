@@ -486,7 +486,6 @@ function mostrarConfirmacion() {
   setTimeout(() => {
     document.getElementById('confirmacionDatos').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 100);
-}
 
 // NUEVA FUNCIÓN: Verificar documento antes de mostrar el formulario
 async function verificarDocumento(event) {
@@ -518,9 +517,9 @@ async function verificarDocumento(event) {
     document.getElementById('formRegistro').classList.remove('hidden');
     document.getElementById('regDocumentoMostrar').value = doc;
     
-    // Hacer scroll al inicio del formulario
+// Hacer scroll al inicio de la página
     setTimeout(() => {
-      document.getElementById('formRegistro').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
 
   } catch (error) {
@@ -2950,3 +2949,16 @@ function retrocederPagina() {
     actualizarProgreso(3);
   }
 }
+
+// ===================================
+// COLOREAR ASTERISCOS EN ROJO
+// ===================================
+document.addEventListener('DOMContentLoaded', function() {
+  const labels = document.querySelectorAll('label');
+  
+  labels.forEach(label => {
+    if (label.textContent.includes('*')) {
+      label.innerHTML = label.innerHTML.replace(/\*/g, '<span style="color: #dc3545; font-weight: bold; font-size: 16px;">*</span>');
+    }
+  });
+});
