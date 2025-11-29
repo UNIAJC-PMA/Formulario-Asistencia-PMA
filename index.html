@@ -17,15 +17,16 @@
         enable: false,
       },
       allowLocalhostAsSecureOrigin: true,
-      // ✅ NUEVO: Deshabilitar el prompt automático
       autoRegister: false,
-      autoResubscribe: true,
       promptOptions: {
         slidedown: {
-          enabled: false // Desactivar slidedown automático
+          enabled: false
         }
       }
     });
+    
+    // Marcar como inicializado
+    window.oneSignalInitialized = true;
   });
 </script>
   
