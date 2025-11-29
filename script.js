@@ -517,9 +517,9 @@ async function verificarDocumento(event) {
     document.getElementById('formRegistro').classList.remove('hidden');
     document.getElementById('regDocumentoMostrar').value = doc;
     
-// Hacer scroll al inicio de la página
+// Hacer scroll al inicio del formulario
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('formRegistro').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
 
   } catch (error) {
