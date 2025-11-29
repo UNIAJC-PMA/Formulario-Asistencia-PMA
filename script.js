@@ -1576,6 +1576,7 @@ async function cambiarTab(event, tab) {
   
   document.getElementById('tabEstadisticas').classList.add('hidden');
   document.getElementById('tabGraficas').classList.add('hidden');
+  document.getElementById('tabNotificaciones').classList.add('hidden');
   document.getElementById('tabDescargas').classList.add('hidden');
   
   if (tab === 'estadisticas') {
@@ -1614,18 +1615,15 @@ async function cambiarTab(event, tab) {
         container.innerHTML = '<p style="text-align: center; color: #dc3545;">Error al cargar datos. Por favor intenta de nuevo.</p>';
         return;
       }
-      
-      } else if (tab === 'notificaciones') { 
-    document.getElementById('tabNotificaciones').classList.remove('hidden');
-  } else if (tab === 'descargas') {
-    document.getElementById('tabDescargas').classList.remove('hidden');
-  }
-}
+    }
     
     // Crear/actualizar gráfica
     if (!graficoTutorias) {
       actualizarGrafica();
     }
+    
+  } else if (tab === 'notificaciones') {
+    document.getElementById('tabNotificaciones').classList.remove('hidden');
     
   } else if (tab === 'descargas') {
     document.getElementById('tabDescargas').classList.remove('hidden');
