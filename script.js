@@ -1754,7 +1754,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
 
   const grid = document.getElementById('contenidoEstadisticas');
   
-// GENERAL: 4 cards
+// GENERAL
 if (tipo === 'general') {
   // Calcular estudiantes únicos (beneficiados)
   const estudiantesUnicos = new Set(datosFiltrados.map(item => item.documento));
@@ -1774,10 +1774,7 @@ if (tipo === 'general') {
         <h3>${promedioCalificacion}</h3>
         <p>Calificación Promedio</p>
       </div>
-      <div class="stat-card">
-        <h3>${mejorInstructor.nombre}</h3>
-        <p>Mejor Calificación (${mejorInstructor.promedio})</p>
-      </div>
+      
     </div>
   `;
   
