@@ -758,30 +758,39 @@ datosEstudiante = {
       grupo: estudiante.grupo
     };
 
-    // ✅ Verificar y manejar notificaciones si el usuario había aceptado
+   // ✅ Manejar notificaciones si el usuario había aceptado previamente
 if (estudiante.notificaciones === 'Si') {
   try {
-    // Esperar a que OneSignal esté disponible
-    if (typeof OneSignal !== 'undefined') {
-      await OneSignal.init();
-      
-      // Verificar permisos del navegador
-      const permission = await OneSignal.Notifications.permission;
-      
-      if (permission) {
-        // Ya tiene permisos, solo actualizar tags
-        await OneSignal.User.addTag('documento', estudiante.documento);
-        await OneSignal.User.addTag('acepta_notificaciones', 'Si');
-        console.log('✅ Tags de notificación actualizados');
+    // Esperar a que OneSignal esté listo
+    await new Promise(resolve => {
+      if (window.oneSignalInitialized) {
+        resolve();
       } else {
-        // No tiene permisos, intentar suscribir nuevamente
-        console.log('⚠️ Usuario aceptó notificaciones pero no tiene permisos en el navegador');
-        await suscribirNotificaciones(estudiante.documento);
+        const checkInterval = setInterval(() => {
+          if (window.oneSignalInitialized) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
       }
+    });
+    
+    // Verificar permisos actuales del navegador
+    const permission = await OneSignal.Notifications.permission;
+    
+    if (permission) {
+      // Ya tiene permisos, solo actualizar tags
+      await OneSignal.User.addTag('documento', estudiante.documento);
+      await OneSignal.User.addTag('acepta_notificaciones', 'Si');
+      console.log('✅ Tags de notificación actualizados');
+    } else {
+      // No tiene permisos, pero había aceptado antes
+      console.log('⚠️ Usuario había aceptado notificaciones pero no tiene permisos actuales');
+      // Opcionalmente podrías volver a solicitar
+      // await suscribirNotificaciones(estudiante.documento);
     }
   } catch (error) {
     console.error('Error al verificar notificaciones:', error);
-    // No bloquear el login si falla
   }
 }
     
