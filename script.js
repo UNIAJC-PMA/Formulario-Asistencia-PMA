@@ -555,7 +555,7 @@ const datos = {
     semestre: parseInt(document.getElementById('regSemestre').value),
     grupo: document.getElementById('regGrupo').value.toUpperCase(),
     notificaciones: document.getElementById('regSede').value === 'Norte' ? document.getElementById('regNotificaciones').value : null,
-    fecha_actualizacion: new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString()
+    fecha_actualizacion: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' })).toISOString()
   };
 
   try {
@@ -681,9 +681,8 @@ async function iniciarSesion(event) {
 // ===================================
 async function verificarRegistroRecenteConInstructor(documento, instructorSeleccionado) {
   try {
-    // Obtener la fecha y hora actual en Colombia (UTC-5)
-    const ahora = new Date();
-    const ahoraColombia = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+    // Obtener la fecha y hora REAL actual en Colombia
+    const ahoraColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
     
     // Calcular hace 1 hora y 30 minutos (90 minutos)
     const hace90Minutos = new Date(ahoraColombia.getTime() - (90 * 60 * 1000));
@@ -1290,8 +1289,6 @@ const datos = {
 // ACTUALIZACIÓN DE DATOS SEMESTRALES
 // ===================================
 
-// ⏱️ CONFIGURACIÓN TEMPORAL PARA PRUEBAS: 2 MINUTOS
-// 📅 Para cambiar a fechas específicas, ver instrucciones al final del archivo
 function verificarActualizacionSemestral(estudiante) {
   // Si no hay fecha de última actualización, usar fecha de creación o considerar que necesita actualizar
   if (!estudiante.fecha_actualizacion && !estudiante.created_at) {
@@ -1299,37 +1296,49 @@ function verificarActualizacionSemestral(estudiante) {
     return true; // Primera vez, pedir actualización
   }
   
-  // 🕐 USAR HORA DE COLOMBIA PARA TODO EL CÁLCULO
-const ultimaActualizacion = estudiante.fecha_actualizacion 
-  ? new Date(estudiante.fecha_actualizacion) 
-  : new Date(estudiante.created_at);
-
-const ahoraColombia = new Date(Date.now() - (5 * 60 * 60 * 1000));
-const ultimaActualizacionColombia = new Date(ultimaActualizacion.getTime() - (5 * 60 * 60 * 1000));
+  // 🕐 OBTENER HORA REAL DE COLOMBIA
+  const ahoraColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
   
-  // ⏱️ PARA PRUEBAS: 2 MINUTOS (120 segundos)
-  const segundosTranscurridos = (ahoraColombia - ultimaActualizacionColombia) / 1000;
-  const LIMITE_SEGUNDOS = 120; // 2 minutos
+  const ultimaActualizacion = estudiante.fecha_actualizacion 
+    ? new Date(estudiante.fecha_actualizacion) 
+    : new Date(estudiante.created_at);
   
-  console.log('🕐 Última actualización (Colombia):', ultimaActualizacionColombia.toLocaleString('es-CO'));
-  console.log('🕐 Ahora (Colombia):', ahoraColombia.toLocaleString('es-CO'));
-  console.log(`🕐 Tiempo transcurrido: ${Math.floor(segundosTranscurridos)} segundos de ${LIMITE_SEGUNDOS}`);
-  console.log(`🕐 ¿Necesita actualizar? ${segundosTranscurridos > LIMITE_SEGUNDOS ? 'SÍ' : 'NO'}`);
+  const ultimaActualizacionColombia = new Date(ultimaActualizacion.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
   
-  return segundosTranscurridos > LIMITE_SEGUNDOS;
+  // 📅 VERIFICAR SI HA PASADO UNA FECHA DE ACTUALIZACIÓN (01 ENERO o 01 JULIO)
   
-  // 📅 PARA PRODUCCIÓN: DESCOMENTAR ESTAS LÍNEAS Y COMENTAR LAS DE ARRIBA
-  /*
-  const mesesTranscurridos = (ahoraColombia - ultimaActualizacionColombia) / (1000 * 60 * 60 * 24 * 30);
-  const LIMITE_MESES = 4; // 4 meses
+  const añoActual = ahoraColombia.getFullYear();
+  const mesActual = ahoraColombia.getMonth(); // 0 = Enero, 6 = Julio
+  const diaActual = ahoraColombia.getDate();
   
-  console.log('🕐 Última actualización (Colombia):', ultimaActualizacionColombia.toLocaleString('es-CO'));
-  console.log('🕐 Ahora (Colombia):', ahoraColombia.toLocaleString('es-CO'));
-  console.log(`📅 Meses transcurridos: ${mesesTranscurridos.toFixed(1)} de ${LIMITE_MESES}`);
-  console.log(`📅 ¿Necesita actualizar? ${mesesTranscurridos > LIMITE_MESES ? 'SÍ' : 'NO'}`);
+  const añoUltimaActualizacion = ultimaActualizacionColombia.getFullYear();
+  const mesUltimaActualizacion = ultimaActualizacionColombia.getMonth();
   
-  return mesesTranscurridos > LIMITE_MESES;
-  */
+  // Fechas clave de actualización
+  const enero = new Date(añoActual, 0, 1); // 01 Enero del año actual
+  const julio = new Date(añoActual, 6, 1); // 01 Julio del año actual
+  
+  console.log('📅 Última actualización:', ultimaActualizacionColombia.toLocaleString('es-CO'));
+  console.log('📅 Ahora:', ahoraColombia.toLocaleString('es-CO'));
+  console.log('📅 Año actual:', añoActual, '| Mes actual:', mesActual + 1, '| Día actual:', diaActual);
+  
+  // CASO 1: Si la última actualización fue en un año anterior
+  if (añoUltimaActualizacion < añoActual) {
+    console.log('✅ Necesita actualizar: La última actualización fue en un año anterior');
+    return true;
+  }
+  
+  // CASO 2: Si estamos en el mismo año, verificar semestres
+  if (añoUltimaActualizacion === añoActual) {
+    // Si la última actualización fue ANTES de Julio y ya pasó el 01 de Julio
+    if (mesUltimaActualizacion < 6 && ahoraColombia >= julio) {
+      console.log('✅ Necesita actualizar: Ya pasó el 01 de Julio y no ha actualizado este semestre');
+      return true;
+    }
+  }
+  
+  console.log('❌ NO necesita actualizar aún');
+  return false;
 }
 
 function mostrarFormularioActualizacion(estudiante) {
@@ -1366,8 +1375,9 @@ async function actualizarDatosEstudiante(event) {
   mostrarCargando('mensajeActualizacion');
   
   try {
-    // Fecha en Colombia (UTC-5)
-    const fechaColombiaISO = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString();
+    // Fecha REAL en Colombia
+    const fechaColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+    const fechaColombiaISO = fechaColombia.toISOString();
     
     // Actualizar en Supabase
     const url = `${SUPABASE_URL}/rest/v1/estudiantes?documento=eq.${estudianteActualizando.documento}`;
