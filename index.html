@@ -476,7 +476,7 @@
   <!-- Botones de navegación página 1 -->
   <div class="navegacion-formulario">
     <button type="button" class="btn-flecha btn-flecha-derecha" onclick="avanzarPagina()" title="Siguiente">
-      →
+      Siguiente
     </button>
   </div>
 </div>
@@ -484,8 +484,8 @@
 <!-- PÁGINA 2 DEL FORMULARIO -->
 
 <div id="paginaFormulario2" class="pagina-formulario hidden">
-        
-<h2 style="text-align:center;font-size:18px;font-weight:600;color:#28a745;margin:40px 0 25px 0;padding-bottom:12px;border-bottom:2px dashed #28a745;letter-spacing:0.5px;">
+     <br><br>   
+<h2 style="text-align:center;font-size:18px;font-weight:600;color:#000000;margin:40px 0 25px 0;padding-bottom:12px;border-bottom:2px dashed #28a745;letter-spacing:0.5px;">
   Ayúdanos a Mejorar
 </h2>
 
@@ -495,7 +495,7 @@
     5 = Excelente
   </p>
         
-<br>
+<br><br>
 
 <div class="form-group" id="grupoCalificacion">
   <label>Calificación de la tutoría *</label>
@@ -580,15 +580,12 @@
 <div class="form-group" id="grupoSugerencias">
     <label>Sugerencias o Comentarios (Opcional)</label>
     <textarea id="sugerencias" class="uppercase-input" placeholder="Escriba aquí sus sugerencias, comentarios o recomendaciones" oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,.\-]/g, '')" onblur="limpiarEspacios(this)" autocomplete="off"></textarea>
-    <label class="checkbox-label">
-      <input type="checkbox" id="ningunaSugerencia" onchange="toggleSugerencias()"> No tengo sugerencias
-    </label>
   </div>
 
   <!-- Botones de navegación página 2 -->
   <div class="navegacion-formulario">
     <button type="button" class="btn-flecha btn-flecha-izquierda" onclick="retrocederPagina()" title="Anterior">
-      →
+      Anterior
     </button>
   </div>
 </div>
