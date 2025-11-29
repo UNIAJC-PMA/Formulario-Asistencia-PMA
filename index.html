@@ -10,30 +10,12 @@
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
+  OneSignalDeferred.push(function(OneSignal) {
+    OneSignal.init({
       appId: "af1f6666-7815-49df-b39f-b29ca8ecfad2",
-      
-      // ⭐ CLAVE: Le decimos explícitamente qué Service Worker usar
-      serviceWorkerPath: '/OneSignalSDKWorker.js',
-      
-      // Desactivar registro automático
-      autoRegister: false,
-      
-      // Desactivar prompts automáticos
-      promptOptions: {
-        slidedown: {
-          enabled: false,
-          autoPrompt: false
-        }
-      },
-      
-      // Deshabilitar botón
-      notifyButton: {
-        enable: false
-      },
-      
-      allowLocalhostAsSecureOrigin: true
+      path: '/Formulario-Asistencia-PMA/',
+      serviceWorkerPath: '/Formulario-Asistencia-PMA/OneSignalSDKWorker.js',
+      serviceWorkerParam: { scope: '/Formulario-Asistencia-PMA/' }
     });
     
     console.log('✅ OneSignal inicializado');
