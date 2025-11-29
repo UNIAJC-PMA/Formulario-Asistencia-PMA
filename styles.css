@@ -255,11 +255,6 @@ label {
   font-size: 14px;
 }
 
-/* Colorear asteriscos en rojo */
-label::first-line {
-  color: #333;
-}
-
 
 .checkbox-label {
   margin-top: 10px;
