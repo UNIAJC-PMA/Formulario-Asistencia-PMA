@@ -1,3 +1,11 @@
+/* ===================================
+   ESTILOS GLOBALES (DEFAULT)
+   Aplican a todos los dispositivos por defecto
+   =================================== */
+
+/* ===================================
+   RESET Y ESTILOS BASE
+   =================================== */
 * {
   margin: 0;
   padding: 0;
@@ -16,8 +24,6 @@ background-position: center, left center, right top;
   flex-direction: column;
   padding: 15px;
 }
-
-
 
 /* ===================================
    CONTAINER PRINCIPAL
@@ -858,27 +864,218 @@ textarea {
   color: #28a745;
 }
 
-/* Responsive para indicador */
-@media (max-width: 480px) {
-  .progress-indicator {
-    padding: 0 5px;
-  }
-  
-  .progress-circle {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-  
-  .progress-label {
-    font-size: 9px;
-  }
+.footer {
+  color: #ffffff;
+  text-align: center;
+  padding: 25px 10px;
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+.footer-content h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.footer-content p {
+  margin: 8px 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.footer-content a {
+  color: #004C8C;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.footer-content a:hover {
+  color: #002E5D;
 }
 
 
 /* ===================================
-   RESPONSIVE DESIGN
+   CONTENEDOR DE ESTADÍSTICAS COMPLETO
    =================================== */
+#statsGrid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Botones de filtro de estadísticas */
+.estadisticas-menu-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.estadisticas-menu-wrapper .btn-sede {
+  flex: 1;
+  padding: 15px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  transition: all 0.3s;
+  background: white;
+  color: #1e3c72;
+  border: 2px solid #1e3c72;
+}
+
+/* Botón activo en azul claro */
+.estadisticas-menu-wrapper .btn-sede.activo {
+  background: #4a90e2;
+  color: white;
+  border-color: #4a90e2;
+}
+
+.estadisticas-menu-wrapper .btn-sede.activo:hover {
+  background: #5ca3f5;
+  border-color: #5ca3f5;
+}
+
+.estadisticas-menu-wrapper .btn-sede.activo:hover {
+  background: #5886d6;
+  border-color: #2a5298;
+}
+
+/* Contenedor de cards y detalles */
+#contenidoEstadisticas {
+  width: 100%;
+}
+
+#contenidoEstadisticas .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  margin: 0 0 20px 0;
+}
+
+/* ===================================
+   CAMPO DE DOCUMENTO READONLY
+   =================================== */
+.documento-readonly {
+  background: #f5f5f5 !important;
+  color: #666;
+  cursor: not-allowed;
+  font-weight: 600;
+}
+
+input[type="text"]::placeholder {
+  color: #999;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ===================================
+   OPCIONES EN NEGRILLA PARA SELECT
+   =================================== */
+select option {
+  font-weight: normal;
+}
+
+/* Forzar negrilla en todas las plataformas */
+select option[value="Otra"],
+select option[value="Otro"] {
+  font-weight: 700 !important;
+  font-style: normal !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Alternativa adicional para móviles iOS */
+@supports (-webkit-touch-callout: none) {
+  select option[value="Otra"],
+  select option[value="Otro"] {
+    font-weight: bold !important;
+  }
+
+  }
+
+
+/* ===================================
+   PAGINACIÓN DEL FORMULARIO
+   =================================== */
+.pagina-formulario {
+  animation: fadeInPage 0.3s ease;
+  will-change: opacity, transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.navegacion-formulario {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0 20px 0;
+  gap: 20px;
+}
+
+.btn-flecha {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #1e3c72;
+  color: white;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+}
+
+.btn-flecha:hover {
+  background: #2a5298;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(30, 60, 114, 0.4);
+}
+
+.btn-flecha:active {
+  transform: scale(0.95);
+}
+
+.btn-flecha-izquierda {
+  transform: rotate(180deg);
+}
+
+.btn-flecha-izquierda:hover {
+  transform: rotate(180deg) scale(1.1);
+}
+
+.btn-flecha-izquierda:active {
+  transform: rotate(180deg) scale(0.95);
+}
+
+/* ===================================
+   MAYOR SEPARACIÓN ENTRE PREGUNTAS
+   =================================== */
+.form-group {
+  margin-bottom: 30px !important; /* Aumentado de 18px a 30px */
+}
+
+
+
+/* ===================================
+   ESTILOS PARA TABLETS
+   Media Query: max-width: 768px
+   =================================== */
+
 @media (max-width: 768px) {
   body {
     padding: 8px;
@@ -1014,7 +1211,47 @@ textarea {
     height: 40px;
     font-size: 18px;
   }
+
+  .estadisticas-menu-wrapper {
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  
+  .estadisticas-menu-wrapper .btn-sede {
+    padding: 12px 10px;
+    font-size: 13px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Forzar que las tarjetas de estadísticas estén una debajo de otra */
+  #contenidoEstadisticas .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 20px 15px;
+  }
+
+  .stat-card h3 {
+    font-size: 26px;
+  }
+
+  .stat-card p {
+    font-size: 12px;
+  }
+
+  .pagina-formulario {
+    animation: fadeInPage 0.2s ease; /* Más rápido en móviles */
+  }
 }
+
+
+/* ===================================
+   ESTILOS PARA MÓVILES
+   Media Query: max-width: 480px
+   =================================== */
 
 @media (max-width: 480px) {
   body {
@@ -1156,132 +1393,7 @@ textarea {
     height: 36px;
     font-size: 16px;
   }
-}
 
-.footer {
-  color: #ffffff;
-  text-align: center;
-  padding: 25px 10px;
-  font-family: "Poppins", Arial, sans-serif;
-}
-
-.footer-content h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-.footer-content p {
-  margin: 8px 0;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.footer-content a {
-  color: #004C8C;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.footer-content a:hover {
-  color: #002E5D;
-}
-
-
-/* ===================================
-   CONTENEDOR DE ESTADÍSTICAS COMPLETO
-   =================================== */
-#statsGrid {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-/* Botones de filtro de estadísticas */
-.estadisticas-menu-wrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  margin-bottom: 25px;
-  width: 100%;
-}
-
-.estadisticas-menu-wrapper .btn-sede {
-  flex: 1;
-  padding: 15px 20px;
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0;
-  transition: all 0.3s;
-  background: white;
-  color: #1e3c72;
-  border: 2px solid #1e3c72;
-}
-
-/* Botón activo en azul claro */
-.estadisticas-menu-wrapper .btn-sede.activo {
-  background: #4a90e2;
-  color: white;
-  border-color: #4a90e2;
-}
-
-.estadisticas-menu-wrapper .btn-sede.activo:hover {
-  background: #5ca3f5;
-  border-color: #5ca3f5;
-}
-
-.estadisticas-menu-wrapper .btn-sede.activo:hover {
-  background: #5886d6;
-  border-color: #2a5298;
-}
-
-/* Contenedor de cards y detalles */
-#contenidoEstadisticas {
-  width: 100%;
-}
-
-#contenidoEstadisticas .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-  margin: 0 0 20px 0;
-}
-
-@media (max-width: 768px) {
-  .estadisticas-menu-wrapper {
-    gap: 8px;
-    flex-wrap: nowrap;
-  }
-  
-  .estadisticas-menu-wrapper .btn-sede {
-    padding: 12px 10px;
-    font-size: 13px;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  /* Forzar que las tarjetas de estadísticas estén una debajo de otra */
-  #contenidoEstadisticas .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 20px 15px;
-  }
-
-  .stat-card h3 {
-    font-size: 26px;
-  }
-
-  .stat-card p {
-    font-size: 12px;
-  }
-  
-}
-
-@media (max-width: 480px) {
   .estadisticas-menu-wrapper {
     gap: 5px;
     flex-wrap: nowrap;
@@ -1312,140 +1424,29 @@ textarea {
     font-size: 11px;
   }
 
-
-  /* ===================================
-   CAMPO DE DOCUMENTO READONLY
-   =================================== */
-.documento-readonly {
-  background: #f5f5f5 !important;
-  color: #666;
-  cursor: not-allowed;
-  font-weight: 600;
-}
-
-input[type="text"]::placeholder {
-  color: #999;
-  font-size: 13px;
-  font-style: italic;
-}
-}
-
-/* ===================================
-   OPCIONES EN NEGRILLA PARA SELECT
-   =================================== */
-select option {
-  font-weight: normal;
-}
-
-/* Forzar negrilla en todas las plataformas */
-select option[value="Otra"],
-select option[value="Otro"] {
-  font-weight: 700 !important;
-  font-style: normal !important;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Alternativa adicional para móviles iOS */
-@supports (-webkit-touch-callout: none) {
-  select option[value="Otra"],
-  select option[value="Otro"] {
-    font-weight: bold !important;
+  .seccion-opcional-titulo {
+    font-size: 14px;
+    margin: 30px 0 20px 0;
   }
 
+  /* Responsive para indicador */
+  .progress-indicator {
+    padding: 0 5px;
+  }
+  
+  .progress-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .progress-label {
+    font-size: 9px;
   }
 
-
-/* ===================================
-   PAGINACIÓN DEL FORMULARIO
-   =================================== */
-.pagina-formulario {
-  animation: fadeInPage 0.3s ease;
-  will-change: opacity, transform;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-}
-
-@media (max-width: 768px) {
-  .pagina-formulario {
-    animation: fadeInPage 0.2s ease; /* Más rápido en móviles */
-  }
-}
-
-@keyframes fadeInPage {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.navegacion-formulario {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 30px 0 20px 0;
-  gap: 20px;
-}
-
-.btn-flecha {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #1e3c72;
-  color: white;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
-}
-
-.btn-flecha:hover {
-  background: #2a5298;
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(30, 60, 114, 0.4);
-}
-
-.btn-flecha:active {
-  transform: scale(0.95);
-}
-
-.btn-flecha-izquierda {
-  transform: rotate(180deg);
-}
-
-.btn-flecha-izquierda:hover {
-  transform: rotate(180deg) scale(1.1);
-}
-
-.btn-flecha-izquierda:active {
-  transform: rotate(180deg) scale(0.95);
-}
-
-@media (max-width: 480px) {
   .btn-flecha {
     width: 50px;
     height: 50px;
     font-size: 24px;
-  }
-}
-
-/* ===================================
-   MAYOR SEPARACIÓN ENTRE PREGUNTAS
-   =================================== */
-.form-group {
-  margin-bottom: 30px !important; /* Aumentado de 18px a 30px */
-}
-
-@media (max-width: 480px) {
-  .seccion-opcional-titulo {
-    font-size: 14px;
-    margin: 30px 0 20px 0;
   }
 }
