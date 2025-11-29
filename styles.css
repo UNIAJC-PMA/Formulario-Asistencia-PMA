@@ -557,6 +557,15 @@ textarea {
   color: #1e3c72;
 }
 
+
+/* Panel de Administración más ancho en PC (pantallas grandes) */
+@media (min-width: 769px) {
+  #pantallaAdmin {
+    max-width: 95vw;
+  }
+}
+
+
 /* ===================================
    ESTADÍSTICAS
    =================================== */
