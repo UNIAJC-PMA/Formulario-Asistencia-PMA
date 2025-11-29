@@ -1448,9 +1448,4 @@ select option[value="Otro"] {
     font-size: 9px;
   }
 
-  .btn-flecha {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-  }
 }
