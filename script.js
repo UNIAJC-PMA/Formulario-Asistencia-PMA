@@ -1648,7 +1648,6 @@ async function cargarEstadisticas() {
   );
 }
 
-
 function mostrarEstadisticas(tipo, botonClickeado) {
   // Remover clase activo de todos los botones
   document.querySelectorAll('.estadisticas-menu-wrapper .btn-sede').forEach(btn => {
@@ -1732,7 +1731,7 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     promediosPorInstructor[instructor] = (info.suma / info.cantidad).toFixed(2);
   });
 
-  // Encontrar el mejor instructor con mejor promedio
+  // Encontrar el MEJOR instructor con mejor promedio
   let mejorInstructor = { nombre: '', promedio: 0, cantidad: 0 };
   
   Object.keys(stats.calificacionesPorInstructor).forEach(instructor => {
@@ -1742,6 +1741,23 @@ function mostrarEstadisticas(tipo, botonClickeado) {
     if (promedio > mejorInstructor.promedio || 
        (promedio === mejorInstructor.promedio && info.cantidad > mejorInstructor.cantidad)) {
       mejorInstructor = { 
+        nombre: instructor, 
+        promedio: promedio.toFixed(2),
+        cantidad: info.cantidad
+      };
+    }
+  });
+
+  // Encontrar el PEOR instructor con menor promedio
+  let peorInstructor = { nombre: '', promedio: 5, cantidad: 0 };
+  
+  Object.keys(stats.calificacionesPorInstructor).forEach(instructor => {
+    const info = stats.calificacionesPorInstructor[instructor];
+    const promedio = parseFloat((info.suma / info.cantidad).toFixed(2));
+    
+    if (promedio < peorInstructor.promedio || 
+       (promedio === peorInstructor.promedio && info.cantidad > peorInstructor.cantidad)) {
+      peorInstructor = { 
         nombre: instructor, 
         promedio: promedio.toFixed(2),
         cantidad: info.cantidad
@@ -1871,11 +1887,14 @@ if (tipo === 'general') {
         <h3>${mejorInstructor.nombre}</h3>
         <p>Mejor Calificación (${mejorInstructor.promedio})</p>
       </div>
+      <div class="stat-card">
+        <h3>${peorInstructor.nombre}</h3>
+        <p>Menor Calificación (${peorInstructor.promedio})</p>
+      </div>
     </div>
   `;
 
   let detalles = '';
-
 
 // TUTORES: Mostrar por sede
   if (tipo === 'tutores') {
