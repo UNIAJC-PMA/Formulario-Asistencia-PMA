@@ -478,14 +478,15 @@ function mostrarConfirmacion() {
     </div>
   `;
 
-  document.getElementById('datosConfirmacion').innerHTML = html;
+document.getElementById('datosConfirmacion').innerHTML = html;
   document.getElementById('confirmacionDatos').classList.remove('hidden');
   document.getElementById('btnConfirmarRegistro').classList.remove('hidden');
   document.getElementById('btnContinuar').classList.add('hidden');
   
   setTimeout(() => {
-    document.getElementById('confirmacionDatos').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('confirmacionDatos').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 100);
+}
 
 // NUEVA FUNCIÓN: Verificar documento antes de mostrar el formulario
 async function verificarDocumento(event) {
@@ -517,9 +518,9 @@ async function verificarDocumento(event) {
     document.getElementById('formRegistro').classList.remove('hidden');
     document.getElementById('regDocumentoMostrar').value = doc;
     
-// Hacer scroll al inicio del formulario
+    // Hacer scroll al inicio de la página
     setTimeout(() => {
-      document.getElementById('formRegistro').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
 
   } catch (error) {
