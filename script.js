@@ -2605,8 +2605,7 @@ function actualizarGrafica() {
         maintainAspectRatio: true,
         plugins: {
           legend: {
-            display: true,
-            position: 'top'
+            display: false
           }
         },
         scales: {
@@ -2736,8 +2735,7 @@ function actualizarGrafica() {
       maintainAspectRatio: true,
       plugins: {
         legend: {
-          display: true,
-          position: 'top'
+          display: false
         },
         tooltip: {
           callbacks: {
