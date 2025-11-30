@@ -836,11 +836,23 @@ function cargarProfesoresPorFacultad() {
 // ===================================
 // CARGAR MATERIAS
 // ===================================
-function cargarMaterias() {
+async function cargarMaterias() {
   const selectInstructor = document.getElementById('instructor');
   const selectedOption = selectInstructor.options[selectInstructor.selectedIndex];
   
   if (!selectedOption || !selectedOption.value) return;
+
+  // VERIFICAR QUE LOS DATOS ESTÉN CARGADOS
+  if (datosCache.materias.length === 0) {
+    console.warn('⚠️ Datos de materias no disponibles, recargando...');
+    try {
+      await precargarDatosFormulario();
+    } catch (error) {
+      console.error('❌ Error recargando datos:', error);
+      mostrarMensaje('mensajeFormulario', 'Error al cargar las materias. Por favor recargue la página.', 'error');
+      return;
+    }
+  }
 
   const instructorNombre = selectedOption.value;
   
@@ -906,9 +918,21 @@ function cargarMaterias() {
 // ===================================
 // CARGAR TEMAS
 // ===================================
-function cargarTemas() {
+async function cargarTemas() {
   const materia = document.getElementById('asignatura').value;
   if (!materia) return;
+
+  // VERIFICAR QUE LOS DATOS ESTÉN CARGADOS
+  if (datosCache.temas.length === 0) {
+    console.warn('⚠️ Datos de temas no disponibles, recargando...');
+    try {
+      await precargarDatosFormulario();
+    } catch (error) {
+      console.error('❌ Error recargando datos:', error);
+      mostrarMensaje('mensajeFormulario', 'Error al cargar los temas. Por favor recargue la página.', 'error');
+      return;
+    }
+  }
 
   const containerAsignatura = document.getElementById('otraAsignaturaContainer');
   const inputAsignatura = document.getElementById('otraAsignatura');
@@ -931,8 +955,7 @@ function cargarTemas() {
     const labelTema = document.querySelector('#grupoTema label');
     labelTema.textContent = 'Tema *';
     
-document.getElementById('grupoMotivo').classList.remove('hidden');
-// NO mostrar calificación y sugerencias aquí, están en página 2
+    document.getElementById('grupoMotivo').classList.remove('hidden');
     
     formularioEnviandose = true;
     actualizarBotonCerrarSesion();
@@ -992,8 +1015,7 @@ document.getElementById('grupoMotivo').classList.remove('hidden');
     labelTema.textContent = 'Tema de la tutoría *';
   }
 
-document.getElementById('grupoMotivo').classList.remove('hidden');
-// NO mostrar calificación y sugerencias aquí, están en página 2
+  document.getElementById('grupoMotivo').classList.remove('hidden');
   
   formularioEnviandose = true;
   actualizarBotonCerrarSesion();
