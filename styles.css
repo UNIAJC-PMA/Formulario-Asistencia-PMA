@@ -1056,15 +1056,6 @@ select option[value="Otro"] {
   transform: translateY(0);
 }
 
-.btn-flecha-izquierda {
-  /* Sin rotación, es simplemente un botón normal */
-}
-
-.btn-flecha-derecha {
-  /* Sin rotación, es simplemente un botón normal */
-}
-
-
 
 /* ===================================
    MAYOR SEPARACIÓN ENTRE PREGUNTAS
@@ -1244,6 +1235,18 @@ select option[value="Otro"] {
 
   .stat-card p {
     font-size: 12px;
+  }
+
+.navegacion-formulario {
+    margin: 30px 0 20px 0;
+    gap: 15px;
+  }
+
+  .btn-flecha {
+    max-width: 140px;
+    min-width: 120px;
+    padding: 12px 20px;
+    font-size: 14px;
   }
 
   .pagina-formulario {
@@ -1448,4 +1451,16 @@ select option[value="Otro"] {
     font-size: 9px;
   }
 
+.navegacion-formulario {
+    margin: 30px 0 20px 0;
+    gap: 15px;
+  }
+
+  .btn-flecha {
+    max-width: 140px;
+    min-width: 120px;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+   
 }
