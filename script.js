@@ -615,11 +615,14 @@ async function iniciarSesion(event) {
   
   mostrarCargando('mensajeLogin');
 
-  // Asegurar que datos del formulario estén cargados
-  if (datosCache.tutoresNorte.length === 0) {
+  // ASEGURAR QUE TODOS LOS DATOS DEL FORMULARIO ESTÉN CARGADOS
+  if (datosCache.tutoresNorte.length === 0 || datosCache.materias.length === 0 || datosCache.temas.length === 0) {
     try {
+      console.log('🔄 Precargando datos del formulario antes de iniciar sesión...');
       await precargarDatosFormulario();
+      console.log('✅ Datos del formulario cargados correctamente');
     } catch (error) {
+      console.error('❌ Error al cargar datos:', error);
       mostrarMensaje('mensajeLogin', 'Error al cargar los datos del formulario. Por favor intenta de nuevo.', 'error');
       return;
     }
@@ -1455,6 +1458,7 @@ async function actualizarDatosEstudiante(event) {
     mostrarMensaje('mensajeActualizacion', 'Error al actualizar: ' + error.message, 'error');
   }
 }
+
 function cerrarSesion() {
   datosEstudiante = null;
   instructorActual = null;
